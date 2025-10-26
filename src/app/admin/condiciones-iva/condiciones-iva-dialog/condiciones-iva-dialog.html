@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>{{ titulo }}</h2>
+
+<mat-dialog-content [formGroup]="form" class="dialog-form">
+  <mat-form-field appearance="outline">
+    <mat-label>Nombre</mat-label>
+    <input matInput formControlName="nombre" />
+    @if (form.get('nombre')?.hasError('required')) {
+      <mat-error>El nombre es obligatorio.</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Código AFIP</mat-label>
+    <input matInput formControlName="codigoAfip" />
+    @if (form.get('codigoAfip')?.hasError('required')) {
+      <mat-error>El código AFIP es obligatorio.</mat-error>
+    }
+    @if (form.get('codigoAfip')?.hasError('pattern')) {
+      <mat-error>Debe ser numérico (1–3 dígitos).</mat-error>
+    }
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="guardar()" [disabled]="form.invalid">
+    Guardar
+  </button>
+</mat-dialog-actions>

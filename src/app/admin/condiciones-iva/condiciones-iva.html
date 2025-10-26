@@ -1,0 +1,56 @@
+<div class="condiciones-container">
+  <div class="toolbar">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Nombre o código AFIP" />
+      <button mat-icon-button matSuffix *ngIf="searchControl.value" (click)="searchControl.setValue('')">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" (click)="abrirDialogoNueva()">
+      <mat-icon>add</mat-icon>
+      Nueva Condición
+    </button>
+  </div>
+
+  <div class="tabla-container">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+
+      <!-- NOMBRE -->
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let element">{{ element.nombre }}</td>
+      </ng-container>
+
+      <!-- CÓDIGO AFIP -->
+      <ng-container matColumnDef="codigoAfip">
+        <th mat-header-cell *matHeaderCellDef>Código AFIP</th>
+        <td mat-cell *matCellDef="let element">{{ element.codigoAfip }}</td>
+      </ng-container>
+
+      <!-- ACCIONES -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Opciones</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="editar(element)">
+              <mat-icon>edit</mat-icon> Editar
+            </button>
+            <button mat-menu-item (click)="eliminar(element)">
+              <mat-icon color="warn">delete</mat-icon> Eliminar
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <mat-paginator [pageSize]="10" showFirstLastButtons></mat-paginator>
+  </div>
+</div>

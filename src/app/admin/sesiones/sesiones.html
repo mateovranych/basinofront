@@ -1,0 +1,58 @@
+<div class="sesiones-container">
+  <div class="toolbar">
+    <h2>Sesiones Activas</h2>
+    <button mat-flat-button color="warn" (click)="revokeAll()">
+      <mat-icon>power_settings_new</mat-icon>
+      Cerrar Todas las Sesiones
+    </button>
+  </div>
+
+  <div *ngIf="cargando" class="loading">
+    <mat-icon>hourglass_empty</mat-icon> Cargando...
+  </div>
+
+  <div *ngIf="!cargando && dataSource.data.length === 0" class="no-data">
+    <mat-icon>check_circle_outline</mat-icon> No hay sesiones activas.
+  </div>
+
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" *ngIf="!cargando && dataSource.data.length > 0">
+    <ng-container matColumnDef="usuarioEmail">
+      <th mat-header-cell *matHeaderCellDef>Usuario</th>
+      <td mat-cell *matCellDef="let s">{{ s.usuarioEmail }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="rol">
+      <th mat-header-cell *matHeaderCellDef>Rol</th>
+      <td mat-cell *matCellDef="let s">{{ s.rol }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="fechaInicio">
+      <th mat-header-cell *matHeaderCellDef>Inicio</th>
+      <td mat-cell *matCellDef="let s">{{ s.fechaInicio | date: 'short' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="fechaExpiracion">
+      <th mat-header-cell *matHeaderCellDef>Expira</th>
+      <td mat-cell *matCellDef="let s">{{ s.fechaExpiracion | date: 'short' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="ip">
+      <th mat-header-cell *matHeaderCellDef>IP</th>
+      <td mat-cell *matCellDef="let s">{{ s.ip || '-' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef>Acciones</th>
+      <td mat-cell *matCellDef="let session">
+        <button mat-flat-button color="warn" matTooltip="Cerrar esta sesión de forma remota"
+          (click)="revoke(session.refreshTokenId)">
+          <mat-icon>power_off</mat-icon>
+          Cerrar Sesión
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>

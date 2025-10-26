@@ -1,0 +1,41 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    mode="side"
+    [(opened)]="opened"
+    class="sidenav"
+    fixedInViewport
+  >
+    <div class="logo">
+      <h2>Bassino Cloud</h2>
+    </div>
+
+    <mat-nav-list>
+      <a mat-list-item (click)="navigate('')">🏠 Dashboard</a>
+      <a mat-list-item (click)="navigate('condiciones-iva')">📄 Condiciones IVA</a>
+      <a mat-list-item (click)="navigate('sesiones')">👤 Sesiones</a>
+      <a mat-list-item (click)="navigate('clientes')">🧾 Clientes</a>
+      <a mat-list-item (click)="navigate('facturacion')">💰 Facturación</a>
+      <a mat-list-item (click)="navigate('presupuestos')">🧮 Presupuestos</a>
+      <a mat-list-item (click)="navigate('comprobantes')">🧾 Comprobantes</a>
+      <a mat-list-item (click)="navigate('reportes')">📊 Reportes</a>
+    </mat-nav-list>
+
+    <div class="footer">
+      <p>{{ userEmail }}</p>
+      <button mat-button color="warn" (click)="logout()">Cerrar sesión</button>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main-content">
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="opened = !opened">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="toolbar-title">Panel de Administración</span>
+    </mat-toolbar>
+
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

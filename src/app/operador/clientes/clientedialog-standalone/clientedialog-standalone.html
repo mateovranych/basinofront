@@ -1,0 +1,73 @@
+<h2 mat-dialog-title>{{ titulo }}</h2>
+
+<mat-dialog-content [formGroup]="form" class="dialog-form">
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
+            <mat-label>Razón Social</mat-label>
+            <input matInput formControlName="razonSocial" placeholder="Ej: Ferretería López" />
+            @if (form.get('razonSocial')?.hasError('required')) {
+            <mat-error>La razón social es obligatoria.</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>CUIT</mat-label>
+            <input matInput formControlName="cuit" maxlength="11" placeholder="Solo números" />
+            @if (form.get('cuit')?.hasError('required')) {
+            <mat-error>El CUIT es obligatorio.</mat-error>
+            }
+            @if (form.get('cuit')?.hasError('pattern')) {
+            <mat-error>Debe tener 11 dígitos numéricos.</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Domicilio</mat-label>
+            <input matInput formControlName="domicilio" placeholder="Ej: Av. Siempre Viva 742" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Teléfono</mat-label>
+            <input matInput formControlName="telefono" placeholder="Ej: 11-2345-6789" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" type="email" placeholder="cliente@mail.com" />
+            @if (form.get('email')?.hasError('email')) {
+            <mat-error>Formato de email inválido.</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Condición IVA con búsqueda -->
+        <mat-form-field appearance="outline">
+            <mat-label>Condición frente al IVA</mat-label>
+            <mat-select formControlName="condicionIvaId">
+                <mat-option>
+                    <ngx-mat-select-search placeholderLabel="Buscar..." noEntriesFoundLabel="Sin resultados"
+                        [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}">
+                    </ngx-mat-select-search>
+
+                </mat-option>
+
+                @for (c of filteredCondiciones; track c.id) {
+                <mat-option [value]="c.id">{{ c.nombre }}</mat-option>
+                }
+            </mat-select>
+            @if (form.get('condicionIvaId')?.hasError('required')) {
+            <mat-error>Seleccioná una condición.</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-checkbox formControlName="tieneCuentaCorriente">
+            Habilitar cuenta corriente
+        </mat-checkbox>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="cancelar()">Cancelar</button>
+    <button mat-flat-button color="primary" (click)="guardar()" [disabled]="form.invalid">
+        Guardar
+    </button>
+</mat-dialog-actions>

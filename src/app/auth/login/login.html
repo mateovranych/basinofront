@@ -1,0 +1,30 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <h2 class="title">Bassino Cloud</h2>
+    <p class="subtitle">Iniciá sesión para continuar</p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" required />
+        <mat-error *ngIf="email?.hasError('required')">El email es obligatorio</mat-error>
+        <mat-error *ngIf="email?.hasError('email')">Formato inválido</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Contraseña</mat-label>
+        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" required />
+        <button mat-icon-button matSuffix type="button" (click)="hide = !hide">
+          <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="password?.hasError('required')">La contraseña es obligatoria</mat-error>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" class="login-button" [disabled]="loginForm.invalid || loading">
+        <span *ngIf="!loading">Ingresar</span>
+        <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+      </button>
+    </form>
+    <p class="footer-text">© 2025 Bassino Cloud</p>
+  </mat-card>
+</div>
