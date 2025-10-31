@@ -1,33 +1,30 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 
-
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
-import { MatListModule } from '@angular/material/list';
-import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
-
 @Component({
-  selector: 'app-admin-layout-component',  
-  standalone:true,
+  selector: 'app-operador-layout-component',
   imports: [
     CommonModule,
     RouterOutlet,
     RouterModule,
-    
+
     MatSidenavModule,
-     MatToolbarModule,
+    MatToolbarModule,
     MatIconModule,
     MatListModule,
     MatButtonModule,
   ],
-  templateUrl: './admin-layout-component.html',
-  styleUrl: './admin-layout-component.scss'
+  templateUrl: './operador-layout-component.html',
+  styleUrl: './operador-layout-component.scss'
 })
-export class AdminLayoutComponent {
+export class OperadorLayoutComponent {
 
   opened = true;
   userEmail = '';
@@ -48,7 +45,7 @@ export class AdminLayoutComponent {
 
 
   navigate(path: string) {
-    this.router.navigate([`/admin/${path}`]);
+    this.router.navigate([`/operador/${path}`]);
   }
 
 }

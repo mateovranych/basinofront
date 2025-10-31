@@ -1,0 +1,58 @@
+<h2 mat-dialog-title>{{ titulo }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Código</mat-label>
+      <input matInput formControlName="codigo" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción</mat-label>
+      <input matInput formControlName="descripcion" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Precio de venta</mat-label>
+      <input matInput type="number" formControlName="precioVenta" />
+    </mat-form-field>
+
+    <mat-checkbox formControlName="esServicio">Es servicio</mat-checkbox>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Unidad de medida</mat-label>
+      <input matInput formControlName="unidadMedida" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Categoría</mat-label>
+      <mat-select formControlName="categoriaId">
+        
+        <ngx-mat-select-search [formControl]="filtroCategoriaCtrl" placeholderLabel="Buscar categoría..."
+          noEntriesFoundLabel="Sin resultados"></ngx-mat-select-search>
+        
+        <mat-option [value]="null">Sin categoría</mat-option>
+
+        <mat-option *ngFor="let c of categoriasFiltradas" [value]="c.id">
+          {{ c.nombre }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fecha de vencimiento</mat-label>
+      <input matInput type="date" formControlName="fechaVencimiento" />
+    </mat-form-field>
+
+    <mat-checkbox formControlName="requiereFrio">Requiere frío</mat-checkbox>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()" [disabled]="form.invalid">
+    Guardar
+  </button>
+</mat-dialog-actions>

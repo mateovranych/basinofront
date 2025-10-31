@@ -1,0 +1,138 @@
+// ===============================
+// 🎨 ESTILOS PRINCIPALES
+// ===============================
+.contenedor {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background-color: #fafafa;
+  min-height: calc(100vh - 64px);
+
+  // ===============================
+  // 🧭 HEADER
+  // ===============================
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    h2 {
+      margin: 0;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .acciones-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      button[mat-raised-button] {
+        font-weight: 500;
+        border-radius: 8px;
+        padding: 0 1.2rem;
+      }
+    }
+  }
+
+  // ===============================
+  // 🔍 BARRA DE BÚSQUEDA
+  // ===============================
+  .busqueda-container {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+
+    .buscador {
+      width: 50%;
+      min-width: 300px;
+
+      ::ng-deep .mat-mdc-form-field-outline {
+        border-radius: 10px;
+      }
+
+      input {
+        font-size: 0.95rem;
+      }
+
+      mat-icon {
+        color: #666;
+      }
+    }
+  }
+
+  // ===============================
+  // ⏳ BARRA DE PROGRESO
+  // ===============================
+  mat-progress-bar {
+    margin-top: -1rem;
+  }
+
+  // ===============================
+  // 📊 TABLA
+  // ===============================
+  table {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+
+    th {
+      background-color: #f0f0f0;
+      font-weight: 600;
+      color: #444;
+      text-align: left;
+      padding: 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    td {
+      padding: 0.75rem;
+      font-size: 0.9rem;
+      color: #333;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr.mat-row:hover {
+      background-color: #f9f9f9;
+    }
+
+    button[mat-icon-button] {
+      transition: transform 0.15s ease, background-color 0.2s ease;
+
+      &:hover {
+        transform: scale(1.1);
+        background-color: rgba(255, 0, 0, 0.05);
+      }
+
+      mat-icon {
+        color: #d32f2f;
+      }
+    }
+  }
+
+  // ===============================
+  // 📱 RESPONSIVE
+  // ===============================
+  @media (max-width: 768px) {
+    .busqueda-container .buscador {
+      width: 100%;
+    }
+
+    table {
+      font-size: 0.85rem;
+
+      th,
+      td {
+        padding: 0.5rem;
+      }
+    }
+  }
+}

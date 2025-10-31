@@ -197,24 +197,38 @@ refreshToken(): Observable<any> {
   // }
 
 
-  isLoggedIn(): boolean {
-    const token = this.getToken();
-    if (!token) return false;
+//   isLoggedIn(): boolean {
+//     const token = this.getToken();
+//     if (!token) return false;
 
-    try {
-        const decoded: any = jwtDecode(token);
-        const exp = decoded.exp * 1000;
-        console.log("⏳ Token expira en: ", new Date(exp));
-        if (Date.now() < exp) {
-            return true;
-        } else {
-            // Si el token está expirado, intentar refrescarlo
-            this.refreshToken().subscribe();
-            return false;
-        }
-    } catch {
-        return false;
-    }
+//     try {
+//         const decoded: any = jwtDecode(token);
+//         const exp = decoded.exp * 1000;
+//         console.log("⏳ Token expira en: ", new Date(exp));
+//         if (Date.now() < exp) {
+//             return true;
+//         } else {
+//             // Si el token está expirado, intentar refrescarlo
+//             this.refreshToken().subscribe();
+//             return false;
+//         }
+//     } catch {
+//         return false;
+//     }
+// }
+
+
+  isLoggedIn(): boolean {
+  const token = this.getToken();
+  if (!token) return false;
+
+  try {
+    const decoded: any = jwtDecode(token);
+    const exp = decoded.exp * 1000;
+    return Date.now() < exp; // true si no expiró
+  } catch {
+    return false;
+  }
 }
 
 
