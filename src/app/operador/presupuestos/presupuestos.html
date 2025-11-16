@@ -1,12 +1,12 @@
 <div class="contenedor">
   <div class="header">
     <h2>Presupuestos</h2>
-    <div class="acciones-header">  
+    <div class="acciones-header">
       <button mat-raised-button color="primary" (click)="abrirDialogNuevo()">+ Nuevo presupuesto</button>
     </div>
   </div>
 
-    <div class="busqueda-container">
+  <div class="busqueda-container">
     <mat-form-field appearance="outline" class="buscador">
       <mat-label>Buscar</mat-label>
       <input matInput (keyup)="aplicarFiltro($event)" placeholder="Buscar por cliente, fecha, total o ID">
@@ -44,6 +44,9 @@
       <td mat-cell *matCellDef="let p">
         <button mat-icon-button color="warn" (click)="eliminarPresupuesto(p.id)">
           <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button (click)="descargarPresupuesto(p.id)">
+          <mat-icon>picture_as_pdf</mat-icon>
         </button>
       </td>
     </ng-container>

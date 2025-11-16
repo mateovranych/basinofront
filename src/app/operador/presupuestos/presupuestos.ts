@@ -22,7 +22,7 @@ import { MatInputModule } from "@angular/material/input";
     MatIconModule,
     MatProgressBarModule,
     MatInputModule
-],
+  ],
   templateUrl: './presupuestos.html',
   styleUrl: './presupuestos.scss'
 })
@@ -34,7 +34,7 @@ export class Presupuestos implements OnInit {
   constructor(
     private service: PresupuestoService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.cargarPresupuestos();
@@ -111,4 +111,15 @@ export class Presupuestos implements OnInit {
       }
     });
   }
+
+  descargarPresupuesto(id: number) {
+    this.service.descargarPdf(id).subscribe(pdf => {
+      const url = window.URL.createObjectURL(pdf);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `presupuesto_${id}.pdf`;
+      a.click();
+    });
+  }
+
 }
