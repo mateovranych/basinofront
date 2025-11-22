@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatMenuModule} from '@angular/material/menu';
 import { MatInputModule } from '@angular/material/input';
+import { SignalRService } from '../../services/signal-rservice';
 
 @Component({
   selector: 'app-clientes',
@@ -54,16 +55,27 @@ export class Clientes implements OnInit{
 
   constructor(
     private clienteService: ClientesService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private signal: SignalRService
+
   ) {}
 
-  ngOnInit(): void {
-    this.cargarClientes();
+ngOnInit(): void {
 
-    this.searchControl.valueChanges.pipe(debounceTime(400)).subscribe(() => {
+  this.cargarClientes();
+
+  this.signal.listen("actualizar", modulo => {
+    if (modulo === "clientes") {
+      console.log("♻ Clientes actualizados por SignalR");
       this.cargarClientes();
-    });
-  }
+    }
+  });
+  
+  this.searchControl.valueChanges
+    .pipe(debounceTime(400))
+    .subscribe(() => this.cargarClientes());
+}
+
 
   cargarClientes(): void {
     const term = this.searchControl.value?.trim() || '';

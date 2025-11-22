@@ -2,6 +2,7 @@
 
 <mat-dialog-content>
   <form [formGroup]="form">
+
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Código</mat-label>
       <input matInput formControlName="codigo" />
@@ -24,22 +25,28 @@
       <input matInput formControlName="unidadMedida" />
     </mat-form-field>
 
+    <!-- CATEGORÍA -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Categoría</mat-label>
       <mat-select formControlName="categoriaId">
-        
-        <ngx-mat-select-search [formControl]="filtroCategoriaCtrl" placeholderLabel="Buscar categoría..."
-          noEntriesFoundLabel="Sin resultados"></ngx-mat-select-search>
-        
+
+        <!-- 🔍 BUSCADOR CORRECTO -->
+        <mat-option>
+          <ngx-mat-select-search
+            [formControl]="filtroCategoriaCtrl"
+            placeholderLabel="Buscar categoría..."
+            noEntriesFoundLabel="Sin resultados">
+          </ngx-mat-select-search>
+        </mat-option>
+
         <mat-option [value]="null">Sin categoría</mat-option>
 
         <mat-option *ngFor="let c of categoriasFiltradas" [value]="c.id">
           {{ c.nombre }}
         </mat-option>
+
       </mat-select>
     </mat-form-field>
-
-
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Fecha de vencimiento</mat-label>
@@ -47,6 +54,7 @@
     </mat-form-field>
 
     <mat-checkbox formControlName="requiereFrio">Requiere frío</mat-checkbox>
+
   </form>
 </mat-dialog-content>
 

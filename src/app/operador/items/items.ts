@@ -9,6 +9,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { SignalRService } from '../../services/signal-rservice';
 
 @Component({
   selector: 'app-items',
@@ -30,11 +31,23 @@ export class Items {
   items: Item[] = [];
   cargando = false;
 
-  constructor(private service: ItemsService,
-    private dialog: MatDialog) { }
+  constructor(
+    private service: ItemsService,
+    private dialog: MatDialog,
+    private signal: SignalRService
+  
+  ) { }
 
   ngOnInit(): void {
     this.cargarItems();
+
+    this.signal.listen("actualizar", (data) => {
+    if (data === "items") {
+      console.log("🔄 Actualización recibida: recargando items...");
+      this.cargarItems();
+    }
+    
+  });
   }
 
   cargarItems(): void {

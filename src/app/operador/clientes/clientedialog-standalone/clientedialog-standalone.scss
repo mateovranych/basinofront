@@ -1,24 +1,36 @@
 .dialog-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  padding-top: 10px;
 
   .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
-  }
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 16px;
 
-  mat-form-field {
-    width: 100%;
-  }
+    mat-form-field {
+      width: 100%;
+    }
 
-  mat-checkbox {
-    margin-top: 0.5rem;
+    mat-checkbox {
+      margin-top: 12px;
+      align-self: center;
+    }
   }
 }
 
-mat-dialog-actions {
-  padding: 1rem;
-  border-top: 1px solid var(--mat-sys-outline-variant);
+@media (max-width: 768px) {
+  .dialog-form .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 550px) {
+  .dialog-form .form-grid {
+    grid-template-columns: 1fr; 
+    gap: 12px;
+
+    mat-checkbox {
+      margin-top: 5px;
+    }
+  }
 }

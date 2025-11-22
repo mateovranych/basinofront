@@ -1,21 +1,22 @@
 import { Component, OnInit } from '@angular/core';
+import { SignalRService } from './services/signal-rservice';
 import { RouterOutlet } from '@angular/router';
-import { SignalService } from './services/signal-service';
+
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,
-    
-  ],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App implements OnInit {
 
-   constructor(private signalRService: SignalService) {}
+   constructor(private signal: SignalRService) {}
 
-   ngOnInit() {
-    this.signalRService.startConnection(); 
+  ngOnInit(): void {
+    this.signal.iniciar();  // 🔗 Inicia SignalR una sola vez
   }
+
+  
 }

@@ -32,8 +32,7 @@ export class OperadorLayoutComponent {
   constructor(
     private router: Router, 
     private auth: AuthService
-  ) {
-    this.userEmail = auth.getUserEmail() ?? '';
+  ) {    
   }
 
   

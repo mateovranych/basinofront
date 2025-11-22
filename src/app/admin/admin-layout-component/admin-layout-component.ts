@@ -36,7 +36,7 @@ export class AdminLayoutComponent {
     private router: Router, 
     private auth: AuthService
   ) {
-    this.userEmail = auth.getUserEmail() ?? '';
+    // this.userEmail = auth.getUserEmail() ?? '';
   }
 
   

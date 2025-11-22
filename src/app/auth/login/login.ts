@@ -40,45 +40,48 @@ export class Login {
     private snackBar: MatSnackBar
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(4)]],
     });
   }
 
-  onSubmit(): void {
-    if (this.loginForm.invalid) return;
+onSubmit(): void {
+  if (this.loginForm.invalid) return;
 
-    this.loading = true;
-    const { email, password } = this.loginForm.value;
+  this.loading = true;
+  const { email, password } = this.loginForm.value;
 
-    this.authService.login({ email, password }).subscribe({
-      next: (res) => {
-        const rol = this.authService.getUserRole();
-        this.snackBar.open('Inicio de sesión exitoso ✅', 'Cerrar', { duration: 2000 });
-        
-        switch (rol) {
-          case 'Admin':
-            this.router.navigate(['/admin']);
-            break;
-          case 'Operador':
-            this.router.navigate(['/operador']);
-            break;
-          case 'Consulta':
-            this.router.navigate(['/consulta']);
-            break;
-          default:
-            this.router.navigate(['/login']);
-        }
-      },
-      error: (err) => {
-        this.loading = false;
-        console.error('❌ Error de login:', err);
-        const mensaje = err.error?.mensaje || 'Credenciales incorrectas';
-        this.snackBar.open(mensaje, 'Cerrar', { duration: 3000 });
-      },
-      complete: () => (this.loading = false),
-    });
-  }
+  this.authService.login({
+    identificador: email,
+    password: password
+  }).subscribe({
+    next: (res) => {
+      const rol = this.authService.getUserRole();
+      this.snackBar.open('Inicio de sesión exitoso ✅', 'Cerrar', { duration: 2000 });
+
+      switch (rol) {
+        case 'Admin':
+          this.router.navigate(['/admin']);
+          break;
+        case 'Operador':
+          this.router.navigate(['/operador']);
+          break;
+        case 'Consulta':
+          this.router.navigate(['/consulta']);
+          break;
+        default:
+          this.router.navigate(['/login']);
+      }
+    },
+    error: (err) => {
+      this.loading = false;
+      console.error('❌ Error de login:', err);
+      const mensaje = err.error?.mensaje || 'Credenciales incorrectas';
+      this.snackBar.open(mensaje, 'Cerrar', { duration: 3000 });
+    },
+    complete: () => (this.loading = false),
+  });
+}
 
   get email() {
     return this.loginForm.get('email');

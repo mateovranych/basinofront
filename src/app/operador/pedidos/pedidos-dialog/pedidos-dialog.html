@@ -7,26 +7,41 @@
     <mat-form-field appearance="outline" class="full">
       <mat-label>Cliente</mat-label>
       <mat-select formControlName="clienteId">
-        <ngx-mat-select-search
-          [formControl]="filtroClientesCtrl"
-          placeholderLabel="Buscar cliente..."
-          noEntriesFoundLabel="Sin resultados">
-        </ngx-mat-select-search>
-        <mat-option *ngIf="cargandoClientes" disabled>Cargando clientes...</mat-option>
+
+        <!-- BUSCADOR DE CLIENTES -->
+        <mat-option>
+          <ngx-mat-select-search
+            [formControl]="filtroClientesCtrl"
+            placeholderLabel="Buscar cliente..."
+            noEntriesFoundLabel="Sin resultados">
+          </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngIf="cargandoClientes" disabled>
+          Cargando clientes...
+        </mat-option>
+
         <mat-option *ngFor="let c of clientesFiltrados" [value]="c.id">
           {{ c.razonSocial }}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="form.get('clienteId')?.hasError('required')">Seleccioná un cliente</mat-error>
+
+      <mat-error *ngIf="form.get('clienteId')?.hasError('required')">
+        Seleccioná un cliente
+      </mat-error>
     </mat-form-field>
 
     <!-- Estado -->
     <mat-form-field appearance="outline" class="full">
       <mat-label>Estado</mat-label>
       <mat-select formControlName="estadoId">
-        <mat-option *ngFor="let e of estados" [value]="e.id">{{ e.nombre }}</mat-option>
+        <mat-option *ngFor="let e of estados" [value]="e.id">
+          {{ e.nombre }}
+        </mat-option>
       </mat-select>
-      <mat-error *ngIf="form.get('estadoId')?.hasError('required')">Seleccioná un estado</mat-error>
+      <mat-error *ngIf="form.get('estadoId')?.hasError('required')">
+        Seleccioná un estado
+      </mat-error>
     </mat-form-field>
 
     <!-- Tabla de ítems -->
@@ -38,6 +53,7 @@
     </div>
 
     <div class="tabla-lineas">
+
       <div class="fila cabecera">
         <div class="col item">Ítem</div>
         <div class="col cantidad">Cant.</div>
@@ -46,24 +62,38 @@
         <div class="col acciones">Acciones</div>
       </div>
 
-      <div class="fila" *ngFor="let det of detalles.controls; let i = index" [formGroup]="det">
+      <div class="fila"
+          *ngFor="let det of detalles.controls; let i = index"
+          [formGroup]="det">
+
+        <!-- ÍTEM -->
         <div class="col item">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Producto / Servicio</mat-label>
             <mat-select formControlName="itemId" (selectionChange)="onItemChange(i)">
-              <ngx-mat-select-search
-                [formControl]="filtroItemsCtrl"
-                placeholderLabel="Buscar producto o servicio..."
-                noEntriesFoundLabel="Sin resultados">
-              </ngx-mat-select-search>
-              <mat-option *ngIf="cargandoItems" disabled>Cargando ítems...</mat-option>
+
+              <!-- BUSCADOR DE ÍTEMS -->
+              <mat-option>
+                <ngx-mat-select-search
+                  [formControl]="filtroItemsCtrl"
+                  placeholderLabel="Buscar producto o servicio..."
+                  noEntriesFoundLabel="Sin resultados">
+                </ngx-mat-select-search>
+              </mat-option>
+
+              <mat-option *ngIf="cargandoItems" disabled>
+                Cargando ítems...
+              </mat-option>
+
               <mat-option *ngFor="let it of itemsFiltrados" [value]="it.id">
                 {{ it.descripcion }}
               </mat-option>
+
             </mat-select>
           </mat-form-field>
         </div>
 
+        <!-- CANTIDAD -->
         <div class="col cantidad">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Cantidad</mat-label>
@@ -71,6 +101,7 @@
           </mat-form-field>
         </div>
 
+        <!-- PRECIO -->
         <div class="col precio">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Precio</mat-label>
@@ -78,15 +109,18 @@
           </mat-form-field>
         </div>
 
+        <!-- SUBTOTAL -->
         <div class="col subtotal subtotal-text">
           {{ (det.get('cantidad')?.value || 0) * (det.get('precioUnitario')?.value || 0) | number:'1.2-2' }}
         </div>
 
+        <!-- ACCIONES -->
         <div class="col acciones">
           <button mat-icon-button color="warn" type="button" (click)="quitarLinea(i)">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
+
       </div>
     </div>
 
@@ -101,7 +135,8 @@
 
 <mat-dialog-actions align="end">
   <button mat-button type="button" (click)="cancelar()">Cancelar</button>
-  <button mat-raised-button color="primary" type="button" (click)="guardar()" [disabled]="form.invalid || detalles.length === 0">
+  <button mat-raised-button color="primary" type="button"
+          (click)="guardar()" [disabled]="form.invalid || detalles.length === 0">
     Guardar
   </button>
 </mat-dialog-actions>
