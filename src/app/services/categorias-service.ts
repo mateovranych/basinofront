@@ -13,7 +13,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class CategoriasService {
 
-   private apiUrl = `${environment.apiUrl}/Categoria`;
+  private apiUrl = `${environment.apiUrl}/Categoria`;
 
   constructor(private http: HttpClient) {}
 

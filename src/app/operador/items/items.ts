@@ -27,7 +27,7 @@ import { SignalRService } from '../../services/signal-rservice';
 })
 export class Items {
 
-  displayedColumns: string[] = ['codigo', 'descripcion', 'precioVenta', 'esServicio', 'categoria', 'acciones',  'requiereFrio',];
+  displayedColumns: string[] = ['codigo', 'descripcion', 'precioVenta', 'precioCosto', 'precioLista1','precioLista2','esServicio', 'categoria', 'acciones',  'requiereFrio',];
   items: Item[] = [];
   cargando = false;
 

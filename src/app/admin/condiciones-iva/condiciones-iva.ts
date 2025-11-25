@@ -29,8 +29,7 @@ import { CondicionIva } from '../../interfaces/CondicionIva';
     MatIconModule,
     MatDialogModule,
     MatMenuModule,
-    MatPaginatorModule,
-    CondicionesIvaDialog
+    MatPaginatorModule,    
   ],
   templateUrl: './condiciones-iva.html',
   styleUrl: './condiciones-iva.scss'

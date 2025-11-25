@@ -12,6 +12,8 @@ import { ItemsService } from '../../../services/items-service';
 import { Item } from '../../../interfaces/Item';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import Swal from 'sweetalert2';
+import { UnidadMedida } from '../../../interfaces/UnidadMedida';
+import { UnidadMedidaService } from '../../../services/unidad-medida-service';
 
 @Component({
   selector: 'app-items-dialog-component',
@@ -25,22 +27,28 @@ import Swal from 'sweetalert2';
     MatCheckboxModule,
     MatButtonModule,
     FormsModule,
-    NgxMatSelectSearchModule     
+    NgxMatSelectSearchModule
   ],
   templateUrl: './items-dialog-component.html',
   styleUrl: './items-dialog-component.scss'
 })
 export class ItemsDialogComponent implements OnInit {
 
- form: FormGroup;
+  form: FormGroup;
   titulo: string;
   categorias: Categoria[] = [];
   categoriasFiltradas: Categoria[] = [];
-  filtroCategoriaCtrl = new FormControl(''); // ✅ filtro del ngx-mat-select-search
+  filtroCategoriaCtrl = new FormControl('');
+
+  unidadesMedida: UnidadMedida[] = [];
+  unidadesMedidaFiltradas: UnidadMedida[] = [];
+  filtroUnidadCtrl = new FormControl('');
+
 
   constructor(
     private fb: FormBuilder,
     private service: ItemsService,
+    private unidadService: UnidadMedidaService,
     public dialogRef: MatDialogRef<ItemsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { modo: 'crear' | 'editar'; item?: Item }
   ) {
@@ -50,15 +58,19 @@ export class ItemsDialogComponent implements OnInit {
       codigo: [data.item?.codigo || '', Validators.required],
       descripcion: [data.item?.descripcion || '', Validators.required],
       precioVenta: [data.item?.precioVenta || '', [Validators.required, Validators.min(0)]],
+      precioCosto: [data.item?.precioCosto ?? null],
+      precioLista1: [data.item?.precioLista1 ?? null],
+      precioLista2: [data.item?.precioLista2 ?? null],
       esServicio: [data.item?.esServicio || false],
-      unidadMedida: [data.item?.unidadMedida || ''],
+      unidadMedidaId: [data.item?.unidadMedidaId || null, Validators.required],
       categoriaId: [data.item?.categoriaId || null],
-      fechaVencimiento: [data.item?.fechaVencimiento || ''],
+      fechaVencimiento: [data.item?.fechaVencimiento ? data.item.fechaVencimiento.substring(0, 10) : ''],
       requiereFrio: [data.item?.requiereFrio || false]
     });
   }
 
   ngOnInit(): void {
+
     this.service.obtenerCategorias().subscribe({
       next: (res) => {
         this.categorias = res;
@@ -67,17 +79,33 @@ export class ItemsDialogComponent implements OnInit {
       error: () => Swal.fire('Error', 'No se pudieron cargar las categorías', 'error')
     });
 
-    // 🔍 Filtrado reactivo
     this.filtroCategoriaCtrl.valueChanges.subscribe((valor) => {
       const filtro = valor?.toLowerCase() || '';
       this.categoriasFiltradas = this.categorias.filter((c) =>
         c.nombre.toLowerCase().includes(filtro)
       );
     });
+
+    this.unidadService.obtenerUnidades().subscribe({
+      next: (res) => {
+        this.unidadesMedida = res;
+        this.unidadesMedidaFiltradas = [...res];
+      },
+      error: () => Swal.fire('Error', 'No se pudieron cargar las unidades de medida', 'error')
+    });
+
+    this.filtroUnidadCtrl.valueChanges.subscribe((valor) => {
+      const filtro = valor?.toLowerCase() || '';
+      this.unidadesMedidaFiltradas = this.unidadesMedida.filter((u) =>
+        u.nombre.toLowerCase().includes(filtro)
+      );
+    });
   }
+
 
   guardar(): void {
     if (this.form.invalid) return;
+
     const dto = this.form.value;
 
     const accion = this.data.modo === 'crear'
