@@ -5,8 +5,15 @@ export interface Cliente {
     domicilio: string;
     telefono: string;
     email: string;
-    tieneCuentaCorriente: boolean;
-    condicionIVA: string;
-    condicionIvaId?: number;
 
+    tieneCuentaCorriente: boolean;
+
+    condicionIVA: string;
+    condicionIvaId: number;
+    
+    listaPrecioId: number;
+    listaPrecioNombre?: string;
+    
+    esActivo: boolean;
+    
 }

@@ -16,7 +16,7 @@ import { ClientesService } from '../../../services/clientes-service';
 import { EstadoService } from '../../../services/estado-service';
 
 type ClienteMin = { id: number; razonSocial: string };
-type ItemMin = { id: number; descripcion: string; precioVenta: number };
+type ItemMin = { id: number; descripcion: string;  };
 type Estado = { id: number; nombre: string };
 
 @Component({
@@ -125,8 +125,7 @@ export class PedidosDialog implements OnInit {
     const ctrl = this.detalles.at(index);
     const itemId = Number(ctrl.get('itemId')?.value);
     const item = this.items.find(i => i.id === itemId);
-    if (item) {
-      ctrl.get('precioUnitario')?.setValue(item.precioVenta ?? 0);
+    if (item) {      
     }
   }
 
@@ -148,8 +147,7 @@ export class PedidosDialog implements OnInit {
       next: (res) => {
         this.items = res.map(i => ({
           id: i.id,
-          descripcion: i.descripcion,
-          precioVenta: i.precioVenta
+          descripcion: i.descripcion,          
         }));
         this.itemsFiltrados = [...this.items];
       },

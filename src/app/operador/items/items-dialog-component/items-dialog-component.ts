@@ -56,15 +56,10 @@ export class ItemsDialogComponent implements OnInit {
 
     this.form = this.fb.group({
       codigo: [data.item?.codigo || '', Validators.required],
-      descripcion: [data.item?.descripcion || '', Validators.required],
-      precioVenta: [data.item?.precioVenta || '', [Validators.required, Validators.min(0)]],
-      precioCosto: [data.item?.precioCosto ?? null],
-      precioLista1: [data.item?.precioLista1 ?? null],
-      precioLista2: [data.item?.precioLista2 ?? null],
+      descripcion: [data.item?.descripcion || '', Validators.required],  
       esServicio: [data.item?.esServicio || false],
       unidadMedidaId: [data.item?.unidadMedidaId || null, Validators.required],
-      categoriaId: [data.item?.categoriaId || null],
-      fechaVencimiento: [data.item?.fechaVencimiento ? data.item.fechaVencimiento.substring(0, 10) : ''],
+      categoriaId: [data.item?.categoriaId || null],      
       requiereFrio: [data.item?.requiereFrio || false]
     });
   }

@@ -1,0 +1,190 @@
+// ========================================================
+// 🎨 Bassino Theme - Light Mode (Azul Francia + Blanco)
+// ========================================================
+
+// ----------- COLOR PALETTE --------------
+$color-primario: #d60000;
+$color-primario-light: #357eff;
+$color-primario-dark: #003a94;
+
+$color-fondo: #f7f9fc;
+$color-blanco: #ffffff;
+$color-gris-claro: #e6e9f0;
+$color-gris-texto: #333;
+$color-gris-secundario: #555;
+
+$color-warn: #d32f2f;
+$color-accent: #007aff;
+
+$radio-borde: 10px;
+$sombra-suave: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+// ========================================================
+// 🧭 CONTENEDOR BASE
+// ========================================================
+.bassino-contenedor {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-height: calc(100vh - 64px);
+  background: $color-fondo;
+}
+
+// ========================================================
+// 🧭 HEADER GLOBAL
+// ========================================================
+.bassino-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+
+  h2 {
+    margin: 0;
+    color: $color-gris-texto;
+    font-weight: 600;
+  }
+
+  button {
+    border-radius: 8px !important;
+    font-weight: 500;
+    background-color: $color-primario !important;
+    color: $color-blanco !important;
+
+    &:hover {
+      background-color: $color-primario-dark !important;
+    }
+  }
+}
+
+// ========================================================
+// 🔍 BUSCADOR
+// ========================================================
+.bassino-buscador {
+  width: 350px;
+  min-width: 280px;
+}
+
+// ========================================================
+// 📊 TABLAS
+// ========================================================
+.bassino-tabla {
+  width: 100%;
+  border-radius: $radio-borde;
+  overflow: hidden;
+  background: $color-blanco;
+  box-shadow: $sombra-suave;
+
+  th {
+    background: $color-gris-claro;
+    color: $color-gris-secundario;
+    font-weight: 600;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  td {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    color: $color-gris-texto;
+    border-bottom: 1px solid #d9dce3;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover {
+    background: #f1f4fa;
+  }
+
+  button[mat-icon-button] {
+    transition: transform 0.18s ease;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    mat-icon {
+      color: $color-primario;
+    }
+  }
+}
+
+// 👉 Total alineado a la derecha
+.derecha {
+  text-align: right;
+}
+
+// ========================================================
+// 🪫 EMPTY STATE
+// ========================================================
+.empty {
+  padding: 2rem;
+  text-align: center;
+  color: $color-gris-secundario;
+  font-size: 1rem;
+  background: $color-blanco;
+  border-radius: $radio-borde;
+  box-shadow: $sombra-suave;
+}
+
+// ========================================================
+// 💲 CAMPOS DE PRECIOS (Edición inline)
+// ========================================================
+.bassino-precio-field {
+  width: 110px;
+
+  input {
+    text-align: right;
+    font-weight: 500;
+    color: $color-primario-dark;
+  }
+}
+
+.cambiando {
+  background: #fff8db !important;
+  transition: background 0.3s ease;
+}
+
+// ========================================================
+// ❄️ Requiere frío
+// ========================================================
+.frio {
+  background-color: #e6f4ff !important;
+}
+
+//ESTADOS EN CLIENTES
+.estado-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+
+  &.activo {
+    background-color: #4caf50; // verde
+  }
+
+  &.inactivo {
+    background-color: #f44336; // rojo
+  }
+}
+
+// ========================================================
+// 📱 RESPONSIVE
+// ========================================================
+@media (max-width: 768px) {
+  .bassino-buscador {
+    width: 100%;
+  }
+
+  .bassino-tabla {
+    th, td {
+      padding: 0.5rem;
+      font-size: 0.8rem;
+    }
+  }
+}

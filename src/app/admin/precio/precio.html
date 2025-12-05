@@ -1,0 +1,121 @@
+<!-- <div class="toolbar">
+  <mat-form-field appearance="outline" class="busqueda-field">
+    <mat-label>Buscar por código o descripción</mat-label>
+    <input matInput [formControl]="filtroCtrl" placeholder="Ej: 123 o coca cola" />
+    <button mat-icon-button matSuffix *ngIf="filtroCtrl.value" (click)="filtroCtrl.setValue('')">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+
+<ng-container *ngIf="!cargando; else load">
+
+  <table mat-table
+         [dataSource]="dataSource"
+         matSort
+         class="full-table">
+    
+    <ng-container matColumnDef="codigo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Código </th>
+      <td mat-cell *matCellDef="let row"> {{ row.codigo }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripción </th>
+      <td mat-cell *matCellDef="let row"> {{ row.descripcion }} </td>
+    </ng-container>
+    
+    <ng-container *ngFor="let col of columnasPrecio" [matColumnDef]="col.nombre">
+      <th mat-header-cell *matHeaderCellDef> {{ col.titulo }} </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-form-field appearance="outline"
+                        class="precio-field"
+                        [ngClass]="{ cambiando: row._editando === col.lista }">
+
+          <input matInput
+                 type="number"
+                 [ngModel]="getValor(row.precios, col.lista).valor"
+                 (ngModelChange)="onInput(row, col.lista, $event)"
+                 (keydown)="manejarTeclas($event, row, col.lista)"
+                 (blur)="guardarPrecio(row, col.lista)" />
+        </mat-form-field>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayed"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayed"></tr>
+
+  </table>
+
+  <mat-paginator [pageSize]="20"
+                 [pageSizeOptions]="[10, 20, 50, 100]">
+  </mat-paginator>
+
+</ng-container>
+
+<ng-template #load>
+  <div class="center">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>
+ -->
+
+
+ <div class="toolbar">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Buscar por código o descripción</mat-label>
+    <input matInput [formControl]="filtroCtrl">
+    <button mat-icon-button matSuffix *ngIf="filtroCtrl.value" (click)="filtroCtrl.setValue('')">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+
+<ng-container *ngIf="!cargando; else load">
+  
+  <table mat-table [dataSource]="dataSource" matSort class="tabla-precios mat-elevation-z2">
+
+    <!-- Código -->
+    <ng-container matColumnDef="codigo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Código </th>
+      <td mat-cell *matCellDef="let row">{{ row.codigo }}</td>
+    </ng-container>
+
+    <!-- Descripción -->
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripción </th>
+      <td mat-cell *matCellDef="let row">{{ row.descripcion }}</td>
+    </ng-container>
+
+    <!-- Columnas dinámicas de precios -->
+    <ng-container *ngFor="let col of columnasPrecio" [matColumnDef]="col.nombre">
+      <th mat-header-cell *matHeaderCellDef>{{ col.titulo }}</th>
+      <td mat-cell *matCellDef="let row">
+
+        <mat-form-field appearance="outline" class="precio-field"
+                        [ngClass]="{ editando: row._editando === col.lista }">
+          <input matInput
+                 type="number"
+                 [ngModel]="getValor(row.precios, col.lista).valor"
+                 (ngModelChange)="onInput(row, col.lista, $event)"
+                 (keydown)="manejarTeclas($event, row, col.lista)"
+                 (blur)="guardarPrecio(row, col.lista)">
+        </mat-form-field>
+
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayed"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayed"></tr>
+
+  </table>
+
+  <mat-paginator [pageSize]="20" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
+
+</ng-container>
+
+<ng-template #load>
+  <div class="load-wrapper">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

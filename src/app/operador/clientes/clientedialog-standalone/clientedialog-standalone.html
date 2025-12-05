@@ -59,8 +59,27 @@
             }
         </mat-form-field>
 
+        <mat-form-field appearance="outline">
+            <mat-label>Lista de Precios</mat-label>
+            <mat-select formControlName="listaPrecioId">
+                @for (lp of listasPrecio; track lp.id) {
+                <mat-option [value]="lp.id">{{ lp.nombre }}</mat-option>
+                }
+            </mat-select>
+
+            @if (form.get('listaPrecioId')?.hasError('required')) {
+            <mat-error>Seleccioná una lista de precios.</mat-error>
+            }
+        </mat-form-field>
+
+
+
         <mat-checkbox formControlName="tieneCuentaCorriente">
             Habilitar cuenta corriente
+        </mat-checkbox>
+
+        <mat-checkbox formControlName="esActivo">
+            Cliente activo
         </mat-checkbox>
     </div>
 </mat-dialog-content>

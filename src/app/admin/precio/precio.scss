@@ -1,0 +1,65 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+
+  .search-field {
+    width: 350px;
+  }
+}
+
+.load-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.tabla-precios {
+  width: 100%;
+  background: #f6f6f6;         
+  border-radius: 8px;
+  overflow: hidden;
+
+  th {
+    background: #eaeaea;
+    font-weight: 600;
+    color: #333;
+  }
+
+  td {
+    padding: 6px 8px;
+  }
+
+  tr {
+    transition: background 0.2s;
+
+    &:hover {
+      background: #e2e2e2;  
+    }
+  }
+
+  tr:nth-child(even) {
+    background: #f1f1f1;
+  }
+}
+
+.precio-field {
+  width: 110px;
+
+  input {
+    text-align: right;
+  }
+}
+
+.editando {
+  background: #fff3cd !important;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+mat-paginator {
+  margin-top: 12px;
+  background: #f6f6f6;
+  border-radius: 6px;
+  padding: 8px 0;
+}

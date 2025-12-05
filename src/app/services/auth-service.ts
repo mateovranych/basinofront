@@ -13,8 +13,7 @@ export class AuthService {
   private tokenKey = 'access_token'; 
 
   constructor(private http: HttpClient) {}
-
-  // LOGIN CON EMAIL O USERNAME
+  
   login(request: LoginRequest): Observable<AuthResponse> {
   return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request, { withCredentials: true })
     .pipe(

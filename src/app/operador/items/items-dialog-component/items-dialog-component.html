@@ -2,8 +2,7 @@
 
 <mat-dialog-content>
   <form [formGroup]="form">
-
-    <!-- 🔹 INFORMACIÓN BÁSICA -->
+        
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Código</mat-label>
       <input matInput formControlName="codigo" />
@@ -13,31 +12,7 @@
       <mat-label>Descripción</mat-label>
       <input matInput formControlName="descripcion" />
     </mat-form-field>
-
-
-    <!-- 🔹 PRECIOS -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Precio de venta</mat-label>
-      <input matInput type="number" formControlName="precioVenta" />
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Precio costo</mat-label>
-      <input matInput type="number" formControlName="precioCosto" />
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Precio lista 1</mat-label>
-      <input matInput type="number" formControlName="precioLista1" />
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Precio lista 2</mat-label>
-      <input matInput type="number" formControlName="precioLista2" />
-    </mat-form-field>
-
-
-    <!-- 🔹 UNIDAD DE MEDIDA -->
+    
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Unidad de Medida</mat-label>
       <mat-select formControlName="unidadMedidaId">
@@ -56,9 +31,7 @@
 
       </mat-select>
     </mat-form-field>
-
-    
-    <!-- 🔹 CATEGORÍA -->
+        
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Categoría</mat-label>
       <mat-select formControlName="categoriaId">
@@ -79,16 +52,7 @@
 
       </mat-select>
     </mat-form-field>
-
-
-    <!-- 🔹 FECHA -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Fecha de vencimiento</mat-label>
-      <input matInput type="date" formControlName="fechaVencimiento" />
-    </mat-form-field>
-
-
-    <!-- 🔹 CHECKBOXES AL FINAL -->
+    
     <div class="checkbox-group">
       <mat-checkbox formControlName="esServicio">Es servicio</mat-checkbox>
       <mat-checkbox formControlName="requiereFrio">Requiere frío</mat-checkbox>

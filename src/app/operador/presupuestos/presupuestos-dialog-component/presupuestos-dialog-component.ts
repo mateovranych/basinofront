@@ -13,9 +13,10 @@ import { PresupuestoService } from '../../../services/presupuesto-service';
 import { ItemsService } from '../../../services/items-service';
 import { ClientesService } from '../../../services/clientes-service';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { PreciosService } from '../../../services/precio-service';
 
 type ClienteMin = { id: number; razonSocial: string };
-type ItemMin = { id: number; descripcion: string; precioVenta: number };
+type ItemMin = { id: number; descripcion: string; };
 
 @Component({
   selector: 'app-presupuestos-dialog-component',
@@ -55,6 +56,7 @@ export class PresupuestosDialogComponent implements OnInit {
     private presupuestosService: PresupuestoService,
     private itemsService: ItemsService,
     private clientesService: ClientesService,
+    private precioService :PreciosService,
     public dialogRef: MatDialogRef<PresupuestosDialogComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: { modo: 'crear' | 'editar'; presupuesto?: any }
@@ -103,7 +105,7 @@ export class PresupuestosDialogComponent implements OnInit {
     return this.fb.group({
       itemId: [null, Validators.required],
       cantidad: [1, [Validators.required, Validators.min(0.01)]],
-      precioUnitario: [0, [Validators.required, Validators.min(0)]],
+      precioUnitario: [{ value: 0, disabled: true }],   // 🔥 readonly
       descripcionVista: ['']
     });
   }
@@ -119,12 +121,25 @@ export class PresupuestosDialogComponent implements OnInit {
   onItemChange(index: number): void {
     const ctrl = this.detalles.at(index);
     const itemId = Number(ctrl.get('itemId')?.value);
-    const item = this.items.find(i => i.id === itemId);
-    if (item) {
-      ctrl.get('precioUnitario')?.setValue(item.precioVenta ?? 0);
-      ctrl.get('descripcionVista')?.setValue(item.descripcion);
+    const clienteId = Number(this.form.get('clienteId')?.value);
+
+    if (!clienteId) {
+      Swal.fire('Atención', 'Primero seleccioná un cliente', 'warning');
+      ctrl.get('itemId')?.setValue(null);
+      return;
     }
+
+    this.precioService.obtenerPrecioParaCliente(itemId, clienteId).subscribe({
+      next: (precio) => {
+        ctrl.get('precioUnitario')?.setValue(precio);
+      },
+      error: () => {
+        Swal.fire('Error', 'El ítem no tiene un precio para la lista del cliente', 'error');
+        ctrl.get('precioUnitario')?.setValue(0);
+      }
+    });
   }
+
 
   cargarClientes(): void {
     this.cargandoClientes = true;
@@ -149,7 +164,6 @@ export class PresupuestosDialogComponent implements OnInit {
         this.items = res.map(i => ({
           id: i.id,
           descripcion: i.descripcion,
-          precioVenta: i.precioVenta
         }));
         this.itemsFiltrados = [...this.items];
       },
@@ -168,8 +182,7 @@ export class PresupuestosDialogComponent implements OnInit {
       clienteId: this.form.value.clienteId,
       detalles: this.detalles.controls.map(ctrl => ({
         itemId: Number(ctrl.get('itemId')?.value),
-        cantidad: Number(ctrl.get('cantidad')?.value),
-        precioUnitario: Number(ctrl.get('precioUnitario')?.value)
+        cantidad: Number(ctrl.get('cantidad')?.value),        
       }))
     };
 

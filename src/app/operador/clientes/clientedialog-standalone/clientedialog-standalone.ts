@@ -9,11 +9,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import Swal from 'sweetalert2';
+
 import { Cliente } from '../../../interfaces/Cliente';
 import { ClientesService } from '../../../services/clientes-service';
 import { CondicionesIvaService } from '../../../services/condiciones-iva-service';
-import { CondicionIva } from '../../../interfaces/CondicionIva';
+import { ListasPrecioService } from '../../../services/lista-precio-service';
 
+import { CondicionIva } from '../../../interfaces/CondicionIva';
+import { ListaPrecio } from '../../../interfaces/ListaPrecio';
 
 @Component({
   selector: 'app-clientedialog-standalone',
@@ -37,8 +40,11 @@ export class ClientedialogStandalone implements OnInit {
 
   titulo = '';
   form!: FormGroup;
+
   condiciones: CondicionIva[] = [];
   filteredCondiciones: CondicionIva[] = [];
+  listasPrecio: ListaPrecio[] = [];
+
   searchTerm = '';
 
   constructor(
@@ -46,11 +52,12 @@ export class ClientedialogStandalone implements OnInit {
     private dialogRef: MatDialogRef<ClientedialogStandalone>,
     private clienteService: ClientesService,
     private condicionService: CondicionesIvaService,
+    private listasPrecioService: ListasPrecioService,
     @Inject(MAT_DIALOG_DATA) public data: Cliente | null
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    // 🧱 Crear el formulario
+
     this.form = this.fb.group({
       razonSocial: ['', Validators.required],
       cuit: ['', [Validators.required, Validators.pattern(/^[0-9]{11}$/)]],
@@ -58,30 +65,50 @@ export class ClientedialogStandalone implements OnInit {
       telefono: [''],
       email: ['', Validators.email],
       condicionIvaId: [null, Validators.required],
+      listaPrecioId: [null, Validators.required],
       tieneCuentaCorriente: [false],
+      esActivo: [true],
     });
 
-    // 📘 Título dinámico
     this.titulo = this.data ? 'Editar Cliente' : 'Nuevo Cliente';
 
-    // 🔄 Cargar condiciones IVA desde el servicio real
     this.condicionService.getAll().subscribe({
       next: (res) => {
         this.condiciones = res;
         this.filteredCondiciones = res;
+        this.tryPatch();
       },
       error: (err) => console.error(err)
     });
 
-    // 🧩 Si viene un cliente, rellenar datos
-    if (this.data) this.form.patchValue(this.data);
+    this.listasPrecioService.getAll().subscribe({
+      next: (res) => {
+        this.listasPrecio = res;
+        this.tryPatch();
+      },
+      error: (err) => console.error(err)
+    });
   }
 
-  // 🔎 Filtro en tiempo real
-  ngOnChanges(): void {
-    this.filteredCondiciones = this.condiciones.filter(c =>
-      c.nombre.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
+  private tryPatch() {
+    if (!this.data) return;
+
+    if (this.condiciones.length === 0) return;
+    if (this.listasPrecio.length === 0) return;
+
+    setTimeout(() => {
+      this.form.patchValue({
+        razonSocial: this.data?.razonSocial,
+        cuit: this.data?.cuit,
+        domicilio: this.data?.domicilio,
+        telefono: this.data?.telefono,
+        email: this.data?.email,
+        condicionIvaId: this.data?.condicionIvaId,
+        listaPrecioId: this.data?.listaPrecioId,
+        tieneCuentaCorriente: this.data?.tieneCuentaCorriente,
+        esActivo: this.data?.esActivo
+      });
+    });
   }
 
   guardar() {
@@ -89,9 +116,7 @@ export class ClientedialogStandalone implements OnInit {
 
     const payload = this.form.getRawValue() as Partial<Cliente>;
 
-    if (this.data) {
-      payload.id = this.data.id;
-    }
+    if (this.data) payload.id = this.data.id;
 
     const peticion = this.data
       ? this.clienteService.update(this.data.id, payload)
@@ -117,6 +142,4 @@ export class ClientedialogStandalone implements OnInit {
   cancelar() {
     this.dialogRef.close(false);
   }
-
-
 }

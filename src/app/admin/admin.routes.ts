@@ -16,6 +16,7 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'facturacion', loadComponent: () => import('../operador/facturacion/facturacion').then(m => m.Facturacion) },
       { path: 'presupuestos', loadComponent: () => import('../operador/presupuestos/presupuestos').then(m => m.Presupuestos) },
       { path: 'pedidos', loadComponent: () => import('../operador/pedidos/pedidos').then(m => m.Pedidos) },
+      { path: 'precio', loadComponent: () => import('../admin/precio/precio').then(m => m.Precio) },
       { path: 'items', loadComponent: () => import('../operador/items/items').then(m => m.Items) },
       { path: 'comprobantes', loadComponent: () => import('../consulta/comprobantes/comprobantes').then(m => m.Comprobantes) },
       { path: 'reportes', loadComponent: () => import('../consulta/reportes/reportes').then(m => m.Reportes) },

@@ -1,67 +1,104 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { ItemsDialogComponent } from './items-dialog-component/items-dialog-component';
 import { ItemsService } from '../../services/items-service';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { SignalRService } from '../../services/signal-rservice';
 import { Item } from '../../interfaces/Item';
+
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { SignalRService } from '../../services/signal-rservice';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-items',
+  standalone: true,
   imports: [
     CommonModule,
     MatDialogModule,
     MatTableModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressBarModule
-
+    MatProgressBarModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatInputModule
   ],
   templateUrl: './items.html',
   styleUrl: './items.scss'
 })
-export class Items {
+export class Items implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['codigo', 'descripcion', 'precioVenta', 'precioCosto', 'precioLista1','precioLista2','esServicio', 'categoria', 'acciones',  'requiereFrio',];
-  items: Item[] = [];
+  displayedColumns: string[] = ['codigo', 'descripcion', 'esServicio', 'categoria', 'requiereFrio', 'acciones'];
+  dataSource = new MatTableDataSource<Item>([]);
   cargando = false;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private service: ItemsService,
     private dialog: MatDialog,
     private signal: SignalRService
-  
   ) { }
 
   ngOnInit(): void {
     this.cargarItems();
-
-    this.signal.listen("actualizar", (data) => {
-    if (data === "items") {
-      console.log("🔄 Actualización recibida: recargando items...");
-      this.cargarItems();
-    }
     
-  });
+    this.signal.listen("actualizar", (data) => {
+      if (data === "items") {
+        console.log("🔄 Actualización en tiempo real → recargando items...");
+        this.cargarItems();
+      }
+    });
+
+    this.configurarFiltro();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   cargarItems(): void {
     this.cargando = true;
     this.service.obtenerItems().subscribe({
       next: (res) => {
-        this.items = res;
+        this.dataSource.data = res;
         this.cargando = false;
       },
       error: () => {
-        Swal.fire('Error', 'No se pudieron cargar los items', 'error');
+        Swal.fire('Error', 'No se pudieron cargar los ítems', 'error');
         this.cargando = false;
       }
     });
+  }
+  
+  configurarFiltro() {
+    this.dataSource.filterPredicate = (data: Item, filtro: string): boolean => {
+      const t = filtro.trim().toLowerCase();
+
+      const codigo = data.codigo?.toLowerCase() || '';
+      const descripcion = data.descripcion?.toLowerCase() || '';
+      const categoria = data.categoriaNombre?.toLowerCase() || '';
+
+      return (
+        codigo.includes(t) ||
+        descripcion.includes(t) ||
+        categoria.includes(t)
+      );
+    };
+
+  }
+
+  aplicarFiltro(event: Event) {
+    const valor = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = valor.trim().toLowerCase();
   }
 
   abrirDialogCrear(): void {

@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
-import { Presupuesto } from '../interfaces/Presupuesto';
-import { CrearPresupuesto } from '../interfaces/CrearPresupuesto';
+import { Presupuesto } from '../interfaces/Presupuesto/Presupuesto';
+import { CrearPresupuesto } from '../interfaces/Presupuesto/CrearPresupuesto';
 
 @Injectable({
   providedIn: 'root'

@@ -1,85 +1,120 @@
-<div class="clientes-container">
-  <!-- 🔎 Barra de búsqueda y botón -->
-  <div class="toolbar">
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Buscar cliente</mat-label>
-      <input matInput [formControl]="searchControl" placeholder="Buscar por nombre o CUIT" />
-      <button mat-icon-button matSuffix *ngIf="searchControl.value" (click)="searchControl.setValue('')">
-        <mat-icon>close</mat-icon>
-      </button>
-    </mat-form-field>
+<div class="bassino-contenedor">
 
-    <button mat-flat-button color="primary" (click)="abrirDialogoNuevo()">
+  <!-- Header -->
+  <div class="bassino-header">
+    <h2>Clientes</h2>
+    <button mat-raised-button color="primary" (click)="abrirDialogoNuevo()">
       <mat-icon>add</mat-icon>
-      Agregar Cliente
+      Nuevo Cliente
     </button>
   </div>
 
-  <div class="tabla-container">
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" matSort>
-      
+  <!-- Buscador -->
+  <div class="bassino-buscador">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Buscar cliente</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Nombre, CUIT, email, etc.">
+      <button mat-icon-button *ngIf="searchControl.value" matSuffix (click)="searchControl.setValue('')">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty" *ngIf="dataSource.data.length === 0">
+    No hay clientes cargados.
+  </div>
+
+  <!-- Tabla -->
+  <div class="tabla-container" *ngIf="dataSource.data.length > 0">
+    <table mat-table [dataSource]="dataSource" matSort class="bassino-tabla">
+
+      <!-- Razon Social -->
       <ng-container matColumnDef="razonSocial">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Razón Social</th>
-        <td mat-cell *matCellDef="let element">{{ element.razonSocial }}</td>
+        <td mat-cell *matCellDef="let e">{{ e.razonSocial }}</td>
       </ng-container>
 
+      <!-- CUIT -->
       <ng-container matColumnDef="cuit">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>CUIT</th>
-        <td mat-cell *matCellDef="let element">{{ element.cuit }}</td>
+        <td mat-cell *matCellDef="let e">{{ e.cuit }}</td>
       </ng-container>
-      
+
+      <!-- Domicilio -->
       <ng-container matColumnDef="domicilio">
-        <th mat-header-cell *matHeaderCellDef> Domicilio </th>
-        <td mat-cell *matCellDef="let element">{{ element.domicilio }}</td>
+        <th mat-header-cell *matHeaderCellDef>Domicilio</th>
+        <td mat-cell *matCellDef="let e">{{ e.domicilio }}</td>
       </ng-container>
-      
+
+      <!-- Telefono -->
       <ng-container matColumnDef="telefono">
-        <th mat-header-cell *matHeaderCellDef> Teléfono </th>
-        <td mat-cell *matCellDef="let element">{{ element.telefono }}</td>
+        <th mat-header-cell *matHeaderCellDef>Teléfono</th>
+        <td mat-cell *matCellDef="let e">{{ e.telefono }}</td>
       </ng-container>
 
+      <!-- Email -->
       <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef> Email </th>
-        <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let e">{{ e.email }}</td>
       </ng-container>
 
+      <!-- IVA -->
       <ng-container matColumnDef="condicionIVA">
-        <th mat-header-cell *matHeaderCellDef> Cond. IVA </th>
-        <td mat-cell *matCellDef="let element">{{ element.condicionIVA }}</td>
+        <th mat-header-cell *matHeaderCellDef>Cond. IVA</th>
+        <td mat-cell *matCellDef="let e">{{ e.condicionIVA }}</td>
       </ng-container>
 
+      <!-- Lista Precio -->
+      <ng-container matColumnDef="listaPrecioNombre">
+        <th mat-header-cell *matHeaderCellDef>Lista Precio</th>
+        <td mat-cell *matCellDef="let e">{{ e.listaPrecioNombre }}</td>
+      </ng-container>
+
+      <!-- CC -->
       <ng-container matColumnDef="tieneCuentaCorriente">
-        <th mat-header-cell *matHeaderCellDef> CC </th>
-        <td mat-cell *matCellDef="let element">
-          <mat-icon color="{{ element.tieneCuentaCorriente ? 'primary' : 'warn' }}">
-            {{ element.tieneCuentaCorriente ? 'check_circle' : 'cancel' }}
+        <th mat-header-cell *matHeaderCellDef>CC</th>
+        <td mat-cell *matCellDef="let e">
+          <mat-icon [color]="e.tieneCuentaCorriente ? 'primary' : 'warn'">
+            {{ e.tieneCuentaCorriente ? 'check_circle' : 'cancel' }}
           </mat-icon>
         </td>
       </ng-container>
 
+      <!-- Estado -->
+      <ng-container matColumnDef="esActivo">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let e">
+          <span class="estado-badge" [class.activo]="e.esActivo" [class.inactivo]="!e.esActivo">
+            {{ e.esActivo ? 'Activo' : 'Inactivo' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Acciones -->
       <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef class="acciones-header">Opciones</th>
-        <td mat-cell *matCellDef="let element" class="acciones-cell">
+        <th mat-header-cell *matHeaderCellDef>Opciones</th>
+        <td mat-cell *matCellDef="let e" class="acciones-cell">
           <button mat-icon-button [matMenuTriggerFor]="menu">
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="editarCliente(element)">
-              <mat-icon>edit</mat-icon>
-              Editar
+            <button mat-menu-item (click)="editarCliente(e)">
+              <mat-icon>edit</mat-icon> Editar
             </button>
-            <button mat-menu-item (click)="eliminarCliente(element)">
-              <mat-icon color="warn">delete</mat-icon>
-              Eliminar
+            <button mat-menu-item (click)="eliminarCliente(e)">
+              <mat-icon color="warn">delete</mat-icon> Eliminar
             </button>
           </mat-menu>
         </td>
       </ng-container>
-      
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
     </table>
 
     <mat-paginator [pageSize]="10" showFirstLastButtons></mat-paginator>
   </div>
+
 </div>

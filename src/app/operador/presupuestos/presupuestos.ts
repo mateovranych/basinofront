@@ -1,15 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { PresupuestoService } from '../../services/presupuesto-service';
-import { Presupuesto } from '../../interfaces/Presupuesto';
-import { PresupuestosDialogComponent } from './presupuestos-dialog-component/presupuestos-dialog-component';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 import Swal from 'sweetalert2';
-import { MatInputModule } from "@angular/material/input";
+
+import { PresupuestoService } from '../../services/presupuesto-service';
+import { PresupuestosDialogComponent } from './presupuestos-dialog-component/presupuestos-dialog-component';
+import { Presupuesto } from '../../interfaces/Presupuesto/Presupuesto';
 
 @Component({
   selector: 'app-presupuestos',
@@ -21,24 +24,35 @@ import { MatInputModule } from "@angular/material/input";
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
-    MatInputModule
+    MatInputModule,
+    MatPaginatorModule,
+    MatSortModule
   ],
   templateUrl: './presupuestos.html',
   styleUrl: './presupuestos.scss'
 })
-export class Presupuestos implements OnInit {
+export class Presupuestos implements OnInit, AfterViewInit {
+
   displayedColumns: string[] = ['id', 'cliente', 'fecha', 'total', 'acciones'];
   dataSource = new MatTableDataSource<Presupuesto>([]);
   cargando = false;
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
   constructor(
     private service: PresupuestoService,
     private dialog: MatDialog
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.cargarPresupuestos();
     this.configurarFiltro();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   cargarPresupuestos(): void {
@@ -112,7 +126,7 @@ export class Presupuestos implements OnInit {
     });
   }
 
-  descargarPresupuesto(id: number) {
+  descargarPresupuesto(id: number): void {
     this.service.descargarPdf(id).subscribe(pdf => {
       const url = window.URL.createObjectURL(pdf);
       const a = document.createElement('a');
@@ -121,5 +135,4 @@ export class Presupuestos implements OnInit {
       a.click();
     });
   }
-
 }

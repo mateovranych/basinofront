@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { Cliente } from '../../interfaces/Cliente';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClientesService } from '../../services/clientes-service';
 import Swal from 'sweetalert2';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { debounceTime } from 'rxjs';
 import { ClientedialogStandalone } from './clientedialog-standalone/clientedialog-standalone';
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {MatMenuModule} from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatInputModule } from '@angular/material/input';
 import { SignalRService } from '../../services/signal-rservice';
 
@@ -28,15 +29,16 @@ import { SignalRService } from '../../services/signal-rservice';
     MatMenuModule,
     MatInputModule,
     MatPaginatorModule,
+    MatSortModule,
     MatDialogModule,
-    MatButtonModule,    
+    MatButtonModule,
     MatIconModule
   ],
   templateUrl: './clientes.html',
   styleUrl: './clientes.scss'
 })
-export class Clientes implements OnInit{
-  
+export class Clientes implements OnInit, AfterViewInit {
+
   displayedColumns: string[] = [
     'razonSocial',
     'cuit',
@@ -44,7 +46,9 @@ export class Clientes implements OnInit{
     'telefono',
     'email',
     'condicionIVA',
+    'listaPrecioNombre',
     'tieneCuentaCorriente',
+    'esActivo',
     'acciones',
   ];
 
@@ -52,34 +56,58 @@ export class Clientes implements OnInit{
   searchControl = new FormControl('');
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private clienteService: ClientesService,
     private dialog: MatDialog,
     private signal: SignalRService
-
   ) {}
 
-ngOnInit(): void {
+  ngOnInit(): void {
+    // 🔎 Filtro personalizado
+    this.dataSource.filterPredicate = (data: Cliente, filter: string): boolean => {
+      const term = filter.trim().toLowerCase();
 
-  this.cargarClientes();
+      const razon = data.razonSocial?.toLowerCase() || '';
+      const cuit = data.cuit?.toLowerCase() || '';
+      const email = data.email?.toLowerCase() || '';
+      const telefono = data.telefono?.toLowerCase() || '';
+      const domicilio = data.domicilio?.toLowerCase() || '';
 
-  this.signal.listen("actualizar", modulo => {
-    if (modulo === "clientes") {
-      console.log("♻ Clientes actualizados por SignalR");
-      this.cargarClientes();
-    }
-  });
-  
-  this.searchControl.valueChanges
-    .pipe(debounceTime(400))
-    .subscribe(() => this.cargarClientes());
-}
+      return (
+        razon.includes(term) ||
+        cuit.includes(term) ||
+        email.includes(term) ||
+        telefono.includes(term) ||
+        domicilio.includes(term)
+      );
+    };
 
+    this.cargarClientes();
+
+    this.signal.listen("actualizar", modulo => {
+      if (modulo === "clientes") {
+        this.cargarClientes();
+      }
+    });
+
+    // Debounce para evitar spam en el filtro
+    this.searchControl.valueChanges
+      .pipe(debounceTime(300))
+      .subscribe(value => {
+        this.dataSource.filter = (value ?? '').trim().toLowerCase();
+        if (this.paginator) this.paginator.firstPage();
+      });
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 
   cargarClientes(): void {
-    const term = this.searchControl.value?.trim() || '';
-    this.clienteService.getAll(term).subscribe({
+    this.clienteService.getAll().subscribe({
       next: (res) => {
         this.dataSource.data = res;
         if (this.paginator) this.dataSource.paginator = this.paginator;
@@ -89,31 +117,27 @@ ngOnInit(): void {
   }
 
   abrirDialogoNuevo() {
-  const dialogRef = this.dialog.open(ClientedialogStandalone, {
-    width: '600px',
-    data: null,
-    disableClose: true
-  });
+    const dialogRef = this.dialog.open(ClientedialogStandalone, {
+      width: '600px',
+      disableClose: true
+    });
 
-  dialogRef.afterClosed().subscribe((result) => {
-    if (result) this.cargarClientes();
-  });
-}
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) this.cargarClientes();
+    });
+  }
 
+  editarCliente(cliente: Cliente) {
+    const dialogRef = this.dialog.open(ClientedialogStandalone, {
+      width: '600px',
+      data: cliente,
+      disableClose: true
+    });
 
-
-editarCliente(cliente: Cliente) {
-  const dialogRef = this.dialog.open(ClientedialogStandalone, {    
-    
-    data: cliente,
-    disableClose: true
-  });
-
-  dialogRef.afterClosed().subscribe((result) => {
-    if (result) this.cargarClientes();
-  });
-}
-
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) this.cargarClientes();
+    });
+  }
 
   eliminarCliente(cliente: Cliente) {
     Swal.fire({
@@ -130,9 +154,8 @@ editarCliente(cliente: Cliente) {
             Swal.fire('Eliminado', 'El cliente fue eliminado.', 'success');
             this.cargarClientes();
           },
-          error: (err) => {
+          error: () => {
             Swal.fire('Error', 'No se pudo eliminar el cliente.', 'error');
-            console.error(err);
           },
         });
       }
