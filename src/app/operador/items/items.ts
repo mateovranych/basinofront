@@ -34,7 +34,7 @@ import { MatInputModule } from '@angular/material/input';
 })
 export class Items implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['codigo', 'descripcion', 'esServicio', 'categoria', 'requiereFrio', 'acciones'];
+  displayedColumns: string[] = ['codigo', 'descripcion', 'esServicio', 'categoria', 'requiereFrio', 'habilitado', 'acciones'];
   dataSource = new MatTableDataSource<Item>([]);
   cargando = false;
 
@@ -49,7 +49,7 @@ export class Items implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.cargarItems();
-    
+
     this.signal.listen("actualizar", (data) => {
       if (data === "items") {
         console.log("🔄 Actualización en tiempo real → recargando items...");
@@ -78,7 +78,7 @@ export class Items implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   configurarFiltro() {
     this.dataSource.filterPredicate = (data: Item, filtro: string): boolean => {
       const t = filtro.trim().toLowerCase();
@@ -122,6 +122,24 @@ export class Items implements OnInit, AfterViewInit {
       if (resultado === 'guardado') this.cargarItems();
     });
   }
+
+  toggle(i: Item) {
+    this.service.toggleHabilitado(i.id).subscribe({
+      next: (updatedItem) => {
+        // Actualiza el estado visual del item inmediatamente
+        i.habilitado = updatedItem.habilitado;
+        Swal.fire(
+          'Actualizado',
+          `El item ahora está ${i.habilitado ? 'HABILITADO' : 'DESHABILITADO'}`,
+          'success'
+        );
+      },
+      error: () => Swal.fire('Error', 'No se pudo cambiar el estado', 'error')
+    });
+  }
+
+
+
 
   eliminarItem(id: number): void {
     Swal.fire({

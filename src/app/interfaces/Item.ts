@@ -5,7 +5,7 @@ export interface Item {
     esServicio: boolean;
     unidadMedidaId: number;
     unidadMedida: string;
-
+    habilitado:boolean;
     categoriaId?: number;
     categoriaNombre?: string;    
     requiereFrio?: boolean;

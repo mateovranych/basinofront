@@ -5,16 +5,17 @@ import { Item } from '../interfaces/Item';
 import { Categoria } from '../interfaces/Categoria';
 import { environment } from '../../environments/environment';
 import { CrearItem } from '../interfaces/CrearItem';
+import { ItemConPrecios } from '../interfaces/ItemConPrecios';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ItemsService {
 
-    private apiUrl = `${environment.apiUrl}/Items`;
+  private apiUrl = `${environment.apiUrl}/Items`;
   private categoriasUrl = `${environment.apiUrl}/Categoria`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   obtenerItems(): Observable<Item[]> {
     return this.http.get<Item[]>(this.apiUrl);
@@ -35,5 +36,15 @@ export class ItemsService {
   eliminarItem(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
-  
+
+  obtenerItemsConPrecios() {
+    return this.http.get<ItemConPrecios[]>(`${this.apiUrl}/con-precios`);
+  }
+
+   toggleHabilitado(id: number): Observable<Item> {
+    return this.http.put<Item>(`${this.apiUrl}/${id}/toggle`, {});
+  }
+
+
+
 }

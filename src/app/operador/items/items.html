@@ -4,7 +4,7 @@
     <h2>Productos y Servicios</h2>
     <button mat-raised-button color="primary" (click)="abrirDialogCrear()">+ Nuevo ítem</button>
   </div>
-  
+
   <div class="bassino-buscador">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Buscar</mat-label>
@@ -16,40 +16,54 @@
   </div>
 
   <mat-progress-bar *ngIf="cargando" mode="indeterminate"></mat-progress-bar>
-  
+
   <div class="empty" *ngIf="!cargando && dataSource.data.length === 0">
     No hay ítems cargados.
   </div>
-  
+
   <table mat-table [dataSource]="dataSource" matSort class="bassino-tabla" *ngIf="dataSource.data.length > 0">
-    
+
     <ng-container matColumnDef="codigo">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
       <td mat-cell *matCellDef="let i">{{ i.codigo }}</td>
     </ng-container>
-    
+
     <ng-container matColumnDef="descripcion">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
       <td mat-cell *matCellDef="let i">{{ i.descripcion }}</td>
     </ng-container>
-    
+
     <ng-container matColumnDef="esServicio">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
       <td mat-cell *matCellDef="let i">{{ i.esServicio ? 'Servicio' : 'Producto' }}</td>
     </ng-container>
-    
+
     <ng-container matColumnDef="categoria">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Categoría</th>
       <td mat-cell *matCellDef="let i">{{ i.categoriaNombre || '-' }}</td>
     </ng-container>
-    
+
     <ng-container matColumnDef="requiereFrio">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Frío</th>
       <td mat-cell *matCellDef="let i" [ngClass]="{'frio': i.requiereFrio}">
         {{ i.requiereFrio ? 'Sí' : 'No' }}
       </td>
     </ng-container>
-    
+
+    <ng-container matColumnDef="habilitado">
+      <th mat-header-cell *matHeaderCellDef>Estado</th>
+      <td mat-cell *matCellDef="let i">
+        <span class="estado-badge" [ngClass]="i.habilitado ? 'activo' : 'inactivo'">
+          {{ i.habilitado ? 'Habilitado' : 'Deshabilitado' }}
+        </span>
+
+        <button mat-icon-button (click)="toggle(i)">
+          <mat-icon>{{ i.habilitado ? 'visibility' : 'visibility_off' }}</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+
     <ng-container matColumnDef="acciones">
       <th mat-header-cell *matHeaderCellDef>Acciones</th>
       <td mat-cell *matCellDef="let i">
@@ -66,7 +80,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
   </table>
-  
+
   <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
 
 </div>

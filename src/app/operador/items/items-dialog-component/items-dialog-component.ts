@@ -60,7 +60,8 @@ export class ItemsDialogComponent implements OnInit {
       esServicio: [data.item?.esServicio || false],
       unidadMedidaId: [data.item?.unidadMedidaId || null, Validators.required],
       categoriaId: [data.item?.categoriaId || null],      
-      requiereFrio: [data.item?.requiereFrio || false]
+      requiereFrio: [data.item?.requiereFrio || false],
+      habilitado: [data.item?.habilitado ?? true]
     });
   }
 

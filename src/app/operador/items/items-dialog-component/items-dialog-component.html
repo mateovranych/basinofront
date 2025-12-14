@@ -2,7 +2,7 @@
 
 <mat-dialog-content>
   <form [formGroup]="form">
-        
+
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Código</mat-label>
       <input matInput formControlName="codigo" />
@@ -12,15 +12,13 @@
       <mat-label>Descripción</mat-label>
       <input matInput formControlName="descripcion" />
     </mat-form-field>
-    
+
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Unidad de Medida</mat-label>
       <mat-select formControlName="unidadMedidaId">
 
         <mat-option>
-          <ngx-mat-select-search 
-            [formControl]="filtroUnidadCtrl" 
-            placeholderLabel="Buscar unidad..."
+          <ngx-mat-select-search [formControl]="filtroUnidadCtrl" placeholderLabel="Buscar unidad..."
             noEntriesFoundLabel="Sin resultados">
           </ngx-mat-select-search>
         </mat-option>
@@ -31,15 +29,13 @@
 
       </mat-select>
     </mat-form-field>
-        
+
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Categoría</mat-label>
       <mat-select formControlName="categoriaId">
 
         <mat-option>
-          <ngx-mat-select-search 
-            [formControl]="filtroCategoriaCtrl" 
-            placeholderLabel="Buscar categoría..."
+          <ngx-mat-select-search [formControl]="filtroCategoriaCtrl" placeholderLabel="Buscar categoría..."
             noEntriesFoundLabel="Sin resultados">
           </ngx-mat-select-search>
         </mat-option>
@@ -52,10 +48,11 @@
 
       </mat-select>
     </mat-form-field>
-    
+
     <div class="checkbox-group">
       <mat-checkbox formControlName="esServicio">Es servicio</mat-checkbox>
       <mat-checkbox formControlName="requiereFrio">Requiere frío</mat-checkbox>
+      <mat-checkbox formControlName="habilitado">Habilitado</mat-checkbox>
     </div>
 
   </form>

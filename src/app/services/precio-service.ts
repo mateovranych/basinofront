@@ -6,10 +6,10 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PreciosService {
-  
+
   private apiUrl = `${environment.apiUrl}/Precios`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   obtenerPreciosDeItem(itemId: number): Observable<PrecioConListaDTO[]> {
     return this.http.get<PrecioConListaDTO[]>(`${this.apiUrl}/item/${itemId}`);
@@ -20,9 +20,10 @@ export class PreciosService {
   }
 
   obtenerPrecioParaCliente(itemId: number, clienteId: number): Observable<number> {
-  return this.http.get<number>(
-    `${this.apiUrl}/item/${itemId}/cliente/${clienteId}`
-  );
-}
+    return this.http.get<number>(
+      `${this.apiUrl}/item/${itemId}/cliente/${clienteId}`
+    );
+
+  }
 
 }

@@ -1,6 +1,11 @@
-import { Item } from "./Item";
+import { ConfiguracionDePrecioDTO } from "./ConfiguracionDePrecioDTO";
+
 import { PrecioConListaDTO } from "./PrecioConListaDTO";
 
-export interface ItemConPrecios extends Item {
+export interface ItemConPrecios  {
+    id: number;
+    codigo: string;
+    descripcion: string;
     precios: PrecioConListaDTO[];
+    configs: ConfiguracionDePrecioDTO[];
 }

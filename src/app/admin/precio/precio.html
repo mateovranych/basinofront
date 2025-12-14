@@ -1,121 +1,118 @@
-<!-- <div class="toolbar">
-  <mat-form-field appearance="outline" class="busqueda-field">
-    <mat-label>Buscar por código o descripción</mat-label>
-    <input matInput [formControl]="filtroCtrl" placeholder="Ej: 123 o coca cola" />
-    <button mat-icon-button matSuffix *ngIf="filtroCtrl.value" (click)="filtroCtrl.setValue('')">
-      <mat-icon>close</mat-icon>
+<div class="toolbar-precios">
+  <div class="filtros-izquierda">
+    <input type="text" placeholder="Buscar por código o descripción..." [(ngModel)]="terminoBusqueda"
+      (input)="aplicarFiltros()" />
+
+    <input type="number" placeholder="Venta mín" [(ngModel)]="filtroMinVenta" (change)="aplicarFiltros()" />
+
+    <input type="number" placeholder="Venta máx" [(ngModel)]="filtroMaxVenta" (change)="aplicarFiltros()" />
+  </div>
+
+  <div class="acciones-derecha">
+    <div class="porcentaje-global">
+      <input type="number" placeholder="% global" [(ngModel)]="porcentajeGlobal" />
+      <button mat-raised-button color="primary" (click)="aplicarPorcentajeGlobal()">
+        Aplicar % a listas
+      </button>
+    </div>
+
+    <button mat-stroked-button color="primary" (click)="exportarAExcel()">
+      Exportar Excel
     </button>
-  </mat-form-field>
+  </div>
 </div>
 
-<ng-container *ngIf="!cargando; else load">
+<table mat-table [dataSource]="itemsPagina" class="tabla-precios mat-elevation-z2">
 
-  <table mat-table
-         [dataSource]="dataSource"
-         matSort
-         class="full-table">
-    
-    <ng-container matColumnDef="codigo">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Código </th>
-      <td mat-cell *matCellDef="let row"> {{ row.codigo }} </td>
-    </ng-container>
+  <!-- CÓDIGO -->
+  <ng-container matColumnDef="codigo">
+    <th mat-header-cell *matHeaderCellDef (click)="ordenar('codigo')" class="sortable">
+      CÓDIGO
+    </th>
+    <td mat-cell *matCellDef="let item"> {{ item.codigo }} </td>
+  </ng-container>
 
-    <ng-container matColumnDef="descripcion">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripción </th>
-      <td mat-cell *matCellDef="let row"> {{ row.descripcion }} </td>
-    </ng-container>
-    
-    <ng-container *ngFor="let col of columnasPrecio" [matColumnDef]="col.nombre">
-      <th mat-header-cell *matHeaderCellDef> {{ col.titulo }} </th>
-      <td mat-cell *matCellDef="let row">
-        <mat-form-field appearance="outline"
-                        class="precio-field"
-                        [ngClass]="{ cambiando: row._editando === col.lista }">
+  <!-- DESCRIPCIÓN -->
+  <ng-container matColumnDef="descripcion">
+    <th mat-header-cell *matHeaderCellDef (click)="ordenar('descripcion')" class="sortable">
+      DESCRIPCIÓN
+    </th>
+    <td mat-cell *matCellDef="let item"> {{ item.descripcion }} </td>
+  </ng-container>
 
-          <input matInput
-                 type="number"
-                 [ngModel]="getValor(row.precios, col.lista).valor"
-                 (ngModelChange)="onInput(row, col.lista, $event)"
-                 (keydown)="manejarTeclas($event, row, col.lista)"
-                 (blur)="guardarPrecio(row, col.lista)" />
-        </mat-form-field>
-      </td>
-    </ng-container>
+  <!-- PRECIO VENTA -->
+  <ng-container matColumnDef="precioVenta">
+    <th mat-header-cell *matHeaderCellDef (click)="ordenar('precioVenta')" class="sortable">
+      VENTA
+    </th>
+    <td mat-cell *matCellDef="let item">
+      <input type="number" [(ngModel)]="item.precioVenta" (change)="onPrecioVentaChange(item)" class="input-precio" />
+    </td>
+  </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayed"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayed"></tr>
+  <!-- PRECIO COSTO -->
+  <ng-container matColumnDef="precioCosto">
+    <th mat-header-cell *matHeaderCellDef (click)="ordenar('precioCosto')" class="sortable">
+      COSTO
+    </th>
+    <td mat-cell *matCellDef="let item">
+      <input type="number" [(ngModel)]="item.precioCosto" (change)="onPrecioCostoChange(item)" class="input-precio" />
+    </td>
+  </ng-container>
 
-  </table>
+  <!-- LISTAS DINÁMICAS -->
+  @for (lista of listas; track lista.key; let i = $index) {
 
-  <mat-paginator [pageSize]="20"
-                 [pageSizeOptions]="[10, 20, 50, 100]">
-  </mat-paginator>
+  <!-- PORCENTAJE -->
+  <ng-container [matColumnDef]="lista.key + '_pct'">
+    <th mat-header-cell *matHeaderCellDef>
+      % {{ lista.nombre }}
+    </th>
+    <td mat-cell *matCellDef="let item">
+      <input type="number" [(ngModel)]="item.listasDetalle[i].porcentaje"
+        (change)="onPorcentajeChange(item, item.listasDetalle[i])" class="input-porcentaje" />
+    </td>
+  </ng-container>
 
-</ng-container>
+  <!-- PRECIO -->
+  <ng-container [matColumnDef]="lista.key + '_val'">
+    <th mat-header-cell *matHeaderCellDef>
+      {{ lista.nombre }}
+    </th>
+    <td mat-cell *matCellDef="let item">
+      {{ item.listasDetalle[i].precio }}
+    </td>
+  </ng-container>
+  }
 
-<ng-template #load>
-  <div class="center">
-    <mat-spinner></mat-spinner>
-  </div>
-</ng-template>
- -->
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.highlight]="row._highlight">
+  </tr>
+</table>
 
- <div class="toolbar">
-  <mat-form-field appearance="outline" class="search-field">
-    <mat-label>Buscar por código o descripción</mat-label>
-    <input matInput [formControl]="filtroCtrl">
-    <button mat-icon-button matSuffix *ngIf="filtroCtrl.value" (click)="filtroCtrl.setValue('')">
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-form-field>
+<div class="paginacion">
+  <button mat-stroked-button (click)="paginaAnterior()" [disabled]="pageIndex === 0">
+    Anterior
+  </button>
+
+  <span>
+    Página {{ pageIndex + 1 }} de {{ totalPaginas }}
+    ({{ itemsFiltrados.length }} ítems)
+  </span>
+
+  <button mat-stroked-button (click)="paginaSiguiente()" [disabled]="pageIndex + 1 >= totalPaginas">
+    Siguiente
+  </button>
+
+  <span class="page-size">
+    Mostrar
+    <select [(ngModel)]="pageSize" (change)="cambiarPageSize()">
+      <option [ngValue]="5">5</option>
+      <option [ngValue]="10">10</option>
+      <option [ngValue]="25">25</option>
+      <option [ngValue]="50">50</option>
+    </select>
+    por página
+  </span>
 </div>
-
-<ng-container *ngIf="!cargando; else load">
-  
-  <table mat-table [dataSource]="dataSource" matSort class="tabla-precios mat-elevation-z2">
-
-    <!-- Código -->
-    <ng-container matColumnDef="codigo">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Código </th>
-      <td mat-cell *matCellDef="let row">{{ row.codigo }}</td>
-    </ng-container>
-
-    <!-- Descripción -->
-    <ng-container matColumnDef="descripcion">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripción </th>
-      <td mat-cell *matCellDef="let row">{{ row.descripcion }}</td>
-    </ng-container>
-
-    <!-- Columnas dinámicas de precios -->
-    <ng-container *ngFor="let col of columnasPrecio" [matColumnDef]="col.nombre">
-      <th mat-header-cell *matHeaderCellDef>{{ col.titulo }}</th>
-      <td mat-cell *matCellDef="let row">
-
-        <mat-form-field appearance="outline" class="precio-field"
-                        [ngClass]="{ editando: row._editando === col.lista }">
-          <input matInput
-                 type="number"
-                 [ngModel]="getValor(row.precios, col.lista).valor"
-                 (ngModelChange)="onInput(row, col.lista, $event)"
-                 (keydown)="manejarTeclas($event, row, col.lista)"
-                 (blur)="guardarPrecio(row, col.lista)">
-        </mat-form-field>
-
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayed"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayed"></tr>
-
-  </table>
-
-  <mat-paginator [pageSize]="20" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
-
-</ng-container>
-
-<ng-template #load>
-  <div class="load-wrapper">
-    <mat-spinner></mat-spinner>
-  </div>
-</ng-template>

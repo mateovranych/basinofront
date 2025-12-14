@@ -8,7 +8,7 @@ export const ADMIN_ROUTES: Routes = [
     path: '',
     component: AdminLayoutComponent,
     children: [
-      { path: '', loadComponent: () => import('./admin-dashboard-component/admin-dashboard-component').then(m => m.AdminDashboardComponent) },
+      { path: '', loadComponent: () => import('../operador/clientes/clientes').then(m => m.Clientes) },
       { path: 'condiciones-iva', loadComponent: () => import('./condiciones-iva/condiciones-iva').then(m => m.CondicionesIva) },
       // { path: 'sesiones', loadComponent: () => import('./sesiones/sesiones').then(m => m.Sesiones) },
       { path: 'categorias', loadComponent: () => import('./categorias/categorias').then(m => m.Categorias) },
