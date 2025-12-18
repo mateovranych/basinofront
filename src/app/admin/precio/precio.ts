@@ -231,6 +231,8 @@ export class Precio implements OnInit {
     { nombre: 'LISTA C', key: 'listaC' },
   ];
 
+  listaExportar: 'LISTA A' | 'LISTA B' | 'LISTA C' = 'LISTA A';
+
   displayedColumns: string[] = [];
 
   constructor(
@@ -534,10 +536,6 @@ export class Precio implements OnInit {
     });
   }
 
-  // ==========================
-  // 📤 EXPORTAR A EXCEL (CSV)
-  // ==========================
-
   exportarAExcel() {
     const headers = [
       'Codigo',
@@ -579,4 +577,39 @@ export class Precio implements OnInit {
     a.click();
     URL.revokeObjectURL(url);
   }
+
+  exportarListaSeleccionada() {
+    const lista = this.listas.find(l => l.nombre === this.listaExportar);
+    if (!lista) return;
+
+    const headers = ['Descripcion', 'Precio'];
+
+    const rows = this.itemsFiltrados.map(item => {
+      const detalle = item.listasDetalle.find(
+        (d: any) => d.key === lista.key
+      );
+
+      return [
+        item.descripcion,
+        detalle?.precio ?? 0
+      ];
+    });
+
+    const csvContent =
+      headers.join(';') + '\n' +
+      rows.map(r => r.join(';')).join('\n');
+
+    const blob = new Blob([csvContent], {
+      type: 'text/csv;charset=utf-8;'
+    });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `precios_${this.listaExportar.replace(' ', '_')}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+
 }

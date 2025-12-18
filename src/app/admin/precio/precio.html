@@ -20,11 +20,25 @@
       Exportar Excel
     </button>
   </div>
+
+  <div class="acciones-derecha">
+
+    <select [(ngModel)]="listaExportar" class="select-lista">
+      <option value="LISTA A">LISTA A</option>
+      <option value="LISTA B">LISTA B</option>
+      <option value="LISTA C">LISTA C</option>
+    </select>
+
+    <button mat-stroked-button color="primary" (click)="exportarListaSeleccionada()">
+      Exportar lista
+    </button>
+
+  </div>
+
 </div>
 
 <table mat-table [dataSource]="itemsPagina" class="tabla-precios mat-elevation-z2">
 
-  <!-- CÓDIGO -->
   <ng-container matColumnDef="codigo">
     <th mat-header-cell *matHeaderCellDef (click)="ordenar('codigo')" class="sortable">
       CÓDIGO
@@ -32,7 +46,6 @@
     <td mat-cell *matCellDef="let item"> {{ item.codigo }} </td>
   </ng-container>
 
-  <!-- DESCRIPCIÓN -->
   <ng-container matColumnDef="descripcion">
     <th mat-header-cell *matHeaderCellDef (click)="ordenar('descripcion')" class="sortable">
       DESCRIPCIÓN
@@ -40,7 +53,6 @@
     <td mat-cell *matCellDef="let item"> {{ item.descripcion }} </td>
   </ng-container>
 
-  <!-- PRECIO VENTA -->
   <ng-container matColumnDef="precioVenta">
     <th mat-header-cell *matHeaderCellDef (click)="ordenar('precioVenta')" class="sortable">
       VENTA
@@ -50,7 +62,6 @@
     </td>
   </ng-container>
 
-  <!-- PRECIO COSTO -->
   <ng-container matColumnDef="precioCosto">
     <th mat-header-cell *matHeaderCellDef (click)="ordenar('precioCosto')" class="sortable">
       COSTO
@@ -60,10 +71,8 @@
     </td>
   </ng-container>
 
-  <!-- LISTAS DINÁMICAS -->
   @for (lista of listas; track lista.key; let i = $index) {
 
-  <!-- PORCENTAJE -->
   <ng-container [matColumnDef]="lista.key + '_pct'">
     <th mat-header-cell *matHeaderCellDef>
       % {{ lista.nombre }}
@@ -74,7 +83,6 @@
     </td>
   </ng-container>
 
-  <!-- PRECIO -->
   <ng-container [matColumnDef]="lista.key + '_val'">
     <th mat-header-cell *matHeaderCellDef>
       {{ lista.nombre }}

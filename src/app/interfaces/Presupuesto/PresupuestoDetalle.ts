@@ -2,6 +2,6 @@ export interface PresupuestoDetalle {
   itemId: number;
   itemDescripcion: string;
   cantidad: number;
-  precioUnitario: number;  // viene desde backend
+  precioUnitario: number;  
   subtotal: number;
 }
