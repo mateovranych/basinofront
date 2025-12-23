@@ -31,6 +31,24 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Unidad base de cálculo</mat-label>
+      <mat-select formControlName="unidadBaseId">
+        <mat-option *ngFor="let u of unidadesMedidaFiltradas" [value]="u.id">
+          {{ u.nombre }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Factor de conversión</mat-label>
+      <input matInput type="number" formControlName="factorConversion" step="0.001" />
+      <mat-hint>
+        Ej: 3 = 1 horma pesa 3 kg / 12 = caja x12
+      </mat-hint>
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Categoría</mat-label>
       <mat-select formControlName="categoriaId">
 

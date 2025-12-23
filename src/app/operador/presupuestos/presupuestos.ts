@@ -94,7 +94,8 @@ export class Presupuestos implements OnInit, AfterViewInit {
 
   abrirDialogNuevo(): void {
     const dialogRef = this.dialog.open(PresupuestosDialogComponent, {
-      width: '900px',
+      width: '95vw',     
+      maxWidth: '1200px',
       data: { modo: 'crear' }
     });
 

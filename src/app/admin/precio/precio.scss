@@ -1,67 +1,5 @@
 @use '../../../bassino-theme.scss' as *;
 
-// .buscador {
-//   margin-bottom: 15px;
-
-//   input {
-//     width: 350px;
-//     padding: 10px 12px;
-//     border-radius: 8px;
-//     border: 1px solid #ccd3dd;
-//     background: white;
-//     font-size: 0.95rem;
-
-//     &:focus {
-//       outline: none;
-//       border-color: $color-primario;
-//       box-shadow: 0 0 5px rgba($color-primario, 0.4);
-//     }
-//   }
-// }
-
-// .input-precio,
-// .input-porcentaje {
-//   color: #222 !important;
-//   -webkit-text-fill-color: #222 !important;
-//   font-weight: 500;
-// }
-
-// .tabla-precios {
-//   width: 100%;
-//   background: white;
-//   border-radius: 10px;
-//   overflow: hidden;
-
-//   th {
-//     background: #eef1f6;
-//     font-weight: 600;
-//     cursor: pointer;
-
-//     &.sortable:hover {
-//       background: #dde3ee;
-//     }
-//   }
-
-//   td, th {
-//     padding: 0.8rem;
-//   }
-// }
-
-// .tabla-precios tr:nth-child(even) {
-//   background: #f8fafa;
-// }
-
-// .tabla-precios td:nth-child(even),
-// .tabla-precios th:nth-child(even) {
-//   background: #f3f6fb;
-// }
-
-// .highlight {
-//   background: #fff1b8 !important;
-//   transition: background 0.5s ease;
-// }
-
-
 .toolbar-precios {
   display: flex;
   justify-content: space-between;
@@ -206,6 +144,7 @@
   background: #fff1b8 !important;
   transition: background 0.4s ease;
 }
+
 
 /* PAGINACIÓN */
 .paginacion {

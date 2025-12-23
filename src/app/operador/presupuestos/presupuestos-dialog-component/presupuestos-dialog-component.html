@@ -8,7 +8,9 @@
       <mat-select formControlName="clienteId">
 
         <mat-option>
-          <ngx-mat-select-search [formControl]="filtroClientesCtrl" placeholderLabel="Buscar cliente..."
+          <ngx-mat-select-search
+            [formControl]="filtroClientesCtrl"
+            placeholderLabel="Buscar cliente..."
             noEntriesFoundLabel="Sin resultados">
           </ngx-mat-select-search>
         </mat-option>
@@ -39,7 +41,8 @@
 
       <div class="fila cabecera">
         <div class="col item">Ítem</div>
-        <div class="col cantidad">Cant.</div>
+        <div class="col cantidad">Cant. Comercial</div>
+        <div class="col cantidad">Cantidad Base</div>
         <div class="col precio">Precio</div>
         <div class="col subtotal">Subtotal</div>
         <div class="col acciones">Acciones</div>
@@ -47,14 +50,16 @@
 
       <div class="fila" *ngFor="let det of detalles.controls; let i = index" [formGroup]="det">
 
+        <!-- ITEM -->
         <div class="col item">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Producto / Servicio</mat-label>
 
             <mat-select formControlName="itemId" (selectionChange)="onItemChange(i)">
-
               <mat-option>
-                <ngx-mat-select-search [formControl]="filtroItemsCtrl" placeholderLabel="Buscar producto o servicio..."
+                <ngx-mat-select-search
+                  [formControl]="filtroItemsCtrl"
+                  placeholderLabel="Buscar producto o servicio..."
                   noEntriesFoundLabel="Sin resultados">
                 </ngx-mat-select-search>
               </mat-option>
@@ -74,26 +79,69 @@
           </mat-form-field>
         </div>
 
+        <!-- CANTIDAD COMERCIAL (hormas/cajas) -->
         <div class="col cantidad">
           <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Cantidad</mat-label>
-            <input matInput type="number" formControlName="cantidad" min="0.01" step="0.01" />
-            <mat-error *ngIf="det.get('cantidad')?.invalid">Inválido</mat-error>
+            <mat-label>
+              Cantidad ({{ det.get('unidadComercial')?.value || '—' }})
+            </mat-label>
+
+            <input
+              matInput
+              type="number"
+              formControlName="cantidadComercial"
+              min="1"
+              step="1" />
+
+            <mat-error *ngIf="det.get('cantidadComercial')?.invalid">
+              Ingresá una cantidad válida
+            </mat-error>
           </mat-form-field>
         </div>
 
+        <!-- CANTIDAD BASE (kg/unidades base) -->
+        <div class="col cantidad">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>
+              {{ det.get('unidadBase')?.value === 'KG'
+                ? 'Peso (kg)'
+                : 'Cantidad base (' + (det.get('unidadBase')?.value || '—') + ')' }}
+            </mat-label>
+
+            <input
+              matInput
+              type="number"
+              formControlName="cantidad"
+              [step]="det.get('unidadBase')?.value === 'KG' ? '0.01' : '1'"
+              [min]="det.get('unidadBase')?.value === 'KG' ? '0.01' : '1'" />
+
+            <mat-hint *ngIf="det.get('factorConversion')?.value">
+              Estimado: {{ det.get('cantidadComercial')?.value || 0 }}
+              × {{ det.get('factorConversion')?.value }}
+              = {{ (det.get('cantidadComercial')?.value || 0) * (det.get('factorConversion')?.value || 0) | number:'1.2-2' }}
+              {{ det.get('unidadBase')?.value }}
+            </mat-hint>
+
+            <mat-error *ngIf="det.get('cantidad')?.invalid">
+              Ingresá un valor válido
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- PRECIO -->
         <div class="col precio">
           <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Precio</mat-label>
-            <input matInput formControlName="precioUnitario" />
+            <mat-label>Precio (por {{ det.get('unidadBase')?.value || '—' }})</mat-label>
+            <input matInput type="number" formControlName="precioUnitario" />
           </mat-form-field>
         </div>
 
-
+        <!-- SUBTOTAL -->
         <div class="col subtotal subtotal-text">
           {{ (det.get('cantidad')?.value || 0) * (det.get('precioUnitario')?.value || 0) | number:'1.2-2' }}
         </div>
 
+        <!-- ACCIONES -->
         <div class="col acciones">
           <button mat-icon-button color="warn" type="button" (click)="quitarLinea(i)">
             <mat-icon>delete</mat-icon>
@@ -114,7 +162,7 @@
 <mat-dialog-actions align="end">
   <button mat-button type="button" (click)="cancelar()">Cancelar</button>
   <button mat-raised-button color="primary" type="button" (click)="guardar()"
-    [disabled]="form.invalid || detalles.length === 0">
+          [disabled]="form.invalid || detalles.length === 0">
     Guardar
   </button>
 </mat-dialog-actions>

@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Categoria } from '../../../interfaces/Categoria';
 import { ItemsService } from '../../../services/items-service';
-import { Item } from '../../../interfaces/Item';
+import { Item } from '../../../interfaces/Items/Item';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import Swal from 'sweetalert2';
 import { UnidadMedida } from '../../../interfaces/UnidadMedida';
@@ -59,6 +59,9 @@ export class ItemsDialogComponent implements OnInit {
       descripcion: [data.item?.descripcion || '', Validators.required],  
       esServicio: [data.item?.esServicio || false],
       unidadMedidaId: [data.item?.unidadMedidaId || null, Validators.required],
+
+      factorConversion: [1, [Validators.required, Validators.min(0.0001)]],
+      unidadBaseId: [null, Validators.required],   // base
       categoriaId: [data.item?.categoriaId || null],      
       requiereFrio: [data.item?.requiereFrio || false],
       habilitado: [data.item?.habilitado ?? true]

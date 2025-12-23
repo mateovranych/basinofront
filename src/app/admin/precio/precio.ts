@@ -1,178 +1,3 @@
-// import { Component, OnInit } from '@angular/core';
-// import { FormsModule } from '@angular/forms';
-// import { MatTableModule } from '@angular/material/table';
-// import { CommonModule } from '@angular/common';
-// import { MatInputModule } from '@angular/material/input';
-// import Swal from 'sweetalert2';
-
-// import { ItemsService } from '../../services/items-service';
-// import { PrecioConfiguracionesService } from '../../services/precio-configuraciones-service';
-// import { PreciosService } from '../../services/precio-service';
-// import { ItemConPrecios } from '../../interfaces/ItemConPrecios';
-
-// @Component({
-//   selector: 'app-precio',
-//   standalone: true,
-//   imports: [CommonModule, FormsModule, MatTableModule, MatInputModule],
-//   templateUrl: './precio.html',
-//   styleUrls: ['./precio.scss']
-// })
-// export class Precio implements OnInit {
-
-//   items: any[] = [];
-//   itemsOriginal: any[] = [];
-//   terminoBusqueda: string = '';
-//   ordenColumna: string = '';
-//   ordenAsc: boolean = true;
-
-//   listas = [
-//     { nombre: 'LISTA A', key: 'listaA' },
-//     { nombre: 'LISTA B', key: 'listaB' },
-//     { nombre: 'LISTA C', key: 'listaC' },
-//   ];
-
-//   displayedColumns: string[] = [];
-
-//   constructor(
-//     private itemsService: ItemsService,
-//     private precioConfigService: PrecioConfiguracionesService,
-//     private precioService: PreciosService
-//   ) {}
-
-//   ngOnInit(): void {
-//     this.cargarItems();
-//   }
-
-//   cargarItems() {
-//     this.itemsService.obtenerItemsConPrecios().subscribe({
-//       next: data => {
-//         this.itemsOriginal = data.map(x => this.transformarItem(x));
-//         this.items = [...this.itemsOriginal];
-
-//         this.displayedColumns = [
-//           'codigo',
-//           'descripcion',
-//           'precioVenta',
-//           'precioCosto',
-//           ...this.listas.flatMap(l => [l.key + '_pct', l.key + '_val'])
-//         ];
-//       }
-//     });
-//   }
-
-//   transformarItem(item: ItemConPrecios) {
-//     const precioVenta = item.precios.find(x => x.listaNombre === 'VENTA')?.valor ?? 0;
-//     const precioCosto = item.precios.find(x => x.listaNombre === 'COSTO')?.valor ?? 0;
-
-//     const listasDetalle = this.listas.map(l => {
-//       const precio = item.precios.find(x => x.listaNombre === l.nombre)?.valor ?? 0;
-//       const config = item.configs.find(x => x.listaNombre === l.nombre);
-
-//       return {
-//         key: l.key,
-//         nombre: l.nombre,
-//         porcentaje: config?.porcentaje ?? 0,
-//         porcentajeId: config?.id,
-//         precio
-//       };
-//     });
-
-//     return {
-//       ...item,
-//       precioVenta,
-//       precioCosto,
-//       listasDetalle,
-//       _highlight: false
-//     };
-//   }
-
-//   filtrar() {
-//     const t = this.terminoBusqueda.trim().toLowerCase();
-
-//     if (t === '') {
-//       this.items = [...this.itemsOriginal];
-//       return;
-//     }
-
-//     this.items = this.itemsOriginal.filter(item =>
-//       item.codigo.toLowerCase().includes(t) ||
-//       item.descripcion.toLowerCase().includes(t)
-//     );
-//   }
-
-//   async onPorcentajeChange(item: any, lista: any) {
-//     const anterior = lista.porcentaje;
-//     const nuevo = lista.porcentaje;
-
-//     const nuevoPrecio = Math.round(item.precioVenta * (1 + nuevo / 100));
-
-//     const result = await Swal.fire({
-//       title: `¿Actualizar % de ${lista.nombre}?`,
-//       html: `
-//         <b>Nuevo porcentaje:</b> ${nuevo}% <br>
-//         <b>Nuevo precio:</b> $${nuevoPrecio}
-//       `,
-//       icon: 'warning',
-//       showCancelButton: true,
-//       confirmButtonText: 'Actualizar',
-//       cancelButtonText: 'Cancelar'
-//     });
-
-//     if (!result.isConfirmed) {
-//       lista.porcentaje = anterior;
-//       return;
-//     }
-
-//     lista.precio = nuevoPrecio;
-
-//     item._highlight = true;
-//     setTimeout(() => item._highlight = false, 500);
-
-//     this.precioConfigService.actualizar(lista.porcentajeId, lista.porcentaje).subscribe();
-//   }
-
-//   async onPrecioVentaChange(item: any) {
-//     const venta = item.precios.find((p: any) => p.listaNombre === 'VENTA');
-//     if (!venta) return;
-
-//     const result = await Swal.fire({
-//       title: '¿Cambiar precio de venta?',
-//       text: 'Todas las listas serán recalculadas.',
-//       icon: 'warning',
-//       showCancelButton: true,
-//       confirmButtonText: 'Actualizar',
-//       cancelButtonText: 'Cancelar'
-//     });
-
-//     if (!result.isConfirmed) return;
-
-//     item._highlight = true;
-//     setTimeout(() => item._highlight = false, 500);
-
-//     this.precioService.actualizarPrecio(venta.precioId, item.precioVenta)
-//       .subscribe(() => this.cargarItems());
-//   }
-
-//   ordenar(col: string) {
-//     if (this.ordenColumna === col) {
-//       this.ordenAsc = !this.ordenAsc;
-//     } else {
-//       this.ordenColumna = col;
-//       this.ordenAsc = true;
-//     }
-
-//     this.items.sort((a: any, b: any) => {
-//       const valA = a[col] ?? 0;
-//       const valB = b[col] ?? 0;
-
-//       if (valA < valB) return this.ordenAsc ? -1 : 1;
-//       if (valA > valB) return this.ordenAsc ? 1 : -1;
-//       return 0;
-//     });
-//   }
-// }
-
-
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
@@ -185,7 +10,10 @@ import { forkJoin } from 'rxjs';
 import { ItemsService } from '../../services/items-service';
 import { PrecioConfiguracionesService } from '../../services/precio-configuraciones-service';
 import { PreciosService } from '../../services/precio-service';
-import { ItemConPrecios } from '../../interfaces/ItemConPrecios';
+import { ItemConPrecios } from '../../interfaces/Items/ItemConPrecios';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-precio',
@@ -195,17 +23,19 @@ import { ItemConPrecios } from '../../interfaces/ItemConPrecios';
     FormsModule,
     MatTableModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatOptionModule,
+    MatSelectModule,
+    MatFormFieldModule
   ],
   templateUrl: './precio.html',
   styleUrls: ['./precio.scss']
 })
 export class Precio implements OnInit {
 
-  // Datos
-  itemsOriginal: any[] = [];    // lo que viene del backend
-  itemsFiltrados: any[] = [];   // luego de buscar/filtrar
-  itemsPagina: any[] = [];      // lo que se muestra en la tabla
+  itemsOriginal: any[] = [];
+  itemsFiltrados: any[] = [];
+  itemsPagina: any[] = [];
 
   // Buscador y filtros
   terminoBusqueda: string = '';
@@ -231,7 +61,10 @@ export class Precio implements OnInit {
     { nombre: 'LISTA C', key: 'listaC' },
   ];
 
-  listaExportar: 'LISTA A' | 'LISTA B' | 'LISTA C' = 'LISTA A';
+  // listaExportar: 'LISTA A' | 'LISTA B' | 'LISTA C' = 'LISTA A';
+
+  listaExportar: 'listaA' | 'listaB' | 'listaC' = 'listaA';
+
 
   displayedColumns: string[] = [];
 
@@ -318,7 +151,6 @@ export class Precio implements OnInit {
 
     this.itemsFiltrados = lista;
 
-    // Después de filtrar, reseteamos a la primera página
     this.pageIndex = 0;
     this.actualizarPagina();
   }
@@ -394,93 +226,57 @@ export class Precio implements OnInit {
     this.actualizarPagina();
   }
 
-  // ==========================
-  // 🔢 CAMBIO PORCENTAJE INDIVIDUAL
-  // ==========================
 
-  async onPorcentajeChange(item: any, lista: any) {
-    const anterior = lista._valorAnterior ?? lista.porcentaje;
+  onPorcentajeChange(item: any, lista: any) {
     const nuevo = lista.porcentaje;
 
     const nuevoPrecio = Math.round(item.precioVenta * (1 + nuevo / 100));
-
-    const result = await Swal.fire({
-      title: `¿Actualizar % de ${lista.nombre}?`,
-      html: `        
-        <b>Nuevo porcentaje:</b> ${nuevo}%<br/>
-        <b>Nuevo precio:</b> $${nuevoPrecio}
-      `,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Actualizar',
-      cancelButtonText: 'Cancelar'
-    });
-
-    if (!result.isConfirmed) {
-      lista.porcentaje = anterior;
-      return;
-    }
-
     lista.precio = nuevoPrecio;
-    lista._valorAnterior = nuevo;
 
     item._highlight = true;
-    setTimeout(() => item._highlight = false, 500);
+    setTimeout(() => item._highlight = false, 400);
 
     if (!lista.porcentajeId) return;
 
-    this.precioConfigService.actualizar(lista.porcentajeId, lista.porcentaje)
-      .subscribe(() => console.log('Porcentaje actualizado'));
+    this.precioConfigService
+      .actualizar(lista.porcentajeId, lista.porcentaje)
+      .subscribe();
   }
+
 
 
   onPrecioCostoChange(item: any) {
     const costo = item.precios.find((p: any) => p.listaNombre === 'COSTO');
     if (!costo) return;
 
-    Swal.fire({
-      title: "¿Actualizar costo?",
-      text: "Esto NO afecta las demás listas. ¿Confirmás el cambio?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Sí, actualizar",
-      cancelButtonText: "Cancelar"
-    }).then(result => {
-      if (result.isConfirmed) {
-        this.precioService.actualizarPrecio(costo.precioId, item.precioCosto)
-          .subscribe(() => {
-            Swal.fire("Actualizado", "El costo fue modificado.", "success");
-          });
-      }
-    });
+    item._highlight = true;
+    setTimeout(() => item._highlight = false, 400);
+
+    this.precioService
+      .actualizarPrecio(costo.precioId, item.precioCosto)
+      .subscribe();
   }
+
 
 
   // ==========================
   // 💰 CAMBIO PRECIO VENTA
   // ==========================
 
-  async onPrecioVentaChange(item: any) {
+  onPrecioVentaChange(item: any) {
     const venta = item.precios.find((p: any) => p.listaNombre === 'VENTA');
     if (!venta) return;
 
-    const result = await Swal.fire({
-      title: '¿Cambiar precio de venta?',
-      text: 'Todas las listas se recalcularán en base a este nuevo valor.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Actualizar',
-      cancelButtonText: 'Cancelar'
-    });
-
-    if (!result.isConfirmed) return;
-
     item._highlight = true;
-    setTimeout(() => item._highlight = false, 500);
+    setTimeout(() => item._highlight = false, 400);
 
-    this.precioService.actualizarPrecio(venta.precioId, item.precioVenta)
-      .subscribe(() => this.cargarItems());
+    this.precioService
+      .actualizarPrecio(venta.precioId, item.precioVenta)
+      .subscribe(() => {
+        this.cargarItems(); // si querés recalcular todo
+      });
   }
+
 
   // ==========================
   // 💣 BOTÓN GLOBAL: APLICAR % A TODAS LAS LISTAS
@@ -578,15 +374,46 @@ export class Precio implements OnInit {
     URL.revokeObjectURL(url);
   }
 
-  exportarListaSeleccionada() {
-    const lista = this.listas.find(l => l.nombre === this.listaExportar);
-    if (!lista) return;
+  // exportarListaSeleccionada() {
+  //   const lista = this.listas.find(l => l.nombre === this.listaExportar);
+  //   if (!lista) return;
 
+  //   const headers = ['Descripcion', 'Precio'];
+
+  //   const rows = this.itemsFiltrados.map(item => {
+  //     const detalle = item.listasDetalle.find(
+  //       (d: any) => d.key === lista.key
+  //     );
+
+  //     return [
+  //       item.descripcion,
+  //       detalle?.precio ?? 0
+  //     ];
+  //   });
+
+  //   const csvContent =
+  //     headers.join(';') + '\n' +
+  //     rows.map(r => r.join(';')).join('\n');
+
+  //   const blob = new Blob([csvContent], {
+  //     type: 'text/csv;charset=utf-8;'
+  //   });
+
+  //   const url = URL.createObjectURL(blob);
+  //   const a = document.createElement('a');
+  //   a.href = url;
+  //   a.download = `precios_${this.listaExportar.replace(' ', '_')}.csv`;
+  //   a.click();
+  //   URL.revokeObjectURL(url);
+  // }
+
+
+  exportarListaSeleccionada() {
     const headers = ['Descripcion', 'Precio'];
 
     const rows = this.itemsFiltrados.map(item => {
       const detalle = item.listasDetalle.find(
-        (d: any) => d.key === lista.key
+        (d: any) => d.key === this.listaExportar
       );
 
       return [
@@ -606,10 +433,11 @@ export class Precio implements OnInit {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `precios_${this.listaExportar.replace(' ', '_')}.csv`;
+    a.download = `precios_${this.listaExportar}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
+
 
 
 }

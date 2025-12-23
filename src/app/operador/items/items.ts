@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 import { ItemsDialogComponent } from './items-dialog-component/items-dialog-component';
 import { ItemsService } from '../../services/items-service';
 import { SignalRService } from '../../services/signal-rservice';
-import { Item } from '../../interfaces/Item';
+import { Item } from '../../interfaces/Items/Item';
 
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -51,8 +51,7 @@ export class Items implements OnInit, AfterViewInit {
     this.cargarItems();
 
     this.signal.listen("actualizar", (data) => {
-      if (data === "items") {
-        console.log("🔄 Actualización en tiempo real → recargando items...");
+      if (data === "items") {        
         this.cargarItems();
       }
     });
@@ -103,7 +102,8 @@ export class Items implements OnInit, AfterViewInit {
 
   abrirDialogCrear(): void {
     const dialogRef = this.dialog.open(ItemsDialogComponent, {
-      width: '550px',
+      width: '600px',      
+      
       data: { modo: 'crear' }
     });
 
@@ -125,8 +125,7 @@ export class Items implements OnInit, AfterViewInit {
 
   toggle(i: Item) {
     this.service.toggleHabilitado(i.id).subscribe({
-      next: (updatedItem) => {
-        // Actualiza el estado visual del item inmediatamente
+      next: (updatedItem) => {        
         i.habilitado = updatedItem.habilitado;
         Swal.fire(
           'Actualizado',

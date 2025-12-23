@@ -23,17 +23,22 @@
 
   <div class="acciones-derecha">
 
-    <select [(ngModel)]="listaExportar" class="select-lista">
-      <option value="LISTA A">LISTA A</option>
-      <option value="LISTA B">LISTA B</option>
-      <option value="LISTA C">LISTA C</option>
-    </select>
+    <mat-form-field appearance="outline" class="select-lista">
+      <mat-label>Lista a exportar</mat-label>
+      <mat-select [(ngModel)]="listaExportar">
+        <mat-option *ngFor="let l of listas" [value]="l.key">
+          {{ l.nombre }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
 
     <button mat-stroked-button color="primary" (click)="exportarListaSeleccionada()">
       Exportar lista
     </button>
 
   </div>
+
 
 </div>
 

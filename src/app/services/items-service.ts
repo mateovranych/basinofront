@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Item } from '../interfaces/Item';
+import { Item } from '../interfaces/Items/Item';
 import { Categoria } from '../interfaces/Categoria';
 import { environment } from '../../environments/environment';
-import { CrearItem } from '../interfaces/CrearItem';
-import { ItemConPrecios } from '../interfaces/ItemConPrecios';
+import { CrearItem } from '../interfaces/Items/CrearItem';
+import { ItemConPrecios } from '../interfaces/Items/ItemConPrecios';
+import { ItemMin } from '../interfaces/Items/ItemMin';
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +42,12 @@ export class ItemsService {
     return this.http.get<ItemConPrecios[]>(`${this.apiUrl}/con-precios`);
   }
 
-   toggleHabilitado(id: number): Observable<Item> {
+  obtenerParaPresupuesto() {
+    return this.http.get<ItemMin[]>(`${environment.apiUrl}/Items/para-presupuesto`);
+  }
+
+
+  toggleHabilitado(id: number): Observable<Item> {
     return this.http.put<Item>(`${this.apiUrl}/${id}/toggle`, {});
   }
 

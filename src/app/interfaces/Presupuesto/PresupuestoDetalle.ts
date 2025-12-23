@@ -1,7 +1,10 @@
 export interface PresupuestoDetalle {
   itemId: number;
   itemDescripcion: string;
-  cantidad: number;
-  precioUnitario: number;  
+
+  cantidadComercial: number;
+  cantidad: number; 
+
+  precioUnitario: number;
   subtotal: number;
 }

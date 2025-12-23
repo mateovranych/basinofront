@@ -1,9 +1,9 @@
+import { CrearPresupuestoDetalle } from "./CrearPresupuestoDetalle";
+
 export interface CrearPresupuesto {
 
-      clienteId: number;
-  detalles: {
-    itemId: number;
-    cantidad: number;
-  }[];
-    
+  clienteId: number;
+  detalles: CrearPresupuestoDetalle[];
+
+
 }

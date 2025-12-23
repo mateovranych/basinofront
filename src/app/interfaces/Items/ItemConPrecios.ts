@@ -1,6 +1,6 @@
-import { ConfiguracionDePrecioDTO } from "./ConfiguracionDePrecioDTO";
+import { ConfiguracionDePrecioDTO } from "../ConfiguracionDePrecioDTO";
 
-import { PrecioConListaDTO } from "./PrecioConListaDTO";
+import { PrecioConListaDTO } from "../PrecioConListaDTO";
 
 export interface ItemConPrecios  {
     id: number;
