@@ -252,7 +252,9 @@ export class PresupuestosDialogComponent implements OnInit {
       detalles: this.detalles.controls.map(ctrl => ({
         itemId: Number(ctrl.get('itemId')?.value),
         cantidadComercial: Number(ctrl.get('cantidadComercial')?.value),
-        cantidad: Number(ctrl.get('cantidad')?.value),
+
+        cantidadReal: Number(ctrl.get('cantidad')?.value),
+
         precioUnitario: Number(ctrl.get('precioUnitario')?.value)
       }))
     };
@@ -268,6 +270,7 @@ export class PresupuestosDialogComponent implements OnInit {
       }
     });
   }
+
 
 
   cancelar(): void {
