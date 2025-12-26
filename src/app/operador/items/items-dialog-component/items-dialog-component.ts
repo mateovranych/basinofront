@@ -45,27 +45,34 @@ export class ItemsDialogComponent implements OnInit {
   filtroUnidadCtrl = new FormControl('');
 
 
-  constructor(
-    private fb: FormBuilder,
-    private service: ItemsService,
-    private unidadService: UnidadMedidaService,
-    public dialogRef: MatDialogRef<ItemsDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { modo: 'crear' | 'editar'; item?: Item }
-  ) {
+  constructor
+    (
+      private fb: FormBuilder,
+      private service: ItemsService,
+      private unidadService: UnidadMedidaService,
+      public dialogRef: MatDialogRef<ItemsDialogComponent>,
+      @Inject(MAT_DIALOG_DATA) public data: { modo: 'crear' | 'editar'; item?: Item }
+
+      
+
+    ) {
+      
     this.titulo = data.modo === 'crear' ? 'Nuevo ítem' : 'Editar ítem';
 
     this.form = this.fb.group({
       codigo: [data.item?.codigo || '', Validators.required],
-      descripcion: [data.item?.descripcion || '', Validators.required],  
+      descripcion: [data.item?.descripcion || '', Validators.required],
       esServicio: [data.item?.esServicio || false],
       unidadMedidaId: [data.item?.unidadMedidaId || null, Validators.required],
 
-      factorConversion: [1, [Validators.required, Validators.min(0.0001)]],
-      unidadBaseId: [null, Validators.required],   // base
-      categoriaId: [data.item?.categoriaId || null],      
+      factorConversion: [ data.item?.factorConversion ?? 1, [Validators.required, Validators.min(0.0001)]],
+      unidadBaseId: [data.item?.unidadBaseId ?? null, Validators.required],
+
+      categoriaId: [data.item?.categoriaId || null],
       requiereFrio: [data.item?.requiereFrio || false],
       habilitado: [data.item?.habilitado ?? true]
-    });
+    }
+    );
   }
 
   ngOnInit(): void {
@@ -99,6 +106,9 @@ export class ItemsDialogComponent implements OnInit {
         u.nombre.toLowerCase().includes(filtro)
       );
     });
+
+    console.log(this.data.item);
+
   }
 
 

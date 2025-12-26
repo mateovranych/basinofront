@@ -5,8 +5,11 @@ export interface Item {
     esServicio: boolean;
     unidadMedidaId: number;
     unidadMedida: string;
-    habilitado:boolean;
+    habilitado: boolean;
     categoriaId?: number;
-    categoriaNombre?: string;    
+    categoriaNombre?: string;
     requiereFrio?: boolean;
+
+    unidadBaseId?: number;
+    factorConversion?: number;
 }

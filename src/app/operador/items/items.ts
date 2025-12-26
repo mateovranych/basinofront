@@ -113,15 +113,20 @@ export class Items implements OnInit, AfterViewInit {
   }
 
   abrirDialogEditar(item: Item): void {
-    const dialogRef = this.dialog.open(ItemsDialogComponent, {
-      width: '550px',
-      data: { modo: 'editar', item }
-    });
+  this.service.obtenerPorId(item.id).subscribe({
+    next: (itemCompleto) => {
+      this.dialog.open(ItemsDialogComponent, {
+        width: '550px',
+        data: {
+          modo: 'editar',
+          item: itemCompleto
+        }
+      });
+    },
+    error: () => Swal.fire('Error', 'No se pudo cargar el ítem', 'error')
+  });
+}
 
-    dialogRef.afterClosed().subscribe((resultado) => {
-      if (resultado === 'guardado') this.cargarItems();
-    });
-  }
 
   toggle(i: Item) {
     this.service.toggleHabilitado(i.id).subscribe({

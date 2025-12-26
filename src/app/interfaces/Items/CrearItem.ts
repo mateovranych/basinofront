@@ -4,9 +4,9 @@ export interface CrearItem {
     esServicio: boolean;
 
     unidadMedidaId: number;
-    unidadBaseId: number;     // KG, UNIDAD, LITRO
+    unidadBaseId: number;     
 
-    factorConversion: number; // 3, 12, 24, etc
+    factorConversion: number; 
     
     categoriaId?: number | null;
     requiereFrio?: boolean;

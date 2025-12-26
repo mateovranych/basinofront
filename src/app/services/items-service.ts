@@ -22,6 +22,11 @@ export class ItemsService {
     return this.http.get<Item[]>(this.apiUrl);
   }
 
+  obtenerPorId(id: number): Observable<Item> {
+    return this.http.get<Item>(`${this.apiUrl}/${id}`);
+  }
+
+
   obtenerCategorias(): Observable<Categoria[]> {
     return this.http.get<Categoria[]>(this.categoriasUrl);
   }

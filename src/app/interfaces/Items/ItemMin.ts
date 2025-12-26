@@ -1,7 +1,7 @@
 export interface ItemMin {
   id: number;
   descripcion: string;
-  unidadMedidaNombre: string; // Esto sería el nombre de la unidad de medida, como 'kg' o 'UN'.
+  unidadMedidaNombre: string; 
   presentacionDefault: null | {
     unidadComercial: string;
     unidadBase: string;
