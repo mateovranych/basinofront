@@ -1,15 +1,11 @@
 <div class="tittle">
-<h2 mat-dialog-title>{{ titulo }}</h2>
+  <h2 mat-dialog-title>{{ titulo }}</h2>
 </div>
 <mat-dialog-content>
   <form [formGroup]="form" class="form-wrap">
 
     <div class="cliente-row">
 
-      <!-- <div class="cliente-id">
-        {{ clienteSeleccionado?.id || '—' }}
-      </div> -->
-      
       <mat-form-field appearance="outline" class="cliente-id-field readonly-field">
         <mat-label>ID</mat-label>
         <input matInput [value]="clienteSeleccionado?.id || '—'" readonly />
@@ -34,10 +30,6 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-
-      <!-- <div class="cliente-iva">
-        {{ clienteSeleccionado?.condicionIVA || '—' }}
-      </div> -->
 
       <mat-form-field appearance="outline" class="cliente-iva-field readonly-field">
         <mat-label>Condición IVA</mat-label>
@@ -67,12 +59,6 @@
       </div>
 
       <div class="fila" *ngFor="let det of detalles.controls; let i = index" [formGroup]="det">
-
-        <!-- <div class="col codigo codigo-text">
-          {{ itemCodigoMap.get(det.get('itemId')?.value) || '—' }}
-
-        </div> -->
-
 
         <div class="col codigo">
           <mat-form-field appearance="outline" class="w-100 readonly-field">
@@ -158,10 +144,6 @@
           </mat-form-field>
         </div>
 
-        <!-- <div class="col subtotal subtotal-text">
-          {{ (det.get('cantidad')?.value || 0) * (det.get('precioUnitario')?.value || 0) | number:'1.2-2' }}
-        </div> -->
-
         <div class="col subtotal">
           <mat-form-field appearance="outline" class="w-100 readonly-field subtotal-field">
             <mat-label>Subtotal</mat-label>
@@ -183,10 +165,41 @@
       </div>
     </div>
 
-    <div class="total-wrap">
+    <!-- <div class="total-wrap">
       <div class="total-label">Total</div>
       <div class="total-valor">$ {{ total | number:'1.2-2' }}</div>
+    </div> -->
+
+    <div class="total-wrap resumen-box">
+
+      <!-- RESPONSABLE INSCRIPTO -->
+      <ng-container *ngIf="discriminaIVA; else totalFinalBox">
+        <div class="resumen-linea">
+          <span>Subtotal</span>
+          <strong>$ {{ subtotal | number:'1.2-2' }}</strong>
+        </div>
+
+        <div class="resumen-linea">
+          <span>IVA 21%</span>
+          <strong>$ {{ iva | number:'1.2-2' }}</strong>
+        </div>
+
+        <div class="resumen-total">
+          <span>TOTAL</span>
+          <strong>$ {{ totalFinal | number:'1.2-2' }}</strong>
+        </div>
+      </ng-container>
+
+      <!-- NO RESPONSABLE INSCRIPTO -->
+      <ng-template #totalFinalBox>
+        <div class="resumen-total grande">
+          <span>Total final (IVA incluido)</span>
+          <strong>$ {{ totalFinal | number:'1.2-2' }}</strong>
+        </div>
+      </ng-template>
+
     </div>
+
 
   </form>
 </mat-dialog-content>

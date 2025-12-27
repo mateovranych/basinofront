@@ -38,18 +38,6 @@ type ClienteMin = {
 
 };
 
-// type ItemMin = {
-//   id: number;
-//   descripcion: string;
-//   presentacionDefault: null | {
-//     unidadComercial: string;
-//     unidadBase: string;
-//     factorConversion: number;
-//     nombre?: string;
-//   };
-// };
-
-
 @Component({
   selector: 'app-presupuestos-dialog-component',
   standalone: true,
@@ -186,6 +174,9 @@ export class PresupuestosDialogComponent implements OnInit {
       return;
     }
 
+    // 🔥 RESET DURO DEL PRECIO (CLAVE)
+    ctrl.get('precioUnitario')?.setValue(0);
+
     const item = this.items.find(i => i.id === itemId);
     const pres = item?.presentacionDefault;
 
@@ -194,32 +185,31 @@ export class PresupuestosDialogComponent implements OnInit {
       ctrl.get('unidadBase')?.setValue(pres.unidadBase);
       ctrl.get('factorConversion')?.setValue(pres.factorConversion);
 
-      // seteo inicial estimado: cantidadBase = cantidadComercial * factor
       const cantCom = Number(ctrl.get('cantidadComercial')?.value || 1);
       const estimadoBase = cantCom * Number(pres.factorConversion || 0);
       ctrl.get('cantidad')?.setValue(estimadoBase);
-
     } else {
-      // si no tiene presentación default todavía, no bloqueamos, pero avisamos
       ctrl.get('unidadComercial')?.setValue('');
       ctrl.get('unidadBase')?.setValue('');
       ctrl.get('factorConversion')?.setValue(0);
     }
 
-    // cargar precio por lista del cliente (precio por UNIDAD BASE)
+    // cargar precio por lista del cliente
     this.precioService.obtenerPrecioParaCliente(itemId, clienteId).subscribe({
       next: precio => {
-        const precioCtrl = ctrl.get('precioUnitario') as FormControl;
-        if (!precioCtrl.value || precioCtrl.value === 0) {
-          precioCtrl.setValue(precio);
-        }
+        ctrl.get('precioUnitario')?.setValue(precio);
       },
       error: () => {
-        Swal.fire('Error', 'El ítem no tiene un precio para la lista del cliente', 'error');
-        (ctrl.get('precioUnitario') as FormControl).setValue(0);
+        Swal.fire(
+          'Error',
+          'El ítem no tiene un precio para la lista del cliente',
+          'error'
+        );
+        ctrl.get('precioUnitario')?.setValue(0);
       }
     });
   }
+
 
 
 
@@ -294,6 +284,27 @@ export class PresupuestosDialogComponent implements OnInit {
       }
     });
   }
+
+  get subtotal(): number {
+    return this.detalles.controls.reduce((acc, ctrl) => {
+      const cantidad = Number(ctrl.get('cantidad')?.value || 0);
+      const precio = Number(ctrl.get('precioUnitario')?.value || 0);
+      return acc + cantidad * precio;
+    }, 0);
+  }
+
+  get iva(): number {
+    return this.subtotal * 0.21;
+  }
+
+  get totalFinal(): number {
+    return this.subtotal + this.iva;
+  }
+
+  get discriminaIVA(): boolean {
+    return this.clienteSeleccionado?.condicionIVA === 'Responsable Inscripto';
+  }
+
 
 
 
