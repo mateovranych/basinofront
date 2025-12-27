@@ -1,5 +1,6 @@
 export interface ItemMin {
   id: number;
+  codigo:string;
   descripcion: string;
   unidadMedidaNombre: string; 
   presentacionDefault: null | {

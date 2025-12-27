@@ -43,7 +43,7 @@ export class Presupuestos implements OnInit, AfterViewInit {
   constructor(
     private service: PresupuestoService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.cargarPresupuestos();
@@ -94,8 +94,8 @@ export class Presupuestos implements OnInit, AfterViewInit {
 
   abrirDialogNuevo(): void {
     const dialogRef = this.dialog.open(PresupuestosDialogComponent, {
-      width: '95vw',     
-      maxWidth: '1200px',
+      width: '95vw',
+      maxWidth: '95vw',
       data: { modo: 'crear' }
     });
 

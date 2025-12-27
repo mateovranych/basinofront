@@ -26,23 +26,28 @@ import { ItemsService } from '../../../services/items-service';
 import { ClientesService } from '../../../services/clientes-service';
 import { PreciosService } from '../../../services/precio-service';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { Cliente } from '../../../interfaces/Cliente';
+import { CondicionesIva } from '../../../admin/condiciones-iva/condiciones-iva';
+import { ItemMin } from '../../../interfaces/Items/ItemMin';
 
 type ClienteMin = {
 
   id: number;
-  razonSocial: string
+  razonSocial: string;
+  condicionIVA: string;
+
 };
 
-type ItemMin = {
-  id: number;
-  descripcion: string;
-  presentacionDefault: null | {
-    unidadComercial: string;
-    unidadBase: string;
-    factorConversion: number;
-    nombre?: string;
-  };
-};
+// type ItemMin = {
+//   id: number;
+//   descripcion: string;
+//   presentacionDefault: null | {
+//     unidadComercial: string;
+//     unidadBase: string;
+//     factorConversion: number;
+//     nombre?: string;
+//   };
+// };
 
 
 @Component({
@@ -64,15 +69,22 @@ type ItemMin = {
   styleUrls: ['./presupuestos-dialog-component.scss']
 })
 export class PresupuestosDialogComponent implements OnInit {
-  titulo = 'Nuevo presupuesto';
+  titulo = 'NUEVO PRESUPUESTO';
   form!: FormGroup;
 
   clientes: ClienteMin[] = [];
   clientesFiltrados: ClienteMin[] = [];
+
+  clienteSeleccionado: ClienteMin | null = null;
+
+
   filtroClientesCtrl = new FormControl('');
 
   items: ItemMin[] = [];
   itemsFiltrados: ItemMin[] = [];
+  itemCodigoMap = new Map<number, string>();
+
+
   filtroItemsCtrl = new FormControl('');
 
   cargandoClientes = false;
@@ -114,6 +126,11 @@ export class PresupuestosDialogComponent implements OnInit {
       this.itemsFiltrados = this.items.filter(it =>
         it.descripcion.toLowerCase().includes(filtro)
       );
+    });
+
+    this.form.get('clienteId')?.valueChanges.subscribe(id => {
+      this.clienteSeleccionado =
+        this.clientes.find(c => c.id === id) || null;
     });
   }
 
@@ -214,7 +231,9 @@ export class PresupuestosDialogComponent implements OnInit {
       next: res => {
         this.clientes = res.map(c => ({
           id: c.id,
-          razonSocial: c.razonSocial
+          razonSocial: c.razonSocial,
+          condicionIVA: c.condicionIVA
+
         }));
         this.clientesFiltrados = [...this.clientes];
       },
@@ -232,8 +251,13 @@ export class PresupuestosDialogComponent implements OnInit {
 
     this.itemsService.obtenerParaPresupuesto().subscribe({
       next: res => {
+
         this.items = res;
         this.itemsFiltrados = [...this.items];
+        this.itemCodigoMap.clear();
+        for (const it of this.items) {
+          this.itemCodigoMap.set(it.id, it.codigo);
+        }
       },
       error: () => Swal.fire('Error', 'No se pudieron cargar los ítems', 'error'),
       complete: () => (this.cargandoItems = false)
