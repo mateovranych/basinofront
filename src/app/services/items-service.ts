@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 import { CrearItem } from '../interfaces/Items/CrearItem';
 import { ItemConPrecios } from '../interfaces/Items/ItemConPrecios';
 import { ItemMin } from '../interfaces/Items/ItemMin';
+import { ItemExportarPrecio } from '../interfaces/Items/ItemExportarPrecio';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +55,12 @@ export class ItemsService {
 
   toggleHabilitado(id: number): Observable<Item> {
     return this.http.put<Item>(`${this.apiUrl}/${id}/toggle`, {});
+  }
+
+  obtenerItemsParaExportar(): Observable<ItemExportarPrecio[]> {
+    return this.http.get<ItemExportarPrecio[]>(
+      `${this.apiUrl}/exportar-precios`
+    );
   }
 
 

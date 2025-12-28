@@ -37,31 +37,30 @@ export class Precio implements OnInit {
   itemsFiltrados: any[] = [];
   itemsPagina: any[] = [];
 
-  // Buscador y filtros
+
   terminoBusqueda: string = '';
   filtroMinVenta: number | null = null;
   filtroMaxVenta: number | null = null;
 
-  // Ordenamiento
+
   ordenColumna: string = '';
   ordenAsc: boolean = true;
 
-  // Paginación
   pageSize = 10;
   pageIndex = 0;
   totalPaginas = 1;
 
-  // Porcentaje global
+
   porcentajeGlobal: number | null = null;
 
-  // Config de listas
+
   listas = [
     { nombre: 'LISTA A', key: 'listaA' },
     { nombre: 'LISTA B', key: 'listaB' },
     { nombre: 'LISTA C', key: 'listaC' },
   ];
 
-  // listaExportar: 'LISTA A' | 'LISTA B' | 'LISTA C' = 'LISTA A';
+
 
   listaExportar: 'listaA' | 'listaB' | 'listaC' = 'listaA';
 
@@ -78,16 +77,13 @@ export class Precio implements OnInit {
     this.cargarItems();
   }
 
-  // ==========================
-  // 🧠 CARGA Y TRANSFORMACIÓN
-  // ==========================
   cargarItems() {
     this.itemsService.obtenerItemsConPrecios().subscribe({
       next: data => {
         this.itemsOriginal = data.map(x => this.transformarItem(x));
-        // Por defecto aplicamos filtros (vacíos) y paginamos
+
         this.aplicarFiltros();
-        // Definimos las columnas visibles
+
         this.displayedColumns = [
           'codigo',
           'descripcion',
@@ -125,9 +121,6 @@ export class Precio implements OnInit {
     };
   }
 
-  // ==========================
-  // 🔍 FILTROS Y BUSCADOR
-  // ==========================
 
   aplicarFiltros() {
     const t = this.terminoBusqueda.trim().toLowerCase();
@@ -154,10 +147,6 @@ export class Precio implements OnInit {
     this.pageIndex = 0;
     this.actualizarPagina();
   }
-
-  // ==========================
-  // 📄 PAGINACIÓN
-  // ==========================
 
   actualizarPagina() {
     const total = this.itemsFiltrados.length;
@@ -192,10 +181,6 @@ export class Precio implements OnInit {
     this.pageIndex = 0;
     this.actualizarPagina();
   }
-
-  // ==========================
-  // ↕️ ORDENAMIENTO
-  // ==========================
 
   ordenar(col: string) {
     if (this.ordenColumna === col) {
@@ -257,12 +242,6 @@ export class Precio implements OnInit {
       .subscribe();
   }
 
-
-
-  // ==========================
-  // 💰 CAMBIO PRECIO VENTA
-  // ==========================
-
   onPrecioVentaChange(item: any) {
     const venta = item.precios.find((p: any) => p.listaNombre === 'VENTA');
     if (!venta) return;
@@ -273,14 +252,11 @@ export class Precio implements OnInit {
     this.precioService
       .actualizarPrecio(venta.precioId, item.precioVenta)
       .subscribe(() => {
-        this.cargarItems(); // si querés recalcular todo
+        this.cargarItems();
       });
   }
 
 
-  // ==========================
-  // 💣 BOTÓN GLOBAL: APLICAR % A TODAS LAS LISTAS
-  // ==========================
 
   async aplicarPorcentajeGlobal() {
     if (this.porcentajeGlobal === null || isNaN(this.porcentajeGlobal)) {
@@ -333,108 +309,81 @@ export class Precio implements OnInit {
   }
 
   exportarAExcel() {
-    const headers = [
-      'Codigo',
-      'Descripcion',
-      'PrecioVenta',
-      'PrecioCosto',
-      ...this.listas.flatMap(l => [
-        `% ${l.nombre}`,
-        `Precio ${l.nombre}`
-      ])
-    ];
+    this.itemsService.obtenerItemsParaExportar().subscribe({
+      next: items => {
 
-    const rows = this.itemsFiltrados.map(item => {
-      const fila: (string | number)[] = [
-        item.codigo,
-        item.descripcion,
-        item.precioVenta,
-        item.precioCosto
-      ];
+        const headers = [
+          'Codigo',
+          'Descripcion',
+          'Precio Venta',
+          'Precio Costo',
+          'Lista A',
+          'Lista B',
+          'Lista C'
+        ];
 
-      for (const l of this.listas) {
-        const det = item.listasDetalle.find((d: any) => d.key === l.key);
-        fila.push(det?.porcentaje ?? '');
-        fila.push(det?.precio ?? '');
+        const rows = items.map(i => [
+          i.codigo,
+          i.descripcion,
+          i.precioVenta,
+          i.precioCosto,
+          i.precioListaA,
+          i.precioListaB,
+          i.precioListaC
+        ]);
+
+        this.descargarCSV(headers, rows, 'precios.csv');
+      },
+      error: () => {
+        Swal.fire('Error', 'No se pudo exportar la lista de precios', 'error');
       }
-
-      return fila;
     });
-
-    const csvContent =
-      headers.join(';') + '\n' +
-      rows.map(r => r.join(';')).join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'precios.csv';
-    a.click();
-    URL.revokeObjectURL(url);
   }
-
-  // exportarListaSeleccionada() {
-  //   const lista = this.listas.find(l => l.nombre === this.listaExportar);
-  //   if (!lista) return;
-
-  //   const headers = ['Descripcion', 'Precio'];
-
-  //   const rows = this.itemsFiltrados.map(item => {
-  //     const detalle = item.listasDetalle.find(
-  //       (d: any) => d.key === lista.key
-  //     );
-
-  //     return [
-  //       item.descripcion,
-  //       detalle?.precio ?? 0
-  //     ];
-  //   });
-
-  //   const csvContent =
-  //     headers.join(';') + '\n' +
-  //     rows.map(r => r.join(';')).join('\n');
-
-  //   const blob = new Blob([csvContent], {
-  //     type: 'text/csv;charset=utf-8;'
-  //   });
-
-  //   const url = URL.createObjectURL(blob);
-  //   const a = document.createElement('a');
-  //   a.href = url;
-  //   a.download = `precios_${this.listaExportar.replace(' ', '_')}.csv`;
-  //   a.click();
-  //   URL.revokeObjectURL(url);
-  // }
 
 
   exportarListaSeleccionada() {
-    const headers = ['Descripcion', 'Precio'];
+    this.itemsService.obtenerItemsParaExportar().subscribe({
+      next: items => {
 
-    const rows = this.itemsFiltrados.map(item => {
-      const detalle = item.listasDetalle.find(
-        (d: any) => d.key === this.listaExportar
-      );
+        const headers = ['Descripcion', 'Precio'];
 
-      return [
-        item.descripcion,
-        detalle?.precio ?? 0
-      ];
+        const rows = items.map(i => {
+          let precio = 0;
+
+          switch (this.listaExportar) {
+            case 'listaA': precio = i.precioListaA; break;
+            case 'listaB': precio = i.precioListaB; break;
+            case 'listaC': precio = i.precioListaC; break;
+          }
+
+          return [i.descripcion, precio];
+        });
+
+        this.descargarCSV(
+          headers,
+          rows,
+          `precios_${this.listaExportar}.csv`
+        );
+      },
+      error: () => {
+        Swal.fire('Error', 'No se pudo exportar la lista', 'error');
+      }
     });
+  }
 
-    const csvContent =
+  private descargarCSV(headers: string[], rows: any[], nombre: string) {
+    const csv =
       headers.join(';') + '\n' +
       rows.map(r => r.join(';')).join('\n');
 
-    const blob = new Blob([csvContent], {
-      type: 'text/csv;charset=utf-8;'
-    });
-
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
+
     const a = document.createElement('a');
     a.href = url;
-    a.download = `precios_${this.listaExportar}.csv`;
+    a.download = nombre;
     a.click();
+
     URL.revokeObjectURL(url);
   }
 

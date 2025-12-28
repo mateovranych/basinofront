@@ -11,8 +11,8 @@ import { CrearPresupuesto } from '../interfaces/Presupuesto/CrearPresupuesto';
 export class PresupuestoService {
 
   private apiUrl = `${environment.apiUrl}/Presupuestos`;
-   
-  constructor(private http: HttpClient) {}
+
+  constructor(private http: HttpClient) { }
 
   obtenerPresupuestos(): Observable<Presupuesto[]> {
     return this.http.get<Presupuesto[]>(this.apiUrl);
@@ -29,7 +29,7 @@ export class PresupuestoService {
   eliminarPresupuesto(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
-  
+
   descargarPdf(id: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${id}/pdf`, {
       responseType: 'blob'
