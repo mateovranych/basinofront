@@ -1,0 +1,58 @@
+<h2 mat-dialog-title>{{ titulo }}</h2>
+
+<mat-dialog-content [formGroup]="form" class="dialog-form">
+  <div class="form-grid">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Razón Social</mat-label>
+      <input matInput formControlName="razonSocial" />
+      <mat-error *ngIf="form.get('razonSocial')?.invalid">
+        Obligatorio
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>CUIT</mat-label>
+      <input matInput formControlName="cuit" />
+      <mat-error *ngIf="form.get('cuit')?.invalid">
+        Obligatorio
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Domicilio</mat-label>
+      <input matInput formControlName="domicilio" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Teléfono</mat-label>
+      <input matInput formControlName="telefono" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Condición IVA</mat-label>
+      <mat-select formControlName="condicionIvaId">
+        <mat-option *ngFor="let c of condiciones" [value]="c.id">
+          {{ c.nombre }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="esActivo">
+      Proveedor activo
+    </mat-checkbox>
+
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="guardar()" [disabled]="form.invalid">
+    Guardar
+  </button>
+</mat-dialog-actions>

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -18,7 +18,7 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
 import Swal from 'sweetalert2';
 
 import { PresupuestoService } from '../../../services/presupuesto-service';
@@ -67,10 +67,35 @@ export class PresupuestosDialogComponent implements OnInit {
   itemCodigoMap = new Map<number, string>();
 
   filtroClientesCtrl = new FormControl('');
+
   filtroItemsCtrl = new FormControl('');
 
   cargandoClientes = false;
   cargandoItems = false;
+
+  @ViewChild('dialogContent') dialogContent!: ElementRef<HTMLElement>;
+  @ViewChild('clienteSelect') clienteSelect!: MatSelect;
+
+
+
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboard(event: KeyboardEvent): void {
+
+
+    if (event.ctrlKey && event.code === 'Space') {
+      event.preventDefault();
+      this.agregarLinea();
+    }
+
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.clienteSelect.focus();
+    });
+  }
+
 
   private readonly IVA = 0.21;
 
@@ -94,8 +119,12 @@ export class PresupuestosDialogComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.group({
       clienteId: [null, Validators.required],
-      detalles: this.fb.array<FormGroup>([])
+      totalManual: [null],
+      detalles: this.fb.array<FormGroup>([]),
+
     });
+
+
 
     this.agregarLinea();
     this.cargarClientes();
@@ -109,15 +138,24 @@ export class PresupuestosDialogComponent implements OnInit {
     });
 
     this.filtroItemsCtrl.valueChanges.subscribe(valor => {
-      const filtro = (valor || '').toLowerCase();
-      this.itemsFiltrados = this.items.filter(it =>
-        it.descripcion.toLowerCase().includes(filtro)
-      );
+      const filtro = (valor || '').toLowerCase().trim();
+
+      this.itemsFiltrados = this.items.filter(it => {
+        const textoBusqueda = `${it.codigo} ${it.descripcion}`.toLowerCase();
+        return textoBusqueda.includes(filtro);
+      });
     });
+
 
     this.form.get('clienteId')?.valueChanges.subscribe(id => {
       this.clienteSeleccionado =
         this.clientes.find(c => c.id === id) || null;
+
+      this.recalcularPreciosPorCliente();
+
+      setTimeout(() => {
+        this.focusPrimerCodigo();
+      });
     });
   }
 
@@ -134,28 +172,74 @@ export class PresupuestosDialogComponent implements OnInit {
 
   nuevaLinea(): FormGroup {
     return this.fb.group({
+      codigoInput: [''],
       itemId: [null, Validators.required],
+
+      filtroItemCtrl: new FormControl(''),
+
       cantidad: [0, [Validators.required, Validators.min(0.01)]],
       cantidadComercial: [1, [Validators.required, Validators.min(1)]],
-      precioUnitario: [0, [Validators.required, Validators.min(0)]], // BASE (sin IVA)
+      precioUnitario: [0, [Validators.required, Validators.min(0)]],
       unidadComercial: [''],
       unidadBase: [''],
-      factorConversion: [0]
+      factorConversion: [0],
+
+
+      esServicio: [false],           // 👈 NUEVO
+      observaciones: ['']             // 👈 NUEVO
     });
   }
 
   agregarLinea(): void {
     this.detalles.push(this.nuevaLinea());
+
+    // Espera a que Angular renderice la nueva fila
+    setTimeout(() => {
+      this.scrollAlFinal();
+      this.focusUltimoCodigo();
+    });
   }
 
   quitarLinea(index: number): void {
     this.detalles.removeAt(index);
   }
 
+
+  scrollAlFinal(): void {
+    const el = this.dialogContent.nativeElement;
+    el.scrollTop = el.scrollHeight;
+  }
+
+  focusUltimoCodigo(): void {
+    setTimeout(() => {
+      const codigos = document.querySelectorAll<HTMLElement>('mat-select.codigo-select');
+      if (codigos.length > 0) {
+        codigos[codigos.length - 1].focus();
+      }
+    });
+  }
+
+  focusPrimerCodigo(): void {
+    const codigos = document.querySelectorAll<HTMLElement>('mat-select.codigo-select');
+    if (codigos.length > 0) {
+      codigos[0].focus();
+    }
+  }
+
+
+
+
+
   // ============================
   // ITEM CHANGE
   // ============================
+
+
   onItemChange(index: number): void {
+
+
+
+
     const ctrl = this.detalles.at(index);
     const itemId = Number(ctrl.get('itemId')?.value);
     const clienteId = Number(this.form.get('clienteId')?.value);
@@ -169,7 +253,45 @@ export class PresupuestosDialogComponent implements OnInit {
     ctrl.get('precioUnitario')?.setValue(0);
 
     const item = this.items.find(i => i.id === itemId);
-    const pres = item?.presentacionDefault;
+    if (!item) return;
+
+    console.log('ITEM SELECCIONADO:', item);
+    console.log('esServicio:', item.esServicio);
+
+    // 🔹 Marcamos si es servicio
+    ctrl.patchValue({
+      esServicio: item.esServicio
+    });
+
+    // 🔴 SI ES SERVICIO → SALIMOS ACÁ
+    if (item.esServicio) {
+      ctrl.patchValue({
+        cantidadComercial: 1,
+        cantidad: 1,
+        unidadComercial: '',
+        unidadBase: '',
+        factorConversion: 0
+      });
+
+      // El precio sí se carga, pero NO conversión ni kg
+      this.precioService.obtenerPrecioParaCliente(itemId, clienteId).subscribe({
+        next: precio => {
+          ctrl.get('precioUnitario')?.setValue(Number(precio.toFixed(2)));
+        },
+        error: () => {
+          Swal.fire('Error', 'El servicio no tiene precio configurado', 'error');
+          ctrl.get('precioUnitario')?.setValue(0);
+        }
+      });
+
+      return; // ⬅️ ESTE ES EL RETURN CLAVE
+    }
+
+    // ======================
+    // 👇 DESDE ACÁ SOLO PRODUCTOS
+    // ======================
+
+    const pres = item.presentacionDefault;
 
     if (pres) {
       ctrl.patchValue({
@@ -180,6 +302,8 @@ export class PresupuestosDialogComponent implements OnInit {
           Number(ctrl.get('cantidadComercial')?.value || 1) *
           Number(pres.factorConversion || 0)
       });
+
+      this.recalcularCantidadBase(ctrl);
     }
 
     this.precioService.obtenerPrecioParaCliente(itemId, clienteId).subscribe({
@@ -192,6 +316,10 @@ export class PresupuestosDialogComponent implements OnInit {
       }
     });
   }
+
+
+
+
 
   // ============================
   // VISUAL
@@ -226,12 +354,36 @@ export class PresupuestosDialogComponent implements OnInit {
     return this.discriminaIVA ? this.subtotal * this.IVA : 0;
   }
 
+  // get totalFinal(): number {
+  //   const base = this.subtotal;
+  //   return this.discriminaIVA
+  //     ? base + this.iva
+  //     : base * (1 + this.IVA);
+  // }
+
   get totalFinal(): number {
+
+    if (this.totalManual !== null) {
+      return this.totalManual;
+    }
+
     const base = this.subtotal;
+
     return this.discriminaIVA
       ? base + this.iva
       : base * (1 + this.IVA);
   }
+
+
+  get totalManualCtrl(): FormControl {
+    return this.form.get('totalManual') as FormControl;
+  }
+
+  get totalManual(): number | null {
+    const v = this.totalManualCtrl.value;
+    return v !== null && v !== '' ? Number(v) : null;
+  }
+
 
   // ============================
   // INPUT MANUAL
@@ -252,6 +404,18 @@ export class PresupuestosDialogComponent implements OnInit {
 
     ctrl.get('precioUnitario')?.setValue(Number(base.toFixed(2)));
   }
+
+  onPrecioVisualBlur(ctrl: FormGroup): void {
+    const visual = Number(ctrl.get('precioVisual')?.value || 0);
+
+    const base = this.discriminaIVA
+      ? visual
+      : visual / (1 + this.IVA);
+
+    ctrl.get('precioUnitario')?.setValue(Number(base.toFixed(2)));
+  }
+
+
 
   // ============================
   // DATA LOAD
@@ -304,11 +468,13 @@ export class PresupuestosDialogComponent implements OnInit {
       itemId: Number(ctrl.get('itemId')?.value),
       cantidadComercial: Number(ctrl.get('cantidadComercial')?.value),
       cantidadReal: Number(ctrl.get('cantidad')?.value),
-      precioUnitario: Number(ctrl.get('precioUnitario')?.value)
+      precioUnitario: Number(ctrl.get('precioUnitario')?.value),
+      observaciones: ctrl.get('observaciones')?.value || null
     }));
 
     this.presupuestosService.crearPresupuesto({
       clienteId: Number(this.form.value.clienteId),
+      totalManual: this.totalManual,
       detalles: detallesDto
     } as any).subscribe({
       next: () => {
@@ -320,7 +486,80 @@ export class PresupuestosDialogComponent implements OnInit {
     });
   }
 
+  resetearTotal(): void {
+    this.form.get('totalManual')?.setValue(null);
+  }
+
+  onCodigoSeleccionado(ctrl: FormGroup, itemId: number): void {
+
+    ctrl.get('itemId')?.setValue(itemId);
+
+    const index = this.detalles.controls.indexOf(ctrl);
+    this.onItemChange(index);
+  }
+
+  filtrarItemsPorLinea(ctrl: FormGroup): ItemMin[] {
+    const filtro = (ctrl.get('filtroItemCtrl')?.value || '')
+      .toLowerCase()
+      .trim();
+
+    return this.items.filter(it =>
+      `${it.codigo} ${it.descripcion}`.toLowerCase().includes(filtro)
+    );
+  }
+
+  getFiltroItemCtrl(det: FormGroup): FormControl {
+    return det.get('filtroItemCtrl') as FormControl;
+  }
+
+  getCodigoPorItemId(itemId: number | null): string {
+    if (!itemId) return '';
+    return this.items.find(i => i.id === itemId)?.codigo ?? '';
+  }
+
   cancelar(): void {
     this.dialogRef.close();
   }
+
+
+  private recalcularCantidadBase(ctrl: FormGroup): void {
+    const cantidadComercialCtrl = ctrl.get('cantidadComercial');
+    const factorCtrl = ctrl.get('factorConversion');
+    const cantidadBaseCtrl = ctrl.get('cantidad');
+
+    if (!cantidadComercialCtrl || !factorCtrl || !cantidadBaseCtrl) return;
+
+    cantidadComercialCtrl.valueChanges.subscribe(value => {
+      const cantidad = Number(value || 0);
+      const factor = Number(factorCtrl.value || 0);
+
+      if (factor > 0) {
+        cantidadBaseCtrl.setValue(
+          Number((cantidad * factor).toFixed(2)),
+          { emitEvent: false }
+        );
+      }
+    });
+  }
+
+  private recalcularPreciosPorCliente(): void {
+    const clienteId = Number(this.form.get('clienteId')?.value);
+    if (!clienteId) return;
+
+    this.detalles.controls.forEach((ctrl, index) => {
+      const itemId = Number(ctrl.get('itemId')?.value);
+      if (!itemId) return;
+
+      this.precioService.obtenerPrecioParaCliente(itemId, clienteId).subscribe({
+        next: precio => {
+          ctrl.get('precioUnitario')?.setValue(Number(precio.toFixed(2)));
+        },
+        error: () => {
+          ctrl.get('precioUnitario')?.setValue(0);
+        }
+      });
+    });
+  }
+
+
 }

@@ -13,7 +13,6 @@ export class CondicionesIvaService {
 
   constructor(private http: HttpClient) {}
 
-  // Obtener todas (con o sin búsqueda)
   getAll(search: string = ''): Observable<CondicionIva[]> {
     let params = new HttpParams();
     if (search) params = params.set('search', search);

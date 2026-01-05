@@ -14,7 +14,7 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Unidad de Medida</mat-label>
+      <mat-label>Presentacion</mat-label>
       <mat-select formControlName="unidadMedidaId">
 
         <mat-option>
@@ -31,7 +31,7 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Unidad base de cálculo</mat-label>
+      <mat-label>Unidad de Cálculo</mat-label>
       <mat-select formControlName="unidadBaseId">
         <mat-option *ngFor="let u of unidadesMedidaFiltradas" [value]="u.id">
           {{ u.nombre }}
@@ -40,7 +40,7 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Factor de conversión</mat-label>
+      <mat-label>Estimativo Presentacion</mat-label>
       <input matInput type="number" formControlName="factorConversion" step="0.001" />
       <mat-hint>
         Ej: 3 = 1 horma pesa 3 kg / 12 = caja x12
@@ -65,6 +65,24 @@
 
       </mat-select>
     </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Proveedor</mat-label>
+      <mat-select formControlName="proveedorId">
+
+        <mat-option>
+          <ngx-mat-select-search [formControl]="filtroProveedorCtrl" placeholderLabel="Buscar proveedor..."
+            noEntriesFoundLabel="Sin resultados">
+          </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngFor="let p of proveedoresFiltrados" [value]="p.id">
+          {{ p.razonSocial }}
+        </mat-option>
+
+      </mat-select>
+    </mat-form-field>
+
 
     <div class="checkbox-group">
       <mat-checkbox formControlName="esServicio">Es servicio</mat-checkbox>

@@ -9,7 +9,8 @@ export interface Item {
     categoriaId?: number;
     categoriaNombre?: string;
     requiereFrio?: boolean;
-
+    proveedorId: number;        // 👈
+    proveedorNombre?: string;
     unidadBaseId?: number;
     factorConversion?: number;
 }

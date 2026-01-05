@@ -2,19 +2,19 @@
   <h2 mat-dialog-title>{{ titulo }}</h2>
 </div>
 
-<mat-dialog-content>
+<mat-dialog-content #dialogContent>
   <form [formGroup]="form" class="form-wrap">
 
     <div class="cliente-row">
 
       <mat-form-field appearance="outline" class="cliente-id-field readonly-field">
         <mat-label>ID</mat-label>
-        <input matInput [value]="clienteSeleccionado?.id || '—'" readonly />
+        <input matInput [value]="clienteSeleccionado?.id || '—'" disabled />
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="cliente-select">
         <mat-label>Cliente</mat-label>
-        <mat-select formControlName="clienteId">
+        <mat-select #clienteSelect formControlName="clienteId">
 
           <mat-option>
             <ngx-mat-select-search [formControl]="filtroClientesCtrl" placeholderLabel="Buscar cliente..."
@@ -34,12 +34,12 @@
 
       <mat-form-field appearance="outline" class="cliente-iva-field readonly-field">
         <mat-label>Condición IVA</mat-label>
-        <input matInput [value]="clienteSeleccionado?.condicionIVA || '—'" readonly />
+        <input matInput [value]="clienteSeleccionado?.condicionIVA || '—'" disabled />
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="cliente-lista-field readonly-field">
         <mat-label>Lista de precios</mat-label>
-        <input matInput [value]="clienteSeleccionado?.listaPrecioNombre || '—'" readonly />
+        <input matInput [value]="clienteSeleccionado?.listaPrecioNombre || '—'" disabled />
       </mat-form-field>
 
 
@@ -65,12 +65,35 @@
         <div class="col acciones">Acciones</div>
       </div>
 
-      <div class="fila" *ngFor="let det of detalles.controls; let i = index" [formGroup]="det">
+      <!-- <div class="fila" [class.fila-servicio]="det.get('esServicio')?.value"
+        *ngFor="let det of detalles.controls; let i = index" [formGroup]="det"> -->
+
+      <div class="fila" [class.fila-servicio]="det.get('esServicio')?.value"
+        *ngFor="let det of detalles.controls; let i = index" [formGroup]="det">
+
+
 
         <div class="col codigo">
-          <mat-form-field appearance="outline" class="w-100 readonly-field">
+          <mat-form-field appearance="outline" class="w-100">
             <mat-label>Código</mat-label>
-            <input matInput [value]="itemCodigoMap.get(det.get('itemId')?.value) || '—'" readonly />
+
+            <mat-select class="codigo-select" [value]="det.get('itemId')?.value"
+              (selectionChange)="onCodigoSeleccionado(det, $event.value)">
+
+              <mat-option>
+
+                <ngx-mat-select-search [formControl]="getFiltroItemCtrl(det)" placeholderLabel="Buscar por código..."
+                  noEntriesFoundLabel="Sin resultados">
+                </ngx-mat-select-search>
+
+
+              </mat-option>
+
+              <mat-option *ngFor="let it of filtrarItemsPorLinea(det)" [value]="it.id">
+                {{ it.codigo }}
+              </mat-option>
+
+            </mat-select>
           </mat-form-field>
         </div>
 
@@ -80,18 +103,21 @@
 
             <mat-select formControlName="itemId" (selectionChange)="onItemChange(i)">
               <mat-option>
-                <ngx-mat-select-search [formControl]="filtroItemsCtrl" placeholderLabel="Buscar producto o servicio..."
+
+                <ngx-mat-select-search [formControl]="getFiltroItemCtrl(det)" placeholderLabel="Buscar por codigo..."
                   noEntriesFoundLabel="Sin resultados">
                 </ngx-mat-select-search>
+
               </mat-option>
 
               <mat-option *ngIf="cargandoItems" [disabled]="true">
                 Cargando ítems...
               </mat-option>
 
-              <mat-option *ngFor="let it of itemsFiltrados" [value]="it.id">
+              <mat-option *ngFor="let it of filtrarItemsPorLinea(det)" [value]="it.id">
                 {{ it.descripcion }}
               </mat-option>
+
             </mat-select>
 
             <mat-error *ngIf="det.get('itemId')?.hasError('required')">
@@ -99,6 +125,15 @@
             </mat-error>
           </mat-form-field>
         </div>
+
+        <div class="col item" *ngIf="det.get('esServicio')?.value">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Observaciones</mat-label>
+            <input matInput formControlName="observaciones"
+              placeholder="Detalle del servicio (ej: Transporte, Flete, etc.)" />
+          </mat-form-field>
+        </div>
+
 
         <!-- CANTIDAD COMERCIAL -->
         <div class="col cantidad">
@@ -112,7 +147,7 @@
         </div>
 
         <!-- CANTIDAD BASE -->
-        <div class="col cantidad">
+        <div class="col cantidad cantidad-base">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>
               {{ det.get('unidadBase')?.value === 'KG'
@@ -189,6 +224,10 @@
           <span>TOTAL</span>
           <strong>$ {{ totalFinal | number:'1.2-2' }}</strong>
         </div>
+
+
+
+
       </ng-container>
 
       <ng-template #totalFinalBox>

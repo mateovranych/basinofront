@@ -2,9 +2,7 @@
   <div class="filtros-izquierda">
     <input type="text" placeholder="Buscar por código o descripción..." [(ngModel)]="terminoBusqueda"
       (input)="aplicarFiltros()" />
-
     <input type="number" placeholder="Venta mín" [(ngModel)]="filtroMinVenta" (change)="aplicarFiltros()" />
-
     <input type="number" placeholder="Venta máx" [(ngModel)]="filtroMaxVenta" (change)="aplicarFiltros()" />
   </div>
 
@@ -15,14 +13,12 @@
         Aplicar % a listas
       </button>
     </div>
-
     <button mat-stroked-button color="primary" (click)="exportarAExcel()">
       Exportar Excel
     </button>
   </div>
 
   <div class="acciones-derecha">
-
     <mat-form-field appearance="outline" class="select-lista">
       <mat-label>Lista a exportar</mat-label>
       <mat-select [(ngModel)]="listaExportar">
@@ -32,91 +28,59 @@
       </mat-select>
     </mat-form-field>
 
-
     <button mat-stroked-button color="primary" (click)="exportarListaSeleccionada()">
       Exportar lista
     </button>
-
   </div>
-
-
 </div>
 
 <table mat-table [dataSource]="itemsPagina" class="tabla-precios mat-elevation-z2">
 
   <ng-container matColumnDef="codigo">
-    <th mat-header-cell *matHeaderCellDef (click)="ordenar('codigo')" class="sortable">
-      CÓDIGO
-    </th>
+    <th mat-header-cell *matHeaderCellDef (click)="ordenar('codigo')" class="sortable"> CÓDIGO </th>
     <td mat-cell *matCellDef="let item"> {{ item.codigo }} </td>
   </ng-container>
 
   <ng-container matColumnDef="descripcion">
-    <th mat-header-cell *matHeaderCellDef (click)="ordenar('descripcion')" class="sortable">
-      DESCRIPCIÓN
-    </th>
+    <th mat-header-cell *matHeaderCellDef (click)="ordenar('descripcion')" class="sortable"> DESCRIPCIÓN </th>
     <td mat-cell *matCellDef="let item"> {{ item.descripcion }} </td>
   </ng-container>
 
   <ng-container matColumnDef="precioVenta">
-    <th mat-header-cell *matHeaderCellDef (click)="ordenar('precioVenta')" class="sortable">
-      VENTA
-    </th>
-    <td mat-cell *matCellDef="let item">
-      <input type="number" [(ngModel)]="item.precioVenta" (change)="onPrecioVentaChange(item)" class="input-precio" />
+    <th mat-header-cell *matHeaderCellDef (click)="ordenar('precioVenta')" class="sortable"> COSTO </th>
+    <td mat-cell *matCellDef="let item; let i = index">
+      <input type="number" [(ngModel)]="item.precioVenta" (change)="onPrecioVentaChange(item)"
+        (keydown.enter)="moverFocoAbajo($event, i, '.input-precio-venta')" class="input-precio input-precio-venta" />
     </td>
   </ng-container>
 
-  <ng-container matColumnDef="precioCosto">
-    <th mat-header-cell *matHeaderCellDef (click)="ordenar('precioCosto')" class="sortable">
-      COSTO
-    </th>
-    <td mat-cell *matCellDef="let item">
-      <input type="number" [(ngModel)]="item.precioCosto" (change)="onPrecioCostoChange(item)" class="input-precio" />
-    </td>
-  </ng-container>
-
-  @for (lista of listas; track lista.key; let i = $index) {
-
+  @for (lista of listas; track lista.key; let listaIdx = $index) {
   <ng-container [matColumnDef]="lista.key + '_pct'">
-    <th mat-header-cell *matHeaderCellDef>
-      % {{ lista.nombre }}
-    </th>
-    <td mat-cell *matCellDef="let item">
-      <input type="number" [(ngModel)]="item.listasDetalle[i].porcentaje"
-        (change)="onPorcentajeChange(item, item.listasDetalle[i])" class="input-porcentaje" />
+    <th mat-header-cell *matHeaderCellDef> % {{ lista.nombre }} </th>
+    <td mat-cell *matCellDef="let item; let i = index">
+      <input type="number" [(ngModel)]="item.listasDetalle[listaIdx].porcentaje"
+        (change)="onPorcentajeChange(item, item.listasDetalle[listaIdx])"
+        (keydown.enter)="moverFocoAbajo($event, i, '.input-pct-' + lista.key)"
+        [class]="'input-porcentaje input-pct-' + lista.key" />
     </td>
   </ng-container>
 
   <ng-container [matColumnDef]="lista.key + '_val'">
-    <th mat-header-cell *matHeaderCellDef>
-      {{ lista.nombre }}
-    </th>
+    <th mat-header-cell *matHeaderCellDef> {{ lista.nombre }} </th>
     <td mat-cell *matCellDef="let item">
-      {{ item.listasDetalle[i].precio }}
+      {{ item.listasDetalle[listaIdx].precio }}
     </td>
   </ng-container>
   }
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.highlight]="row._highlight">
-  </tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.highlight]="row._highlight"></tr>
 </table>
 
 <div class="paginacion">
-  <button mat-stroked-button (click)="paginaAnterior()" [disabled]="pageIndex === 0">
-    Anterior
-  </button>
-
-  <span>
-    Página {{ pageIndex + 1 }} de {{ totalPaginas }}
-    ({{ itemsFiltrados.length }} ítems)
-  </span>
-
-  <button mat-stroked-button (click)="paginaSiguiente()" [disabled]="pageIndex + 1 >= totalPaginas">
-    Siguiente
-  </button>
+  <button mat-stroked-button (click)="paginaAnterior()" [disabled]="pageIndex === 0"> Anterior </button>
+  <span> Página {{ pageIndex + 1 }} de {{ totalPaginas }} ({{ itemsFiltrados.length }} ítems) </span>
+  <button mat-stroked-button (click)="paginaSiguiente()" [disabled]="pageIndex + 1 >= totalPaginas"> Siguiente </button>
 
   <span class="page-size">
     Mostrar

@@ -9,15 +9,8 @@
     /* 
       Código | Ítem | Cant.Com | Cant.Base | Precio | Subtotal | Acciones
     */
-    
     grid-template-columns:
-      90px        /* Código */
-      minmax(200px, 2.5fr) /* Ítem */
-      160px       /* Cant. Comercial */
-      170px       /* Cantidad Base */
-      160px       /* Precio */
-      150px       /* Subtotal */
-      70px;       /* Acciones */
+      90px minmax(180px, 1.4fr) 160px 170px 160px 150px 70px;
 
     gap: 16px;
     align-items: center;
@@ -32,6 +25,35 @@
       text-transform: uppercase;
       border-radius: 8px;
       border-bottom: none;
+    }
+
+    /* ===============================
+       CUANDO ES SERVICIO
+       =============================== */
+    &.fila-servicio {
+      grid-template-columns:
+        90px minmax(160px, 1.1fr)
+        /* Servicio */
+        minmax(220px, 1.5fr)
+        /* Observaciones */
+        140px
+        /* Cant. Comercial */
+        160px
+        /* Precio */
+        150px
+        /* Subtotal */
+        70px;
+      /* Acciones */
+
+
+      &.fila-servicio {
+
+        /* Oculta Cantidad Base */
+        .col.cantidad-base {
+          display: none;
+        }
+      }
+
     }
 
     .col {
@@ -88,6 +110,9 @@
   }
 }
 
+/* ===============================
+   TOTALES
+   =============================== */
 .total-wrap {
   display: flex;
   justify-content: flex-end;
@@ -112,7 +137,9 @@
   }
 }
 
-
+/* ===============================
+   CLIENTE
+   =============================== */
 .cliente-row {
   display: flex;
   align-items: center;
@@ -142,8 +169,12 @@
   text-align: center;
 }
 
-.tittle{
+.tittle {
   margin-top: 5px;
 }
 
-
+.total-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

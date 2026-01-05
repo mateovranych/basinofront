@@ -14,6 +14,8 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import Swal from 'sweetalert2';
 import { UnidadMedida } from '../../../interfaces/UnidadMedida';
 import { UnidadMedidaService } from '../../../services/unidad-medida-service';
+import { Proveedor } from '../../../interfaces/Proveedor';
+import { ProveedoresService } from '../../../services/proveedores-service';
 
 @Component({
   selector: 'app-items-dialog-component',
@@ -44,19 +46,24 @@ export class ItemsDialogComponent implements OnInit {
   unidadesMedidaFiltradas: UnidadMedida[] = [];
   filtroUnidadCtrl = new FormControl('');
 
+  proveedores: Proveedor[] = [];
+  proveedoresFiltrados: Proveedor[] = [];
+  filtroProveedorCtrl = new FormControl('');
+
 
   constructor
     (
       private fb: FormBuilder,
       private service: ItemsService,
       private unidadService: UnidadMedidaService,
+      private proveedoresService: ProveedoresService,
       public dialogRef: MatDialogRef<ItemsDialogComponent>,
       @Inject(MAT_DIALOG_DATA) public data: { modo: 'crear' | 'editar'; item?: Item }
 
-      
+
 
     ) {
-      
+
     this.titulo = data.modo === 'crear' ? 'Nuevo ítem' : 'Editar ítem';
 
     this.form = this.fb.group({
@@ -65,17 +72,26 @@ export class ItemsDialogComponent implements OnInit {
       esServicio: [data.item?.esServicio || false],
       unidadMedidaId: [data.item?.unidadMedidaId || null, Validators.required],
 
-      factorConversion: [ data.item?.factorConversion ?? 1, [Validators.required, Validators.min(0.0001)]],
+      factorConversion: [data.item?.factorConversion ?? 1, [Validators.required, Validators.min(0.0001)]],
       unidadBaseId: [data.item?.unidadBaseId ?? null, Validators.required],
+
+      proveedorId: [data.item?.proveedorId ?? null, Validators.required],
 
       categoriaId: [data.item?.categoriaId || null],
       requiereFrio: [data.item?.requiereFrio || false],
       habilitado: [data.item?.habilitado ?? true]
+
+
     }
+
+
     );
   }
 
   ngOnInit(): void {
+
+    this.cargarProveedores();
+
 
     this.service.obtenerCategorias().subscribe({
       next: (res) => {
@@ -107,9 +123,12 @@ export class ItemsDialogComponent implements OnInit {
       );
     });
 
+
+
     console.log(this.data.item);
 
   }
+
 
 
   guardar(): void {
@@ -128,9 +147,35 @@ export class ItemsDialogComponent implements OnInit {
       },
       error: () => Swal.fire('Error', 'No se pudo guardar el ítem', 'error')
     });
+
+
+
   }
 
   cancelar(): void {
     this.dialogRef.close();
   }
+
+
+  cargarProveedores() {
+    this.proveedoresService.getAll().subscribe(res => {
+
+      this.proveedores = res.filter(p => p.id !== 1);
+      this.proveedoresFiltrados = this.proveedores;
+
+      // 👇 CLAVE: precargar proveedor en edición
+      if (this.data.modo === 'editar' && this.data.item?.proveedorId) {
+        this.form.patchValue({
+          proveedorId: this.data.item.proveedorId
+        });
+      }
+    });
+
+    this.filtroProveedorCtrl.valueChanges.subscribe(value => {
+      const filtro = value?.toLowerCase() || '';
+      this.proveedoresFiltrados = this.proveedores
+        .filter(p => p.razonSocial.toLowerCase().includes(filtro));
+    });
+  }
+
 }

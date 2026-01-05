@@ -7,6 +7,8 @@ export interface CrearItem {
     unidadBaseId: number;     
 
     factorConversion: number; 
+
+    proveedorId: number; // 👈 CLAVE
     
     categoriaId?: number | null;
     requiereFrio?: boolean;
