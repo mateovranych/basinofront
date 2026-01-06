@@ -494,7 +494,6 @@ export class Precio implements OnInit {
       const valA = a[col] ?? '';
       const valB = b[col] ?? '';
 
-      // Usamos localeCompare con numeric: true para que P2 vaya antes que P10
       const comparison = String(valA).localeCompare(String(valB), undefined, {
         numeric: true,
         sensitivity: 'base'
@@ -503,6 +502,76 @@ export class Precio implements OnInit {
       return this.ordenAsc ? comparison : -comparison;
     });
   }
+
+  onEnterPrecioVenta(event: Event, item: any, filaIndex: number) {
+    const keyboardEvent = event as KeyboardEvent;
+    keyboardEvent.preventDefault();
+
+    for (const lista of item.listasDetalle) {
+      lista.precio = Math.round(
+        item.precioVenta * (1 + lista.porcentaje / 100)
+      );
+    }
+
+    this.onPrecioVentaChange(item);
+
+    this.moverFocoAbajo(keyboardEvent, filaIndex, '.input-precio-venta');
+  }
+
+
+  onEnterPorcentaje(
+    event: Event,
+    item: any,
+    lista: any,
+    filaIndex: number,
+    listaKey: string
+  ) {
+    const keyboardEvent = event as KeyboardEvent;
+    keyboardEvent.preventDefault();
+
+    lista.precio = Math.round(
+      item.precioVenta * (1 + lista.porcentaje / 100)
+    );
+
+    this.onPorcentajeChange(item, lista);
+
+    this.moverFocoAbajo(
+      keyboardEvent,
+      filaIndex,
+      '.input-pct-' + listaKey
+    );
+  }
+
+
+  onPorcentajeInput(item: any, lista: any) {
+    lista.precio = Math.round(
+      item.precioVenta * (1 + lista.porcentaje / 100)
+    );
+  }
+
+  onPrecioVentaInput(item: any) {
+    for (const lista of item.listasDetalle) {
+      lista.precio = Math.round(
+        item.precioVenta * (1 + lista.porcentaje / 100)
+      );
+    }
+  }
+
+
+
+
+  onTabPrecioVenta(event: Event, item: any) {
+
+    this.onPrecioVentaInput(item);
+    this.onPrecioVentaChange(item); 
+  }
+
+
+  onTabPorcentaje(event: Event, item: any, lista: any) {
+    this.onPorcentajeInput(item, lista);
+    this.onPorcentajeChange(item, lista); 
+  }
+
 
 
 

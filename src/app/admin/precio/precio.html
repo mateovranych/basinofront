@@ -49,8 +49,12 @@
   <ng-container matColumnDef="precioVenta">
     <th mat-header-cell *matHeaderCellDef (click)="ordenar('precioVenta')" class="sortable"> COSTO </th>
     <td mat-cell *matCellDef="let item; let i = index">
-      <input type="number" [(ngModel)]="item.precioVenta" (change)="onPrecioVentaChange(item)"
-        (keydown.enter)="moverFocoAbajo($event, i, '.input-precio-venta')" class="input-precio input-precio-venta" />
+      <input type="number" 
+      [(ngModel)]="item.precioVenta" 
+      (change)="onPrecioVentaChange(item)"
+        (keydown.enter)="onEnterPrecioVenta($event, item, i)" class="input-precio input-precio-venta",
+        (keydown.tab)="onTabPrecioVenta($event, item)" />
+        
     </td>
   </ng-container>
 
@@ -58,10 +62,18 @@
   <ng-container [matColumnDef]="lista.key + '_pct'">
     <th mat-header-cell *matHeaderCellDef> % {{ lista.nombre }} </th>
     <td mat-cell *matCellDef="let item; let i = index">
-      <input type="number" [(ngModel)]="item.listasDetalle[listaIdx].porcentaje"
+      <!-- <input type="number" [(ngModel)]="item.listasDetalle[listaIdx].porcentaje"
         (change)="onPorcentajeChange(item, item.listasDetalle[listaIdx])"
         (keydown.enter)="moverFocoAbajo($event, i, '.input-pct-' + lista.key)"
+        [class]="'input-porcentaje input-pct-' + lista.key" /> -->
+
+      <input type="number" 
+      [(ngModel)]="item.listasDetalle[listaIdx].porcentaje"
+        (change)="onPorcentajeChange(item, item.listasDetalle[listaIdx])"
+        (keydown.enter)="onEnterPorcentaje($event, item, item.listasDetalle[listaIdx], i, lista.key)"
+        (keydown.tab)="onTabPorcentaje($event, item, item.listasDetalle[listaIdx])"
         [class]="'input-porcentaje input-pct-' + lista.key" />
+
     </td>
   </ng-container>
 
