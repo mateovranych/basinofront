@@ -181,6 +181,9 @@ export class PresupuestosDialogComponent implements OnInit {
       cantidadComercial: [1, [Validators.required, Validators.min(1)]],
       precioUnitario: [0, [Validators.required, Validators.min(0)]],
       unidadComercial: [''],
+
+      precioVisual: [''],
+
       unidadBase: [''],
       factorConversion: [0],
 
@@ -226,20 +229,7 @@ export class PresupuestosDialogComponent implements OnInit {
     }
   }
 
-
-
-
-
-  // ============================
-  // ITEM CHANGE
-  // ============================
-
-
   onItemChange(index: number): void {
-
-
-
-
     const ctrl = this.detalles.at(index);
     const itemId = Number(ctrl.get('itemId')?.value);
     const clienteId = Number(this.form.get('clienteId')?.value);
@@ -250,7 +240,10 @@ export class PresupuestosDialogComponent implements OnInit {
       return;
     }
 
-    ctrl.get('precioUnitario')?.setValue(0);
+    ctrl.patchValue({
+      precioUnitario: 0,
+      precioVisual: ''
+    });
 
     const item = this.items.find(i => i.id === itemId);
     if (!item) return;
@@ -263,7 +256,9 @@ export class PresupuestosDialogComponent implements OnInit {
       esServicio: item.esServicio
     });
 
-    // 🔴 SI ES SERVICIO → SALIMOS ACÁ
+    // =========================
+    // 🔴 SERVICIO
+    // =========================
     if (item.esServicio) {
       ctrl.patchValue({
         cantidadComercial: 1,
@@ -273,24 +268,32 @@ export class PresupuestosDialogComponent implements OnInit {
         factorConversion: 0
       });
 
-      // El precio sí se carga, pero NO conversión ni kg
       this.precioService.obtenerPrecioParaCliente(itemId, clienteId).subscribe({
         next: precio => {
-          ctrl.get('precioUnitario')?.setValue(Number(precio.toFixed(2)));
+          const base = Number(precio.toFixed(2));
+
+          ctrl.patchValue({
+            precioUnitario: base,
+            precioVisual: this.discriminaIVA
+              ? base.toFixed(2)
+              : (base * (1 + this.IVA)).toFixed(2)
+          });
         },
         error: () => {
           Swal.fire('Error', 'El servicio no tiene precio configurado', 'error');
-          ctrl.get('precioUnitario')?.setValue(0);
+          ctrl.patchValue({
+            precioUnitario: 0,
+            precioVisual: ''
+          });
         }
       });
 
-      return; // ⬅️ ESTE ES EL RETURN CLAVE
+      return; // ⬅️ CLAVE: no sigue con lógica de productos
     }
 
-    // ======================
-    // 👇 DESDE ACÁ SOLO PRODUCTOS
-    // ======================
-
+    // =========================
+    // 🟢 PRODUCTO
+    // =========================
     const pres = item.presentacionDefault;
 
     if (pres) {
@@ -308,14 +311,25 @@ export class PresupuestosDialogComponent implements OnInit {
 
     this.precioService.obtenerPrecioParaCliente(itemId, clienteId).subscribe({
       next: precio => {
-        ctrl.get('precioUnitario')?.setValue(Number(precio.toFixed(2)));
+        const base = Number(precio.toFixed(2));
+
+        ctrl.patchValue({
+          precioUnitario: base,
+          precioVisual: this.discriminaIVA
+            ? base.toFixed(2)
+            : (base * (1 + this.IVA)).toFixed(2)
+        });
       },
       error: () => {
         Swal.fire('Error', 'El ítem no tiene precio configurado', 'error');
-        ctrl.get('precioUnitario')?.setValue(0);
+        ctrl.patchValue({
+          precioUnitario: 0,
+          precioVisual: ''
+        });
       }
     });
   }
+
 
 
 
@@ -354,13 +368,6 @@ export class PresupuestosDialogComponent implements OnInit {
     return this.discriminaIVA ? this.subtotal * this.IVA : 0;
   }
 
-  // get totalFinal(): number {
-  //   const base = this.subtotal;
-  //   return this.discriminaIVA
-  //     ? base + this.iva
-  //     : base * (1 + this.IVA);
-  // }
-
   get totalFinal(): number {
 
     if (this.totalManual !== null) {
@@ -385,25 +392,27 @@ export class PresupuestosDialogComponent implements OnInit {
   }
 
 
-  // ============================
-  // INPUT MANUAL
-  // ============================
-  onPrecioVisualInput(ctrl: FormGroup, event: Event): void {
-    const raw = (event.target as HTMLInputElement).value ?? '';
+
+  onPrecioVisualInput(ctrl: FormGroup): void {
+    const raw = ctrl.get('precioVisual')?.value ?? '';
     const normalized = raw.replace(/\./g, '').replace(',', '.');
     const visual = Number(normalized);
 
-    if (Number.isNaN(visual)) {
-      ctrl.get('precioUnitario')?.setValue(0);
-      return;
-    }
+    if (Number.isNaN(visual)) return;
 
     const base = this.discriminaIVA
       ? visual
       : visual / (1 + this.IVA);
 
-    ctrl.get('precioUnitario')?.setValue(Number(base.toFixed(2)));
+    ctrl.get('precioUnitario')?.setValue(
+      Number(base.toFixed(2)),
+      { emitEvent: false }
+    );
   }
+
+
+
+
 
   onPrecioVisualBlur(ctrl: FormGroup): void {
     const visual = Number(ctrl.get('precioVisual')?.value || 0);
@@ -546,20 +555,32 @@ export class PresupuestosDialogComponent implements OnInit {
     const clienteId = Number(this.form.get('clienteId')?.value);
     if (!clienteId) return;
 
-    this.detalles.controls.forEach((ctrl, index) => {
+    this.detalles.controls.forEach((ctrl) => {
       const itemId = Number(ctrl.get('itemId')?.value);
       if (!itemId) return;
 
       this.precioService.obtenerPrecioParaCliente(itemId, clienteId).subscribe({
         next: precio => {
-          ctrl.get('precioUnitario')?.setValue(Number(precio.toFixed(2)));
+          const base = Number(precio.toFixed(2));
+
+          ctrl.patchValue({
+            precioUnitario: base,
+            precioVisual: this.discriminaIVA
+              ? base.toFixed(2)
+              : (base * 1.21).toFixed(2)
+          }, { emitEvent: false });
         },
         error: () => {
-          ctrl.get('precioUnitario')?.setValue(0);
+          ctrl.patchValue({
+            precioUnitario: 0,
+            precioVisual: ''
+          }, { emitEvent: false });
         }
       });
     });
   }
+
+
 
 
 }

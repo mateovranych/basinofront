@@ -21,6 +21,7 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'items', loadComponent: () => import('../operador/items/items').then(m => m.Items) },
       { path: 'comprobantes', loadComponent: () => import('../consulta/comprobantes/comprobantes').then(m => m.Comprobantes) },
       { path: 'reportes', loadComponent: () => import('../consulta/reportes/reportes').then(m => m.Reportes) },
+      { path: 'presentacion', loadComponent: () => import('../admin/presentacion/presentacion').then(m => m.Presentacion) },
     ],
   },
 ];

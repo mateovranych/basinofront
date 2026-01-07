@@ -179,8 +179,12 @@
               Precio <span *ngIf="!discriminaIVA">(IVA incluido)</span>
             </mat-label>
 
-            <input matInput type="text" inputmode="decimal" [value]="precioUnitarioVisual(det) | number:'1.2-2'"
-              (input)="onPrecioVisualInput(det, $event)" />
+            <!-- <input matInput type="text" inputmode="decimal" [value]="precioUnitarioVisual(det) | number:'1.2-2'"
+              (input)="onPrecioVisualInput(det, $event)" /> -->
+
+
+            <input matInput type="text" inputmode="decimal" formControlName="precioVisual"
+              (input)="onPrecioVisualInput(det)" />
 
           </mat-form-field>
         </div>

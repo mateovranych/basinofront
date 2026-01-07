@@ -43,14 +43,10 @@ export class Precio implements OnInit {
   filtroMaxVenta: number | null = null;
 
 
-  // ordenColumna: string = '';
-  // ordenAsc: boolean = true;
-
-
   ordenColumna: string = 'codigo';
   ordenAsc: boolean = true;
 
-  pageSize = 10;
+  pageSize = 50;
   pageIndex = 0;
   totalPaginas = 1;
 
@@ -86,14 +82,14 @@ export class Precio implements OnInit {
     event.preventDefault();
 
     setTimeout(() => {
-      // 1. Buscamos todas las filas
+      
       const filas = Array.from(document.querySelectorAll('.mat-mdc-row'));
 
-      // 2. Buscamos la fila de abajo
+    
       const filaSiguiente = filas[filaIndex + 1];
 
       if (filaSiguiente) {
-        // 3. Buscamos el input que coincida con la columna donde estamos
+       
         const nextInput = filaSiguiente.querySelector(selectorColumna) as HTMLInputElement;
 
         if (nextInput) {
@@ -101,11 +97,10 @@ export class Precio implements OnInit {
           nextInput.select();
         }
       } else {
-        // Opcional: Si es la última fila, saltar a la página siguiente
+       
         if (this.pageIndex + 1 < this.totalPaginas) {
           this.paginaSiguiente();
-          // Nota: Para hacer foco en la página nueva necesitarías un pequeño delay 
-          // mayor porque la tabla se tiene que volver a renderizar.
+
         }
       }
     }, 10);
@@ -163,34 +158,6 @@ export class Precio implements OnInit {
     };
   }
 
-
-  // aplicarFiltros() {
-  //   const t = this.terminoBusqueda.trim().toLowerCase();
-
-  //   let lista = [...this.itemsOriginal];
-
-  //   if (t !== '') {
-  //     lista = lista.filter(item =>
-  //       item.codigo.toLowerCase().includes(t) ||
-  //       item.descripcion.toLowerCase().includes(t)
-  //     );
-  //   }
-
-  //   if (this.filtroMinVenta !== null && !isNaN(this.filtroMinVenta)) {
-  //     lista = lista.filter(item => item.precioVenta >= this.filtroMinVenta!);
-  //   }
-
-  //   if (this.filtroMaxVenta !== null && !isNaN(this.filtroMaxVenta)) {
-  //     lista = lista.filter(item => item.precioVenta <= this.filtroMaxVenta!);
-  //   }
-
-  //   this.itemsFiltrados = lista;
-
-  //   this.pageIndex = 0;
-  //   this.actualizarPagina();
-  // }
-
-
   aplicarFiltros() {
     const t = this.terminoBusqueda.trim().toLowerCase();
     let lista = [...this.itemsOriginal];
@@ -211,25 +178,10 @@ export class Precio implements OnInit {
     }
 
     this.itemsFiltrados = lista;
-    // No reseteamos el pageIndex aquí si quieres mantener la página, 
-    // pero por defecto al filtrar se suele volver a la 0.
     this.actualizarPagina();
   }
 
-  // actualizarPagina() {
-  //   const total = this.itemsFiltrados.length;
-  //   this.pageSize = Number(this.pageSize) || 10;
-  //   this.totalPaginas = Math.max(1, Math.ceil(total / this.pageSize));
 
-  //   if (this.pageIndex >= this.totalPaginas) {
-  //     this.pageIndex = this.totalPaginas - 1;
-  //   }
-  //   if (this.pageIndex < 0) this.pageIndex = 0;
-
-  //   const start = this.pageIndex * this.pageSize;
-  //   const end = start + this.pageSize;
-  //   this.itemsPagina = this.itemsFiltrados.slice(start, end);
-  // }
 
   actualizarPagina() {
     const total = this.itemsFiltrados.length;
@@ -266,34 +218,6 @@ export class Precio implements OnInit {
     this.actualizarPagina();
   }
 
-  // ordenar(col: string) {
-  //   if (this.ordenColumna === col) {
-  //     this.ordenAsc = !this.ordenAsc;
-  //   } else {
-  //     this.ordenColumna = col;
-  //     this.ordenAsc = true;
-  //   }
-
-  //   this.itemsFiltrados.sort((a: any, b: any) => {
-  //     const valA = a[col] ?? '';
-  //     const valB = b[col] ?? '';
-
-  //     if (typeof valA === 'string' && typeof valB === 'string') {
-  //       return this.ordenAsc
-  //         ? valA.localeCompare(valB)
-  //         : valB.localeCompare(valA);
-  //     }
-
-  //     const numA = Number(valA);
-  //     const numB = Number(valB);
-
-  //     if (numA < numB) return this.ordenAsc ? -1 : 1;
-  //     if (numA > numB) return this.ordenAsc ? 1 : -1;
-  //     return 0;
-  //   });
-
-  //   this.actualizarPagina();
-  // }
 
   ordenar(col: string) {
     if (this.ordenColumna === col) {
@@ -304,7 +228,6 @@ export class Precio implements OnInit {
     }
 
     this.aplicarOrdenamientoLogica();
-    // Importante: después de ordenar la base original, refrescamos filtros y página
     this.aplicarFiltros();
   }
 
@@ -571,10 +494,6 @@ export class Precio implements OnInit {
     this.onPorcentajeInput(item, lista);
     this.onPorcentajeChange(item, lista); 
   }
-
-
-
-
 
 
 }
