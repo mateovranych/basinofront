@@ -394,12 +394,27 @@ export class PresupuestosDialogComponent implements OnInit {
 
 
   onPrecioVisualInput(ctrl: FormGroup): void {
-    const raw = ctrl.get('precioVisual')?.value ?? '';
-    const normalized = raw.replace(/\./g, '').replace(',', '.');
-    const visual = Number(normalized);
+    const precioCtrl = ctrl.get('precioVisual');
+    if (!precioCtrl) return;
 
+    let value = precioCtrl.value?.toString() ?? '';
+    
+    value = value.replace(',', '.');
+    
+    value = value.replace(/[^0-9.]/g, '');
+
+
+    const parts = value.split('.');
+    if (parts.length > 2) {
+      value = parts[0] + '.' + parts.slice(1).join('');
+    }
+
+
+    precioCtrl.setValue(value, { emitEvent: false });
+
+    const visual = Number(value);
     if (Number.isNaN(visual)) return;
-
+    
     const base = this.discriminaIVA
       ? visual
       : visual / (1 + this.IVA);
@@ -409,6 +424,7 @@ export class PresupuestosDialogComponent implements OnInit {
       { emitEvent: false }
     );
   }
+
 
 
 
