@@ -1,19 +1,27 @@
 export interface Cliente {
-    id: number;
-    razonSocial: string;
-    cuit: string;
-    domicilio: string;
-    telefono: string;
-    email: string;
+  id: number;
 
-    tieneCuentaCorriente: boolean;
+  razonSocial: string;
+  alias: string;
 
-    condicionIVA: string;
-    condicionIvaId: number;
-    
-    listaPrecioId: number;
-    listaPrecioNombre?: string;
-    
-    esActivo: boolean;
-    
+  cuit: string;
+  domicilio: string;
+  telefono: string;
+  email: string;
+
+  tieneCuentaCorriente: boolean;
+
+  condicionIVA: string;
+  condicionIvaId: number;
+
+  listaPrecioId: number;
+  listaPrecioNombre?: string;
+
+  localidadId?: number;
+  localidadNombre?: string;
+
+  provinciaId?: number;
+  provinciaNombre?: string;
+
+  esActivo: boolean;
 }

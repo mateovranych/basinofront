@@ -17,6 +17,11 @@ import { ListasPrecioService } from '../../../services/lista-precio-service';
 
 import { CondicionIva } from '../../../interfaces/CondicionIva';
 import { ListaPrecio } from '../../../interfaces/ListaPrecio';
+import { Provincias } from '../../../admin/provincias/provincias';
+import { ProvinciaService } from '../../../services/provincia-service';
+import { LocalidadService } from '../../../services/localidad-service';
+import { Provincia } from '../../../interfaces/Provincia/Provincia';
+import { Localidad } from '../../../interfaces/Localidad/Localidad';
 
 @Component({
   selector: 'app-clientedialog-standalone',
@@ -45,6 +50,11 @@ export class ClientedialogStandalone implements OnInit {
   filteredCondiciones: CondicionIva[] = [];
   listasPrecio: ListaPrecio[] = [];
 
+
+  provincias: Provincia[] = [];
+  localidades: Localidad[] = [];
+  localidadesFiltradas: Localidad[] = [];
+
   searchTerm = '';
 
   constructor(
@@ -53,19 +63,28 @@ export class ClientedialogStandalone implements OnInit {
     private clienteService: ClientesService,
     private condicionService: CondicionesIvaService,
     private listasPrecioService: ListasPrecioService,
+    private provinciaService: ProvinciaService,
+    private localidadService: LocalidadService,
+
     @Inject(MAT_DIALOG_DATA) public data: Cliente | null
-  ) {}
+  ) { }
 
   ngOnInit(): void {
 
     this.form = this.fb.group({
       razonSocial: ['', Validators.required],
+      alias: [''],
+
       cuit: ['', [Validators.required, Validators.pattern(/^[0-9]{11}$/)]],
       domicilio: [''],
       telefono: [''],
       email: ['', Validators.email],
       condicionIvaId: [null, Validators.required],
       listaPrecioId: [null, Validators.required],
+
+      provinciaId: [null],
+      localidadId: [null],
+
       tieneCuentaCorriente: [false],
       esActivo: [true],
     });
@@ -88,6 +107,22 @@ export class ClientedialogStandalone implements OnInit {
       },
       error: (err) => console.error(err)
     });
+
+    this.provinciaService.obtenerProvincias().subscribe(res => {
+      this.provincias = res;
+    });
+
+    this.localidadService.obtenerLocalidades().subscribe(res => {
+      this.localidades = res;
+      this.localidadesFiltradas = res;
+      this.tryPatch();
+    });
+
+    this.form.get('provinciaId')?.valueChanges.subscribe(() => {
+      this.onProvinciaChange();
+    });
+
+
   }
 
   private tryPatch() {
@@ -99,6 +134,9 @@ export class ClientedialogStandalone implements OnInit {
     setTimeout(() => {
       this.form.patchValue({
         razonSocial: this.data?.razonSocial,
+        alias: this.data?.alias,
+        provinciaId: this.data?.provinciaId,
+        localidadId: this.data?.localidadId,
         cuit: this.data?.cuit,
         domicilio: this.data?.domicilio,
         telefono: this.data?.telefono,
@@ -138,6 +176,23 @@ export class ClientedialogStandalone implements OnInit {
       },
     });
   }
+
+  onProvinciaChange() {
+    const provinciaId = this.form.get('provinciaId')?.value;
+
+    if (!provinciaId) {
+      this.localidadesFiltradas = this.localidades;
+      this.form.patchValue({ localidadId: null });
+      return;
+    }
+
+    this.localidadesFiltradas = this.localidades.filter(
+      l => l.provinciaId === provinciaId
+    );
+
+    this.form.patchValue({ localidadId: null });
+  }
+
 
   cancelar() {
     this.dialogRef.close(false);

@@ -4,11 +4,17 @@
     <div class="form-grid">
         <mat-form-field appearance="outline">
             <mat-label>Razón Social</mat-label>
-            <input matInput formControlName="razonSocial" placeholder="Ej: Ferretería López" />
+            <input matInput formControlName="razonSocial" placeholder="Ej: Arroyo Cabral" />
             @if (form.get('razonSocial')?.hasError('required')) {
             <mat-error>La razón social es obligatoria.</mat-error>
             }
         </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Alias</mat-label>
+            <input matInput formControlName="alias" placeholder="Ej: AC - PS" />
+        </mat-form-field>
+
 
         <mat-form-field appearance="outline">
             <mat-label>CUIT</mat-label>
@@ -39,7 +45,6 @@
             }
         </mat-form-field>
 
-        <!-- Condición IVA con búsqueda -->
         <mat-form-field appearance="outline">
             <mat-label>Condición frente al IVA</mat-label>
             <mat-select formControlName="condicionIvaId">
@@ -71,6 +76,27 @@
             <mat-error>Seleccioná una lista de precios.</mat-error>
             }
         </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Provincia</mat-label>
+            <mat-select formControlName="provinciaId">
+                <mat-option [value]="null">Sin provincia</mat-option>
+                @for (p of provincias; track p.id) {
+                <mat-option [value]="p.id">{{ p.nombre }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Localidad</mat-label>
+            <mat-select formControlName="localidadId">
+                <mat-option [value]="null">Sin localidad</mat-option>
+                @for (l of localidadesFiltradas; track l.id) {
+                <mat-option [value]="l.id">{{ l.nombre }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
 
 
 

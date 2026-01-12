@@ -1,0 +1,46 @@
+<div class="bassino-contenedor">
+
+  <div class="bassino-header">
+    <h2>Localidades</h2>
+    <button mat-raised-button (click)="abrirCrear()">
+      Nueva localidad
+    </button>
+  </div>
+
+  <table mat-table [dataSource]="localidades" class="bassino-tabla">
+
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let l">{{ l.id }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="nombre">
+      <th mat-header-cell *matHeaderCellDef>Nombre</th>
+      <td mat-cell *matCellDef="let l">{{ l.nombre }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="provincia">
+      <th mat-header-cell *matHeaderCellDef>Provincia</th>
+      <td mat-cell *matCellDef="let l">
+        {{ l.provinciaNombre || '—' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let l">
+        <button mat-icon-button color="accent" (click)="abrirEditar(l)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="eliminar(l.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+  </table>
+
+</div>

@@ -79,10 +79,36 @@ export class ProveedoresDialog implements OnInit {
     });
   }
 
+  cambiarEstado(activo: boolean): void {
+    if (!this.data) return; // solo edita, no en crear
+
+    this.proveedorService
+      .cambiarEstado(this.data.id, activo)
+      .subscribe({
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: activo
+              ? 'Proveedor activado'
+              : 'Proveedor desactivado',
+            timer: 1200,
+            showConfirmButton: false
+          });
+        },
+        error: () => {
+          Swal.fire('Error', 'No se pudo cambiar el estado', 'error');
+          // rollback visual
+          this.form.get('esActivo')?.setValue(!activo, { emitEvent: false });
+        }
+      });
+  }
+
+
   guardar(): void {
     if (this.form.invalid) return;
 
-    const payload = this.form.getRawValue();
+    const payload = { ...this.form.value };
+    delete payload.esActivo; // 👈 importante
 
     const peticion = this.data
       ? this.proveedorService.update(this.data.id, payload)
@@ -98,10 +124,11 @@ export class ProveedoresDialog implements OnInit {
         });
         this.dialogRef.close(true);
       },
-      error: () => Swal.fire('Error', 'No se pudo guardar el proveedor', 'error')
+      error: () =>
+        Swal.fire('Error', 'No se pudo guardar el proveedor', 'error')
     });
-
   }
+
 
   cancelar(): void {
     this.dialogRef.close(false);

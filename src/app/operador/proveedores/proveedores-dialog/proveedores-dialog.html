@@ -43,9 +43,10 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-checkbox formControlName="esActivo">
+    <mat-checkbox formControlName="esActivo" (change)="cambiarEstado($event.checked)">
       Proveedor activo
     </mat-checkbox>
+
 
   </div>
 </mat-dialog-content>

@@ -22,6 +22,8 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'comprobantes', loadComponent: () => import('../consulta/comprobantes/comprobantes').then(m => m.Comprobantes) },
       { path: 'reportes', loadComponent: () => import('../consulta/reportes/reportes').then(m => m.Reportes) },
       { path: 'presentacion', loadComponent: () => import('../admin/presentacion/presentacion').then(m => m.Presentacion) },
+      { path: 'provincias', loadComponent: () => import('../admin/provincias/provincias').then(m => m.Provincias) },
+      { path: 'localidades', loadComponent: () => import('../admin/localidades/localidades').then(m => m.Localidades) },
     ],
   },
 ];

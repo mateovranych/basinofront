@@ -81,17 +81,13 @@ export class ItemsDialogComponent implements OnInit {
       requiereFrio: [data.item?.requiereFrio || false],
       habilitado: [data.item?.habilitado ?? true]
 
-
     }
-
-
     );
   }
 
   ngOnInit(): void {
 
     this.cargarProveedores();
-
 
     this.service.obtenerCategorias().subscribe({
       next: (res) => {
@@ -158,12 +154,11 @@ export class ItemsDialogComponent implements OnInit {
 
 
   cargarProveedores() {
-    this.proveedoresService.getAll().subscribe(res => {
+    this.proveedoresService.getProveedoresActivos().subscribe(res => {
 
       this.proveedores = res.filter(p => p.id !== 1);
       this.proveedoresFiltrados = this.proveedores;
 
-      // 👇 CLAVE: precargar proveedor en edición
       if (this.data.modo === 'editar' && this.data.item?.proveedorId) {
         this.form.patchValue({
           proveedorId: this.data.item.proveedorId

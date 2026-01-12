@@ -37,4 +37,17 @@ export class ProveedoresService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  cambiarEstado(id: number, activo: boolean) {
+    return this.http.patch(
+      `${this.apiUrl}/${id}/estado?activo=${activo}`,
+      {}
+    );
+  }
+
+  getProveedoresActivos() {
+    return this.http.get<Proveedor[]>(`${this.apiUrl}/activos`);
+  }
+
+
+
 }
