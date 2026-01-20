@@ -188,15 +188,14 @@ export class PresupuestosDialogComponent implements OnInit {
       factorConversion: [0],
 
 
-      esServicio: [false],           // 👈 NUEVO
-      observaciones: ['']             // 👈 NUEVO
+      esServicio: [false],          
+      observaciones: ['']             
     });
   }
 
   agregarLinea(): void {
     this.detalles.push(this.nuevaLinea());
 
-    // Espera a que Angular renderice la nueva fila
     setTimeout(() => {
       this.scrollAlFinal();
       this.focusUltimoCodigo();

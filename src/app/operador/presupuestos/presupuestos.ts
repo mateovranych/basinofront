@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
 import { PresupuestoService } from '../../services/presupuesto-service';
 import { PresupuestosDialogComponent } from './presupuestos-dialog-component/presupuestos-dialog-component';
 import { Presupuesto } from '../../interfaces/Presupuesto/Presupuesto';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-presupuestos',
