@@ -1,0 +1,26 @@
+<div class="pdf-header">
+  <div class="titulo">
+    <mat-icon>picture_as_pdf</mat-icon>
+    <span>{{ data.filename }}</span>
+  </div>
+
+  <div class="acciones">
+    <button mat-stroked-button (click)="abrirEnPestania()">
+      <mat-icon>open_in_new</mat-icon>
+      Abrir
+    </button>
+
+    <button mat-raised-button color="primary" (click)="descargar()">
+      <mat-icon>download</mat-icon>
+      Descargar
+    </button>
+
+    <button mat-icon-button (click)="cerrar()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+
+<div class="pdf-body">
+  <iframe [src]="safeUrl"></iframe>
+</div>

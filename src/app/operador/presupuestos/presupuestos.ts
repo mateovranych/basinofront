@@ -14,6 +14,7 @@ import { PresupuestoService } from '../../services/presupuesto-service';
 import { PresupuestosDialogComponent } from './presupuestos-dialog-component/presupuestos-dialog-component';
 import { Presupuesto } from '../../interfaces/Presupuesto/Presupuesto';
 import { Observable } from 'rxjs';
+import { Presupuestospdfdialog } from './presupuestospdfdialog/presupuestospdfdialog';
 
 @Component({
   selector: 'app-presupuestos',
@@ -137,4 +138,25 @@ export class Presupuestos implements OnInit, AfterViewInit {
       a.click();
     });
   }
+
+  verPresupuesto(id: number): void {
+    this.service.descargarPdf(id).subscribe(pdfBlob => {
+      const url = URL.createObjectURL(pdfBlob);
+
+      const dialogRef = this.dialog.open(Presupuestospdfdialog, {
+        width: '95vw',
+        maxWidth: '95vw',
+        height: '90vh',
+        data: {
+          url,
+          filename: `presupuesto_${id}.pdf`
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(() => {
+        URL.revokeObjectURL(url);
+      });
+    });
+  }
+
 }
