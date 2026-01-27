@@ -37,6 +37,9 @@
         <input matInput [value]="clienteSeleccionado?.condicionIVA || '—'" disabled />
       </mat-form-field>
 
+
+
+
       <mat-form-field appearance="outline" class="cliente-lista-field readonly-field">
         <mat-label>Lista de precios</mat-label>
         <input matInput [value]="clienteSeleccionado?.listaPrecioNombre || '—'" disabled />
@@ -51,7 +54,11 @@
         <mat-icon>add</mat-icon>
         Agregar ítem
       </button>
+      <mat-slide-toggle *ngIf="discriminaIVA" formControlName="forzarNoDiscriminarIVA">
+        Emitir como No Categorizado
+      </mat-slide-toggle>
     </div>
+
 
     <div class="tabla-lineas">
 
@@ -190,11 +197,22 @@
           </mat-form-field>
         </div>
 
-        <!-- ACCIONES -->
         <div class="col acciones">
-          <button mat-icon-button color="warn" type="button" (click)="quitarLinea(i)">
+          <!-- <button mat-icon-button color="warn" type="button" (click)="quitarLinea(i)">
+            <mat-icon>delete</mat-icon>
+          </button> -->
+
+
+          <button mat-icon-button color="primary" type="button" tabindex="0" (click)="agregarLinea()"
+            aria-label="Agregar ítem">
+            <mat-icon>add</mat-icon>
+          </button>
+
+          <button mat-icon-button color="warn" type="button" tabindex="0" (click)="quitarLinea(i)"
+            aria-label="Eliminar ítem">
             <mat-icon>delete</mat-icon>
           </button>
+
         </div>
 
       </div>

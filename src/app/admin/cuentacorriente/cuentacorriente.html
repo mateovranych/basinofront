@@ -1,0 +1,84 @@
+<div class="cuenta-corriente-page">
+
+    <!-- ================= CLIENTE ================= -->
+    <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Cliente</mat-label>
+
+        <mat-select [formControl]="clienteIdCtrl">
+            <mat-option>
+                <ngx-mat-select-search [formControl]="filtroClientesCtrl" placeholderLabel="Buscar cliente..."
+                    noEntriesFoundLabel="Sin resultados">
+                </ngx-mat-select-search>
+            </mat-option>
+
+            <mat-option *ngIf="cargandoClientes" [disabled]="true">
+                Cargando clientes...
+            </mat-option>
+
+            <mat-option *ngFor="let c of clientesFiltrados" [value]="c.id">
+                {{ c.razonSocial }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <!-- ================= SALDO ================= -->
+    <div *ngIf="cuentaCorriente" class="saldo-box">
+        <h3>
+            Saldo total:
+            <span [ngClass]="{
+          'deuda': cuentaCorriente.saldoTotal > 0,
+          'favor': cuentaCorriente.saldoTotal < 0
+        }">
+                {{ cuentaCorriente.saldoTotal | currency:'ARS' }}
+            </span>
+        </h3>
+    </div>
+
+    <!-- ================= TABLA ================= -->
+    <div *ngIf="cuentaCorriente?.presupuestos?.length">
+
+        <table class="tabla-cc">
+            <thead>
+                <tr>
+                    <th>Presupuesto</th>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                    <th>Pagos</th>
+                    <th>Saldo</th>
+                    <th>Pagar</th>
+                </tr>
+            </thead>
+
+
+            <tbody>
+                <tr *ngFor="let p of cuentaCorriente.presupuestos">
+                    <td>#{{ p.presupuestoId }}</td>
+
+                    <td class="fecha">
+                        {{ p.fecha | date:'dd/MM/yyyy' }}
+                    </td>
+
+                    <td>{{ p.monto | currency }}</td>
+                    <td>{{ p.pagos | currency }}</td>
+                    <td><strong>{{ p.saldo | currency }}</strong></td>
+
+                    <td class="pagar-col">
+                        <input matInput type="number" placeholder="Monto" [(ngModel)]="p.montoPago" />
+                        <button mat-icon-button color="primary" (click)="pagarPresupuesto(p)">
+                            <mat-icon>check</mat-icon>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <!-- ================= SIN DEUDA ================= -->
+    <div *ngIf="cuentaCorriente && !cuentaCorriente.presupuestos.length">
+        <p class="sin-deuda">
+            El cliente no tiene deuda pendiente.
+        </p>
+    </div>
+
+</div>

@@ -19,6 +19,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import Swal from 'sweetalert2';
 
 import { PresupuestoService } from '../../../services/presupuesto-service';
@@ -48,7 +49,9 @@ type ClienteMin = {
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
-    NgxMatSelectSearchModule
+    NgxMatSelectSearchModule,
+    MatSlideToggleModule
+
   ],
   templateUrl: './presupuestos-dialog-component.html',
   styleUrls: ['./presupuestos-dialog-component.scss']
@@ -119,12 +122,11 @@ export class PresupuestosDialogComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.group({
       clienteId: [null, Validators.required],
+      forzarNoDiscriminarIVA: [false],
       totalManual: [null],
       detalles: this.fb.array<FormGroup>([]),
 
     });
-
-
 
     this.agregarLinea();
     this.cargarClientes();
@@ -151,12 +153,20 @@ export class PresupuestosDialogComponent implements OnInit {
       this.clienteSeleccionado =
         this.clientes.find(c => c.id === id) || null;
 
+      this.form.get('forzarNoDiscriminarIVA')
+        ?.setValue(false, { emitEvent: false });
+
       this.recalcularPreciosPorCliente();
 
       setTimeout(() => {
         this.focusPrimerCodigo();
       });
     });
+
+    this.form.get('forzarNoDiscriminarIVA')?.valueChanges.subscribe(() => {
+      this.recalcularVisualesPorCambioIva();
+    });
+
   }
 
   // ============================
@@ -166,9 +176,17 @@ export class PresupuestosDialogComponent implements OnInit {
     return this.form.get('detalles') as FormArray<FormGroup>;
   }
 
+  // get discriminaIVA(): boolean {
+  //   return this.clienteSeleccionado?.condicionIVA === 'Responsable Inscripto';
+  // }
+
   get discriminaIVA(): boolean {
-    return this.clienteSeleccionado?.condicionIVA === 'Responsable Inscripto';
+    const esRI = this.clienteSeleccionado?.condicionIVA === 'Responsable Inscripto';
+    const forzarNo = this.form.get('forzarNoDiscriminarIVA')?.value === true;
+
+    return esRI && !forzarNo;
   }
+
 
   nuevaLinea(): FormGroup {
     return this.fb.group({
@@ -188,8 +206,8 @@ export class PresupuestosDialogComponent implements OnInit {
       factorConversion: [0],
 
 
-      esServicio: [false],          
-      observaciones: ['']             
+      esServicio: [false],
+      observaciones: ['']
     });
   }
 
@@ -397,9 +415,9 @@ export class PresupuestosDialogComponent implements OnInit {
     if (!precioCtrl) return;
 
     let value = precioCtrl.value?.toString() ?? '';
-    
+
     value = value.replace(',', '.');
-    
+
     value = value.replace(/[^0-9.]/g, '');
 
 
@@ -413,7 +431,7 @@ export class PresupuestosDialogComponent implements OnInit {
 
     const visual = Number(value);
     if (Number.isNaN(visual)) return;
-    
+
     const base = this.discriminaIVA
       ? visual
       : visual / (1 + this.IVA);
@@ -498,6 +516,7 @@ export class PresupuestosDialogComponent implements OnInit {
 
     this.presupuestosService.crearPresupuesto({
       clienteId: Number(this.form.value.clienteId),
+      forzarNoDiscriminarIVA: this.form.value.forzarNoDiscriminarIVA, // 👈
       totalManual: this.totalManual,
       detalles: detallesDto
     } as any).subscribe({
@@ -594,6 +613,20 @@ export class PresupuestosDialogComponent implements OnInit {
       });
     });
   }
+
+  private recalcularVisualesPorCambioIva(): void {
+    this.detalles.controls.forEach(ctrl => {
+      const base = Number(ctrl.get('precioUnitario')?.value || 0);
+
+      // actualiza precioVisual según el modo actual (RI vs No RI)
+      const visual = this.discriminaIVA
+        ? base
+        : base * (1 + this.IVA);
+
+      ctrl.get('precioVisual')?.setValue(visual.toFixed(2), { emitEvent: false });
+    });
+  }
+
 
 
 

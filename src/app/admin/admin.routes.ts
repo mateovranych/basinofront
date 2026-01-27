@@ -12,6 +12,7 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'condiciones-iva', loadComponent: () => import('./condiciones-iva/condiciones-iva').then(m => m.CondicionesIva) },
       // { path: 'sesiones', loadComponent: () => import('./sesiones/sesiones').then(m => m.Sesiones) },
       { path: 'categorias', loadComponent: () => import('./categorias/categorias').then(m => m.Categorias) },
+      { path: 'cuentacorriente', loadComponent: () => import('./cuentacorriente/cuentacorriente').then(m => m.Cuentacorriente) },
       { path: 'clientes', loadComponent: () => import('../operador/clientes/clientes').then(m => m.Clientes) },
       { path: 'proveedores', loadComponent: () => import('../operador/proveedores/proveedores').then(m => m.Proveedores) },
       { path: 'facturacion', loadComponent: () => import('../operador/facturacion/facturacion').then(m => m.Facturacion) },
