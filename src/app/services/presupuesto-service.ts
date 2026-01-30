@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { Presupuesto } from '../interfaces/Presupuesto/Presupuesto';
 import { CrearPresupuesto } from '../interfaces/Presupuesto/CrearPresupuesto';
+import { ValidacionEliminarPresupuesto } from '../interfaces/Presupuesto/ValidacionEliminarPresupuesto';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,10 @@ export class PresupuestoService {
 
   crearPresupuesto(dto: CrearPresupuesto): Observable<Presupuesto> {
     return this.http.post<Presupuesto>(this.apiUrl, dto);
+  }
+
+  validarEliminar(id: number): Observable<ValidacionEliminarPresupuesto> {
+    return this.http.get<ValidacionEliminarPresupuesto>(`${this.apiUrl}/${id}/validar-eliminar`);
   }
 
   eliminarPresupuesto(id: number): Observable<void> {

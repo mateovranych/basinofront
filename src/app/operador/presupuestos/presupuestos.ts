@@ -35,7 +35,7 @@ import { Presupuestospdfdialog } from './presupuestospdfdialog/presupuestospdfdi
 })
 export class Presupuestos implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['id', 'cliente','categoria', 'fecha', 'total', 'acciones'];
+  displayedColumns: string[] = ['id', 'cliente', 'categoria', 'fecha', 'total', 'acciones'];
   dataSource = new MatTableDataSource<Presupuesto>([]);
   cargando = false;
 
@@ -109,39 +109,47 @@ export class Presupuestos implements OnInit, AfterViewInit {
   }
 
   eliminarPresupuesto(id: number): void {
-    Swal.fire({
-      title: '¿Eliminar presupuesto?',
-      text: 'Esta acción no se puede deshacer.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.service.eliminarPresupuesto(id).subscribe({
-          next: () => {
-            Swal.fire('Eliminado', 'Presupuesto eliminado correctamente', 'success');
-            this.cargarPresupuestos();
-          },
+    this.service.validarEliminar(id).subscribe({
+      next: (validacion) => {
 
-          error: (err) => {
-            let mensaje = 'Ocurrió un error inesperado';
-
-            if (err.status === 400 || err.status === 404) {
-              mensaje = err.error?.message || mensaje;
-            }
-
-            if (err.status === 500) {
-              mensaje = 'Error interno del servidor. Intente nuevamente.';
-            }
-
-            Swal.fire('Error', mensaje, 'error');
-          }
+        if (!validacion.puedeEliminar) {
+          Swal.fire('No permitido', validacion.mensaje || 'No se puede eliminar', 'warning');
+          return;
         }
-        );
+
+        Swal.fire({
+          title: '¿Eliminar presupuesto?',
+          text: validacion.mensaje || 'Esta acción no se puede deshacer.',
+          icon: validacion.tieneMovimientos ? 'warning' : 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar'
+        }).then(result => {
+          if (result.isConfirmed) {
+            this.service.eliminarPresupuesto(id).subscribe({
+              next: () => {
+                Swal.fire('Eliminado', 'Presupuesto eliminado correctamente', 'success');
+                this.cargarPresupuestos();
+              },
+              error: (err) => {
+                let mensaje = 'Ocurrió un error inesperado';
+
+                if (err.status === 400 || err.status === 404) {
+                  mensaje = err.error?.message || mensaje;
+                }
+
+                Swal.fire('Error', mensaje, 'error');
+              }
+            });
+          }
+        });
+      },
+      error: () => {
+        Swal.fire('Error', 'No se pudo validar el presupuesto', 'error');
       }
     });
   }
+
 
   descargarPresupuesto(id: number): void {
     this.service.descargarPdf(id).subscribe(pdf => {
