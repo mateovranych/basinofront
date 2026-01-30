@@ -64,6 +64,8 @@ export class Precio implements OnInit {
 
   listaExportar: 'listaA' | 'listaB' | 'listaC' = 'listaA';
 
+  private valorAnterior = new WeakMap<any, Record<string, number>>();
+
 
   displayedColumns: string[] = [];
 
@@ -82,22 +84,22 @@ export class Precio implements OnInit {
     event.preventDefault();
 
     setTimeout(() => {
-      
+
       const filas = Array.from(document.querySelectorAll('.mat-mdc-row'));
 
-    
+
       const filaSiguiente = filas[filaIndex + 1];
 
       if (filaSiguiente) {
-       
+
         const nextInput = filaSiguiente.querySelector(selectorColumna) as HTMLInputElement;
 
         if (nextInput) {
           nextInput.focus();
-          nextInput.select();
+          // nextInput.select();
         }
       } else {
-       
+
         if (this.pageIndex + 1 < this.totalPaginas) {
           this.paginaSiguiente();
 
@@ -232,10 +234,14 @@ export class Precio implements OnInit {
   }
 
 
+
+  //LE SACO EL MATH.ROUND PARA NO READONDEAR.
   onPorcentajeChange(item: any, lista: any) {
     const nuevo = lista.porcentaje;
 
-    const nuevoPrecio = Math.round(item.precioVenta * (1 + nuevo / 100));
+
+
+    const nuevoPrecio = (item.precioVenta * (1 + nuevo / 100));
     lista.precio = nuevoPrecio;
 
     item._highlight = true;
@@ -305,9 +311,11 @@ export class Precio implements OnInit {
     for (const item of this.itemsFiltrados) {
       item._highlight = true;
 
+
+      //LE SACO EL MATH.ROUHD PARA NO REDONDEAR
       for (const lista of item.listasDetalle) {
         lista.porcentaje = this.porcentajeGlobal!;
-        const nuevoPrecio = Math.round(item.precioVenta * (1 + lista.porcentaje / 100));
+        const nuevoPrecio = (item.precioVenta * (1 + lista.porcentaje / 100));
         lista.precio = nuevoPrecio;
 
         if (lista.porcentajeId) {
@@ -431,7 +439,8 @@ export class Precio implements OnInit {
     keyboardEvent.preventDefault();
 
     for (const lista of item.listasDetalle) {
-      lista.precio = Math.round(
+      //LE SACO EL MATH.ROUHD PARA NO REDONDEAR
+      lista.precio = (
         item.precioVenta * (1 + lista.porcentaje / 100)
       );
     }
@@ -452,7 +461,9 @@ export class Precio implements OnInit {
     const keyboardEvent = event as KeyboardEvent;
     keyboardEvent.preventDefault();
 
-    lista.precio = Math.round(
+    //LE SACO EL MATH.ROUHD PARA NO REDONDEAR
+
+    lista.precio = (
       item.precioVenta * (1 + lista.porcentaje / 100)
     );
 
@@ -465,35 +476,56 @@ export class Precio implements OnInit {
     );
   }
 
-
+  //LE SACO EL MATH.ROUHD PARA NO REDONDEAR
   onPorcentajeInput(item: any, lista: any) {
-    lista.precio = Math.round(
+    lista.precio = (
       item.precioVenta * (1 + lista.porcentaje / 100)
     );
   }
-
+  //LE SACO EL MATH.ROUHD PARA NO REDONDEAR
   onPrecioVentaInput(item: any) {
     for (const lista of item.listasDetalle) {
-      lista.precio = Math.round(
+      lista.precio = (
         item.precioVenta * (1 + lista.porcentaje / 100)
       );
     }
   }
 
-
-
-
   onTabPrecioVenta(event: Event, item: any) {
 
     this.onPrecioVentaInput(item);
-    this.onPrecioVentaChange(item); 
+    this.onPrecioVentaChange(item);
   }
 
 
   onTabPorcentaje(event: Event, item: any, lista: any) {
     this.onPorcentajeInput(item, lista);
-    this.onPorcentajeChange(item, lista); 
+    this.onPorcentajeChange(item, lista);
   }
+
+  onKeyDownNumero(event: KeyboardEvent) {
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault();
+    }
+  }
+
+
+  onFocusNumero(obj: any, campo: string) {
+    if (!this.valorAnterior.has(obj)) {
+      this.valorAnterior.set(obj, {});
+    }
+
+    this.valorAnterior.get(obj)![campo] = obj[campo];
+  }
+
+  onEscapeNumero(obj: any, campo: string) {
+    const original = this.valorAnterior.get(obj)?.[campo];
+
+    if (original !== undefined) {
+      obj[campo] = original;
+    }
+  }
+
 
 
 }

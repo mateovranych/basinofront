@@ -46,15 +46,24 @@
     <td mat-cell *matCellDef="let item"> {{ item.descripcion }} </td>
   </ng-container>
 
+  <!-- ACORDATE TODA LA VIDA QUE EL PRECIO ES PRECIO VENTA EL QUE TOMA LOS VALORES, PRECIO COSTO ES EL QUE QUERIA BASSINO -->
+
   <ng-container matColumnDef="precioVenta">
     <th mat-header-cell *matHeaderCellDef (click)="ordenar('precioVenta')" class="sortable"> COSTO </th>
     <td mat-cell *matCellDef="let item; let i = index">
-      <input type="number" 
+
+      <!-- <input type="number" 
       [(ngModel)]="item.precioVenta" 
       (change)="onPrecioVentaChange(item)"
-        (keydown.enter)="onEnterPrecioVenta($event, item, i)" class="input-precio input-precio-venta",
-        (keydown.tab)="onTabPrecioVenta($event, item)" />
-        
+        (keydown.enter)="onEnterPrecioVenta($event, item, i)" 
+        class="input-precio input-precio-venta",
+        (keydown.tab)="onTabPrecioVenta($event, item)" /> -->
+
+      <input type="number" [(ngModel)]="item.precioVenta" (keydown)="onKeyDownNumero($event)"
+        (focus)="onFocusNumero(item, 'precioVenta')" (keydown.enter)="onEnterPrecioVenta($event, item, i)"
+        (keydown.tab)="onTabPrecioVenta($event, item)" (keydown.escape)="onEscapeNumero(item, 'precioVenta')"
+        class="input-precio input-precio-venta" />
+
     </td>
   </ng-container>
 
@@ -62,26 +71,38 @@
   <ng-container [matColumnDef]="lista.key + '_pct'">
     <th mat-header-cell *matHeaderCellDef> % {{ lista.nombre }} </th>
     <td mat-cell *matCellDef="let item; let i = index">
-      <!-- <input type="number" [(ngModel)]="item.listasDetalle[listaIdx].porcentaje"
-        (change)="onPorcentajeChange(item, item.listasDetalle[listaIdx])"
-        (keydown.enter)="moverFocoAbajo($event, i, '.input-pct-' + lista.key)"
-        [class]="'input-porcentaje input-pct-' + lista.key" /> -->
 
-      <input type="number" 
-      [(ngModel)]="item.listasDetalle[listaIdx].porcentaje"
+      <!-- <input type="number" [(ngModel)]="item.listasDetalle[listaIdx].porcentaje"
         (change)="onPorcentajeChange(item, item.listasDetalle[listaIdx])"
         (keydown.enter)="onEnterPorcentaje($event, item, item.listasDetalle[listaIdx], i, lista.key)"
         (keydown.tab)="onTabPorcentaje($event, item, item.listasDetalle[listaIdx])"
-        [class]="'input-porcentaje input-pct-' + lista.key" />
+        [class]="'input-porcentaje input-pct-' + lista.key" /> -->
+
+      <input type="number" [(ngModel)]="item.listasDetalle[listaIdx].porcentaje" (keydown)="onKeyDownNumero($event)"
+        (focus)="onFocusNumero(item.listasDetalle[listaIdx], 'porcentaje')"
+        (keydown.enter)="onEnterPorcentaje($event, item, item.listasDetalle[listaIdx], i, lista.key)"
+        (keydown.tab)="onTabPorcentaje($event, item, item.listasDetalle[listaIdx])"
+        (keydown.escape)="onEscapeNumero(item.listasDetalle[listaIdx], 'porcentaje')"
+        class="input-porcentaje input-pct-{{ lista.key }}" />
+
 
     </td>
   </ng-container>
 
   <ng-container [matColumnDef]="lista.key + '_val'">
-    <th mat-header-cell *matHeaderCellDef> {{ lista.nombre }} </th>
-    <td mat-cell *matCellDef="let item">
-      {{ item.listasDetalle[listaIdx].precio }}
+
+    <th mat-header-cell *matHeaderCellDef class="col-precio">
+
+      {{ lista.nombre }}
+
+    </th>
+
+    <td mat-cell *matCellDef="let item" class="col-precio">
+      <!-- {{ item.listasDetalle[listaIdx].precio }} -->
+      {{ item.listasDetalle[listaIdx].precio | number:'1.2-2' }}
+
     </td>
+
   </ng-container>
   }
 

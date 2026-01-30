@@ -169,7 +169,16 @@
   }
 }
 
-/* Responsive */
+
+/* Columnas de precios calculados (LISTA A/B/C) */
+.col-precio {
+  text-align: right;
+  padding-right: 0.9rem; // mismo "aire" visual que los inputs
+  font-weight: 500;
+  color: #222;
+}
+
+
 @media (max-width: 900px) {
   .tabla-precios {
     font-size: 0.8rem;
@@ -182,4 +191,14 @@
   .toolbar-precios .filtros-izquierda input {
     min-width: 130px;
   }
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; 
 }

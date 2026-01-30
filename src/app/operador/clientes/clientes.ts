@@ -84,7 +84,8 @@ export class Clientes implements OnInit, AfterViewInit {
       );
     };
 
-    this.cargarClientes();
+    this.cargarClientes();    
+
 
     this.signal.listen("actualizar", modulo => {
       if (modulo === "clientes") {

@@ -54,9 +54,11 @@
         <mat-icon>add</mat-icon>
         Agregar ítem
       </button>
-      <mat-slide-toggle *ngIf="discriminaIVA" formControlName="forzarNoDiscriminarIVA">
+
+      <mat-slide-toggle *ngIf="puedeEmitirComoNoCategorizado" formControlName="forzarNoDiscriminarIVA">
         Emitir como No Categorizado
       </mat-slide-toggle>
+
     </div>
 
 
@@ -258,9 +260,9 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button type="button" (click)="cancelar()">Cancelar</button>
   <button mat-raised-button color="primary" type="button" (click)="guardar()"
     [disabled]="form.invalid || detalles.length === 0">
     Guardar
   </button>
+  <button mat-button type="button" (click)="cancelar()">Cancelar</button>
 </mat-dialog-actions>

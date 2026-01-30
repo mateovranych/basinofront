@@ -264,18 +264,10 @@ export class PresupuestosDialogComponent implements OnInit {
 
     const item = this.items.find(i => i.id === itemId);
     if (!item) return;
-
-    console.log('ITEM SELECCIONADO:', item);
-    console.log('esServicio:', item.esServicio);
-
-    // 🔹 Marcamos si es servicio
     ctrl.patchValue({
       esServicio: item.esServicio
     });
 
-    // =========================
-    // 🔴 SERVICIO
-    // =========================
     if (item.esServicio) {
       ctrl.patchValue({
         cantidadComercial: 1,
@@ -305,12 +297,9 @@ export class PresupuestosDialogComponent implements OnInit {
         }
       });
 
-      return; // ⬅️ CLAVE: no sigue con lógica de productos
+      return; 
     }
 
-    // =========================
-    // 🟢 PRODUCTO
-    // =========================
     const pres = item.presentacionDefault;
 
     if (pres) {
@@ -629,6 +618,14 @@ export class PresupuestosDialogComponent implements OnInit {
 
 
 
+  get puedeEmitirComoNoCategorizado(): boolean {
+    const cond = this.clienteSeleccionado?.condicionIVA;
+    return (
+      cond === 'Responsable Inscripto' ||
+      cond === 'Monotributista' ||
+      cond === 'Consumidor Final'
+    );
+  }
 
 
 }
