@@ -1,0 +1,47 @@
+.recibos-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.w-100 { width: 100%; }
+
+.info-box {
+  background: #f5f7fa;
+  border-radius: 12px;
+  padding: 16px 18px;
+  color: #444;
+}
+
+.tabla-recibos {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+
+  thead {
+    background: #f0f2f5;
+    th {
+      text-align: left;
+      padding: 14px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #555;
+      border-bottom: 1px solid #e0e0e0;
+    }
+  }
+
+  tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #eee;
+  }
+
+  tbody tr:hover {
+    background: #fafafa;
+  }
+}

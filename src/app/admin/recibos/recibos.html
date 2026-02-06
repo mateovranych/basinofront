@@ -1,0 +1,67 @@
+<div class="recibos-page">
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Cliente</mat-label>
+
+    <mat-select [formControl]="clienteIdCtrl">
+      <mat-option>
+        <ngx-mat-select-search [formControl]="filtroClientesCtrl" placeholderLabel="Buscar cliente..."
+          noEntriesFoundLabel="Sin resultados">
+        </ngx-mat-select-search>
+      </mat-option>
+
+      <mat-option *ngIf="cargandoClientes" [disabled]="true">
+        Cargando clientes...
+      </mat-option>
+
+      <mat-option *ngFor="let c of clientesFiltrados" [value]="c.id">
+        {{ c.razonSocial }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div *ngIf="!clienteIdCtrl.value" class="info-box">
+    Seleccioná un cliente para ver sus recibos.
+  </div>
+
+  <div *ngIf="clienteIdCtrl.value">
+    <div *ngIf="cargandoRecibos" class="info-box">
+      Cargando recibos...
+    </div>
+
+    <table *ngIf="!cargandoRecibos && recibos.length" class="tabla-recibos">
+      <thead>
+        <tr>
+          <th>Recibo</th>
+          <th>Fecha</th>
+          <th>Monto</th>
+          <th>Obs.</th>
+          <th>PDF</th>
+          <th>Acciones</th>
+
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let r of recibos">
+          <td>#{{ r.id }}</td>
+          <td>{{ r.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ r.monto | currency:'$' }}</td>
+          <td>{{ r.observacion || '-' }}</td>
+          <td>
+            <button mat-icon-button (click)="verRecibo(r.id)">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" (click)="imprimir(r.id)">
+              <mat-icon>print</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!cargandoRecibos && !recibos.length" class="info-box">
+      Este cliente todavía no tiene recibos.
+    </div>
+  </div>
+</div>

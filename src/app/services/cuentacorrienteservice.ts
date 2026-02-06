@@ -21,7 +21,10 @@ export class Cuentacorrienteservice {
 
   pagarFIFO(dto: any) {
     return this.http.post(`${this.api}/pagar-fifo`, dto);
+  }
 
+  pagarMultiple(dto: any) {
+    return this.http.post(`${this.api}/pagar-multiple`, dto);
   }
 
 }

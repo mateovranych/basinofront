@@ -1,6 +1,7 @@
 {
   "name": "bassino-front",
   "version": "0.0.0",
+  "private": true,
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -8,29 +9,28 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
-  "private": true,
   "dependencies": {
-    "@angular/animations": "^20.3.6",
-    "@angular/cdk": "^20.2.9",
-    "@angular/common": "^20.0.0",
-    "@angular/compiler": "^20.0.0",
-    "@angular/core": "^20.0.0",
-    "@angular/forms": "^20.0.0",
-    "@angular/material": "^20.2.9",
-    "@angular/platform-browser": "^20.0.0",
-    "@angular/router": "^20.0.0",
+    "@angular/animations": "^20.3.16",
+    "@angular/cdk": "20.2.9",
+    "@angular/common": "20.3.6",
+    "@angular/compiler": "20.3.6",
+    "@angular/core": "20.3.6",
+    "@angular/forms": "^20.3.16",
+    "@angular/material": "20.2.9",
+    "@angular/platform-browser": "^20.3.16",
+    "@angular/router": "^20.3.16",
     "@microsoft/signalr": "^9.0.6",
     "jwt-decode": "^4.0.0",
     "ngx-mat-select-search": "^8.0.3",
-    "rxjs": "~7.8.0",
+    "rxjs": "~7.8.2",
     "sweetalert2": "^11.26.3",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular/build": "^20.0.1",
-    "@angular/cli": "^20.0.1",
-    "@angular/compiler-cli": "^20.0.0",
+    "@angular/build": "^20.3.15",
+    "@angular/cli": "^20.3.15",
+    "@angular/compiler-cli": "^20.3.16",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.7.0",
     "karma": "~6.4.0",
@@ -38,6 +38,6 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.8.2"
+    "typescript": "5.8.2"
   }
 }

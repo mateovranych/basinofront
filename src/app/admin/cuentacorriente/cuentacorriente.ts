@@ -11,20 +11,46 @@ import Swal from 'sweetalert2';
 
 import { ClientesService } from '../../services/clientes-service';
 import { Cuentacorrienteservice } from '../../services/cuentacorrienteservice';
+import { RecibosService } from '../../services/recibos-service';
 
+/* =========================
+   INTERFACES (ACÁ MISMO)
+========================= */
 
-
-type ClienteMin = {
+interface ClienteMin {
   id: number;
   razonSocial: string;
   condicionIVA: string;
   listaPrecioNombre: string;
-};
+}
+
+interface PresupuestoCC {
+  presupuestoId: number;
+  fecha: string;
+  monto: number;
+  pagos: number;
+  saldo: number;
+  observacion?: string;
+
+  // frontend only
+  seleccionado?: boolean;
+  montoPago?: number | null;
+}
+
+interface CuentaCorrienteCliente {
+  clienteId: number;
+  clienteNombre: string;
+  saldoTotal: number;
+  presupuestos: PresupuestoCC[];
+}
+
+/* ========================= */
 
 @Component({
   selector: 'app-cuentacorriente',
   standalone: true,
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -32,13 +58,14 @@ type ClienteMin = {
     MatIconModule,
     MatInputModule,
     NgxMatSelectSearchModule,
-    FormsModule],
+    FormsModule
+  ],
   templateUrl: './cuentacorriente.html',
   styleUrl: './cuentacorriente.scss'
 })
 export class Cuentacorriente implements OnInit {
 
- clientes: ClienteMin[] = [];
+  clientes: ClienteMin[] = [];
   clientesFiltrados: ClienteMin[] = [];
   clienteSeleccionado: ClienteMin | null = null;
 
@@ -47,17 +74,22 @@ export class Cuentacorriente implements OnInit {
 
   cargandoClientes = false;
 
-  cuentaCorriente: any = null;
+  cuentaCorriente: CuentaCorrienteCliente | null = null;
   cargandoCuenta = false;
+
+  observacionPago: string = '';
+
 
   constructor(
     private clientesService: ClientesService,
-    private cuentaCorrienteService: Cuentacorrienteservice
-  ) {}
+    private cuentaCorrienteService: Cuentacorrienteservice,
+    private reciboService: RecibosService
+  ) { }
 
-  // ============================
-  // INIT
-  // ============================
+  /* =========================
+            INIT
+  ========================= */
+
   ngOnInit(): void {
     this.cargarClientes();
 
@@ -80,9 +112,10 @@ export class Cuentacorriente implements OnInit {
     });
   }
 
-  // ============================
-  // DATA LOAD
-  // ============================
+  /* =========================
+         DATA LOAD
+  ========================= */
+
   cargarClientes(): void {
     this.cargandoClientes = true;
     this.clienteIdCtrl.disable();
@@ -109,9 +142,11 @@ export class Cuentacorriente implements OnInit {
 
     this.cuentaCorrienteService.obtenerCuentaCorriente(clienteId)
       .subscribe({
-        next: data => {
-          // agregamos campo auxiliar para input de pago
-          data.presupuestos.forEach((p: any) => p.montoPago = null);
+        next: (data: CuentaCorrienteCliente) => {
+          data.presupuestos.forEach(p => {
+            p.montoPago = null;
+            p.seleccionado = false;
+          });
           this.cuentaCorriente = data;
         },
         error: () => {
@@ -122,23 +157,28 @@ export class Cuentacorriente implements OnInit {
       });
   }
 
-  // ============================
-  // ACCIONES
-  // ============================
-  pagarPresupuesto(p: any): void {
+  /* =========================
+           ACCIONES
+  ========================= */
+
+  pagarPresupuesto(p: PresupuestoCC): void {
     if (!p.montoPago || p.montoPago <= 0) {
       Swal.fire('Atención', 'Ingresá un monto válido', 'warning');
       return;
     }
 
-    this.cuentaCorrienteService.pagar({
-      clienteId: this.clienteIdCtrl.value,
+    this.reciboService.crearReciboPago({
+      clienteId: this.clienteIdCtrl.value!,
       presupuestoId: p.presupuestoId,
-      monto: p.montoPago,
-      observacion: 'Pago desde cuenta corriente'
+      monto: p.montoPago!,
+      observacion: this.observacionPago,
     }).subscribe({
-      next: () => {
-        Swal.fire('Ok', 'Pago registrado', 'success');
+      next: res => {
+        Swal.fire(
+          'Pago registrado',
+          `Recibo Nº ${res.reciboId}`,
+          'success'
+        );
         this.cargarCuentaCorriente(this.clienteIdCtrl.value!);
       },
       error: () => {
@@ -148,7 +188,70 @@ export class Cuentacorriente implements OnInit {
   }
 
 
+
+
+  pagarSeleccionados(): void {
+    const seleccionados = this.presupuestosSeleccionados
+      .filter(p => p.montoPago && p.montoPago > 0);
+
+    if (!seleccionados.length) {
+      Swal.fire('Atención', 'No hay pagos válidos', 'warning');
+      return;
+    }
+
+    this.reciboService.crearReciboPagoMultiple({
+      clienteId: this.clienteIdCtrl.value!,
+      observacion: this.observacionPago,
+      detalles: seleccionados.map(p => ({
+        presupuestoId: p.presupuestoId,
+        monto: p.montoPago!
+      }))
+    }).subscribe({
+      next: res => {
+        Swal.fire(
+          'Pago registrado',
+          `Recibo Nº ${res.reciboId}`,
+          'success'
+        );
+        this.cargarCuentaCorriente(this.clienteIdCtrl.value!);
+      },
+      error: () => {
+        Swal.fire('Error', 'No se pudo registrar el pago', 'error');
+      }
+    });
+
+  }
+
+  limpiarSeleccion(): void {
+    this.cuentaCorriente?.presupuestos.forEach(p => {
+      p.seleccionado = false;
+      p.montoPago = null;
+    });
+  }
+
+  toggleSeleccion(p: PresupuestoCC): void {
+    p.seleccionado = !p.seleccionado;
+
+    if (p.seleccionado && !p.montoPago) {
+      p.montoPago = p.saldo;
+    }
+
+    if (!p.seleccionado) {
+      p.montoPago = null;
+    }
+  }
+
+  /* =========================
+            GETTERS
+  ========================= */
+
+  get presupuestosSeleccionados(): PresupuestoCC[] {
+    return this.cuentaCorriente?.presupuestos
+      .filter(p => p.seleccionado) ?? [];
+  }
+
+  get totalSeleccionado(): number {
+    return this.presupuestosSeleccionados
+      .reduce((acc, p) => acc + (p.montoPago ?? p.saldo), 0);
+  }
 }
-
-
-
