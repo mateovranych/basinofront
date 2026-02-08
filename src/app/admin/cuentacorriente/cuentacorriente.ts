@@ -12,6 +12,8 @@ import Swal from 'sweetalert2';
 import { ClientesService } from '../../services/clientes-service';
 import { Cuentacorrienteservice } from '../../services/cuentacorrienteservice';
 import { RecibosService } from '../../services/recibos-service';
+import { MatDialog } from '@angular/material/dialog';
+import { Historialcc } from './historialcc/historialcc';
 
 /* =========================
    INTERFACES (ACÁ MISMO)
@@ -83,7 +85,8 @@ export class Cuentacorriente implements OnInit {
   constructor(
     private clientesService: ClientesService,
     private cuentaCorrienteService: Cuentacorrienteservice,
-    private reciboService: RecibosService
+    private reciboService: RecibosService,
+    private dialog: MatDialog
   ) { }
 
   /* =========================
@@ -240,6 +243,20 @@ export class Cuentacorriente implements OnInit {
       p.montoPago = null;
     }
   }
+
+  abrirHistorial(): void {
+    if (!this.clienteIdCtrl.value) return;
+
+    this.dialog.open(Historialcc, {
+      width: '900px',
+      maxHeight: '90vh',
+      data: {
+        clienteId: this.clienteIdCtrl.value,
+        clienteNombre: this.clienteSeleccionado?.razonSocial
+      }
+    });
+  }
+
 
   /* =========================
             GETTERS

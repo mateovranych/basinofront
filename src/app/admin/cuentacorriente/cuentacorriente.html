@@ -27,9 +27,13 @@
           'deuda': cuentaCorriente.saldoTotal > 0,
           'favor': cuentaCorriente.saldoTotal < 0
         }">
-                {{ cuentaCorriente.saldoTotal | currency:'ARS' }}
+                {{ cuentaCorriente.saldoTotal | currency:'$' }}
             </span>
         </h3>
+        <button mat-stroked-button color="primary" (click)="abrirHistorial()" [disabled]="!clienteIdCtrl.value">
+            Ver historial
+        </button>
+
     </div>
 
     <div *ngIf="cuentaCorriente?.presupuestos?.length">
@@ -91,7 +95,7 @@
 
             <div class="panel-total">
                 Total a pagar:
-                <strong>{{ totalSeleccionado | currency:'ARS' }}</strong>
+                <strong>{{ totalSeleccionado | currency:'$' }}</strong>
             </div>
 
             <div class="panel-actions">

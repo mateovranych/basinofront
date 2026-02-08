@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
+import { MovimientoCuentaCorriente } from '../interfaces/CuentaCorriente/MovimientoCuentaCorriente';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,12 @@ export class Cuentacorrienteservice {
 
   pagarMultiple(dto: any) {
     return this.http.post(`${this.api}/pagar-multiple`, dto);
+  }
+
+  obtenerHistorial(clienteId: number) {
+    return this.http.get<MovimientoCuentaCorriente[]>(
+      `${this.api}/cliente/${clienteId}/historial`
+    );
   }
 
 }

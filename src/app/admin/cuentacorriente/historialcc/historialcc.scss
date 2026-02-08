@@ -1,0 +1,35 @@
+.tabla-historial {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+
+.debe {
+  color: #c62828;
+}
+
+.haber {
+  color: #2e7d32;
+}
+
+.deuda {
+  color: #c62828;
+  font-weight: bold;
+}
+
+.favor {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
