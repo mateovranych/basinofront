@@ -1,3 +1,18 @@
+/* Chrome, Edge, Safari */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
+
+
 .cuenta-corriente-page {
   max-width: 1200px;
   margin: 0 auto;
@@ -127,8 +142,6 @@
   }
 }
 
-/* ================= SIN DEUDA ================= */
-
 .sin-deuda {
   text-align: center;
   padding: 32px;
@@ -138,110 +151,141 @@
   font-size: 1rem;
 }
 
-/* ================= RESPONSIVE ================= */
-
-
-
-/* ================= PANEL PAGO SELECCIONADOS ================= */
+/* ================= PANEL PAGO ================= */
 
 .panel-pago {
   position: sticky;
-  bottom: 0;
-  margin-top: 16px;
-  background: #ffffff;
-  border-top: 2px solid #1976d2;
-  border-radius: 12px 12px 0 0;
-  padding: 14px 20px;
+  bottom: 16px;
 
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px 24px;
+
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "obs total"
+    "detalles acciones";
+
+  gap: 20px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  border: 1px solid #e0e0e0;
+  z-index: 30;
+}
+
+/* ================= OBSERVACION ================= */
+
+.panel-pago mat-form-field.w-100 {
+  grid-area: obs;
+}
+
+/* ================= DETALLES ================= */
+
+.panel-detalles {
+  grid-area: detalles;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detalle-pago {
+  display: grid;
+  grid-template-columns: 1fr 160px;
   align-items: center;
   gap: 16px;
 
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.12);
-  z-index: 20;
+  padding: 12px 14px;
+  background: #f8f9fb;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
 }
 
-.panel-info {
+.detalle-info {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.9rem;
-  color: #444;
+  flex-direction: column;
+  gap: 4px;
 
   strong {
-    margin-right: 6px;
+    font-size: 0.95rem;
+    color: #1f2937;
   }
 
-  span {
-    background: #e3f2fd;
-    color: #1976d2;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.85rem;
+  small {
+    font-size: 0.8rem;
+    color: #6b7280;
   }
 }
+
+.monto-field {
+  width: 100%;
+}
+
+/* ================= TOTAL ================= */
 
 .panel-total {
-  font-size: 1.05rem;
-  font-weight: 500;
-  color: #333;
+  grid-area: total;
+
+  align-self: center;
+  text-align: right;
+
+  font-size: 0.95rem;
+  color: #555;
 
   strong {
-    margin-left: 6px;
-    font-size: 1.2rem;
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 700;
     color: #1976d2;
   }
 }
 
+/* ================= ACCIONES ================= */
+
 .panel-actions {
+  grid-area: acciones;
+
   display: flex;
-  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
 }
 
+/* ================= BOTONES ================= */
 
-@media (max-width: 768px) {
-  .tabla-cc {
-    font-size: 0.85rem;
-
-    thead {
-      display: none;
-    }
-
-    tbody tr {
-      display: flex;
-      flex-direction: column;
-      padding: 12px;
-      border-bottom: 1px solid #e0e0e0;
-    }
-
-    td {
-      border: none;
-      padding: 6px 0;
-    }
-
-    .pagar-col {
-      margin-top: 8px;
-    }
-  }
-
-  .saldo-box {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
+.panel-actions button {
+  min-width: 120px;
 }
 
-@media (max-width: 768px) {
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 900px) {
   .panel-pago {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "obs"
+      "detalles"
+      "total"
+      "acciones";
+  }
+
+  .panel-total {
+    text-align: left;
+
+    strong {
+      font-size: 1.4rem;
+    }
   }
 
   .panel-actions {
-    justify-content: flex-end;
+    justify-content: space-between;
+  }
+
+  .detalle-pago {
+    grid-template-columns: 1fr;
   }
 }
+
+
+
+

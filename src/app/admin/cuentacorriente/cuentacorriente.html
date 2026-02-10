@@ -21,6 +21,7 @@
     </mat-form-field>
 
     <div *ngIf="cuentaCorriente" class="saldo-box">
+
         <h3>
             Saldo total:
             <span [ngClass]="{
@@ -30,6 +31,7 @@
                 {{ cuentaCorriente.saldoTotal | currency:'$' }}
             </span>
         </h3>
+
         <button mat-stroked-button color="primary" (click)="abrirHistorial()" [disabled]="!clienteIdCtrl.value">
             Ver historial
         </button>
@@ -46,7 +48,7 @@
                     <th>Monto</th>
                     <th>Pagos</th>
                     <th>Saldo</th>
-                    <th>Pagar</th>
+                    <!-- <th>Pagar</th> -->
                 </tr>
             </thead>
 
@@ -64,14 +66,6 @@
                     <td>{{ p.monto | currency }}</td>
                     <td>{{ p.pagos | currency }}</td>
                     <td><strong>{{ p.saldo | currency }}</strong></td>
-
-                    <td class="pagar-col">
-                        <input matInput type="number" placeholder="Monto" [(ngModel)]="p.montoPago" />
-
-                        <button mat-icon-button color="primary" (click)="pagarPresupuesto(p)">
-                            <mat-icon>check</mat-icon>
-                        </button>
-                    </td>
                 </tr>
             </tbody>
 
@@ -82,15 +76,26 @@
             <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Observación del recibo</mat-label>
                 <textarea matInput rows="2" [(ngModel)]="observacionPago"
-                    placeholder="Ej: Pago contado, transferencia, efectivo…">
-                </textarea>
+                    placeholder="Ej: efectivo, transferencia, MP…">
+        </textarea>
             </mat-form-field>
 
-            <div class="panel-info">
-                <strong>Presupuestos:</strong>
-                <span *ngFor="let p of presupuestosSeleccionados">
-                    #{{ p.presupuestoId }}
-                </span>
+            <div class="panel-detalles">
+
+                <div class="detalle-pago" *ngFor="let p of presupuestosSeleccionados">
+
+                    <div class="detalle-info">
+                        <strong>Presupuesto #{{ p.presupuestoId }}</strong>
+                        <small>Saldo: {{ p.saldo | currency:'$' }}</small>
+                    </div>
+
+                    <mat-form-field appearance="outline" class="monto-field">
+                        <mat-label>Monto a pagar</mat-label>
+                        <input matInput type="number" min="1" [max]="p.saldo" [(ngModel)]="p.montoPago" (keydown)="bloquearFlechas($event)" >
+                    </mat-form-field>
+
+                </div>
+
             </div>
 
             <div class="panel-total">
@@ -103,16 +108,15 @@
                     Cancelar
                 </button>
 
-                <button mat-raised-button color="primary" (click)="pagarSeleccionados()">
+                <button mat-raised-button color="primary" [disabled]="pagando" (click)="pagarSeleccionados()">
                     Confirmar pago
                 </button>
             </div>
-        </div>
 
+        </div>
 
     </div>
 
-    <!-- ================= SIN DEUDA ================= -->
     <div *ngIf="cuentaCorriente && !cuentaCorriente.presupuestos.length">
         <p class="sin-deuda">
             El cliente no tiene deuda pendiente.

@@ -65,6 +65,8 @@ interface CuentaCorrienteCliente {
   templateUrl: './cuentacorriente.html',
   styleUrl: './cuentacorriente.scss'
 })
+
+
 export class Cuentacorriente implements OnInit {
 
   clientes: ClienteMin[] = [];
@@ -75,6 +77,8 @@ export class Cuentacorriente implements OnInit {
   filtroClientesCtrl = new FormControl('');
 
   cargandoClientes = false;
+
+  pagando = false;
 
   cuentaCorriente: CuentaCorrienteCliente | null = null;
   cargandoCuenta = false;
@@ -88,10 +92,6 @@ export class Cuentacorriente implements OnInit {
     private reciboService: RecibosService,
     private dialog: MatDialog
   ) { }
-
-  /* =========================
-            INIT
-  ========================= */
 
   ngOnInit(): void {
     this.cargarClientes();
@@ -115,9 +115,6 @@ export class Cuentacorriente implements OnInit {
     });
   }
 
-  /* =========================
-         DATA LOAD
-  ========================= */
 
   cargarClientes(): void {
     this.cargandoClientes = true;
@@ -159,39 +156,6 @@ export class Cuentacorriente implements OnInit {
         complete: () => this.cargandoCuenta = false
       });
   }
-
-  /* =========================
-           ACCIONES
-  ========================= */
-
-  pagarPresupuesto(p: PresupuestoCC): void {
-    if (!p.montoPago || p.montoPago <= 0) {
-      Swal.fire('Atención', 'Ingresá un monto válido', 'warning');
-      return;
-    }
-
-    this.reciboService.crearReciboPago({
-      clienteId: this.clienteIdCtrl.value!,
-      presupuestoId: p.presupuestoId,
-      monto: p.montoPago!,
-      observacion: this.observacionPago,
-    }).subscribe({
-      next: res => {
-        Swal.fire(
-          'Pago registrado',
-          `Recibo Nº ${res.reciboId}`,
-          'success'
-        );
-        this.cargarCuentaCorriente(this.clienteIdCtrl.value!);
-      },
-      error: () => {
-        Swal.fire('Error', 'No se pudo registrar el pago', 'error');
-      }
-    });
-  }
-
-
-
 
   pagarSeleccionados(): void {
     const seleccionados = this.presupuestosSeleccionados
@@ -257,11 +221,6 @@ export class Cuentacorriente implements OnInit {
     });
   }
 
-
-  /* =========================
-            GETTERS
-  ========================= */
-
   get presupuestosSeleccionados(): PresupuestoCC[] {
     return this.cuentaCorriente?.presupuestos
       .filter(p => p.seleccionado) ?? [];
@@ -269,6 +228,17 @@ export class Cuentacorriente implements OnInit {
 
   get totalSeleccionado(): number {
     return this.presupuestosSeleccionados
-      .reduce((acc, p) => acc + (p.montoPago ?? p.saldo), 0);
+      .reduce((acc, p) => acc + (p.montoPago ?? 0), 0);
   }
+  
+
+
+  bloquearFlechas(event: KeyboardEvent) {
+  if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+    event.preventDefault();
+  }
+}
+
+
+
 }
