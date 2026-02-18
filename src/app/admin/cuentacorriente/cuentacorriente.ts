@@ -15,9 +15,6 @@ import { RecibosService } from '../../services/recibos-service';
 import { MatDialog } from '@angular/material/dialog';
 import { Historialcc } from './historialcc/historialcc';
 
-/* =========================
-   INTERFACES (ACÁ MISMO)
-========================= */
 
 interface ClienteMin {
   id: number;

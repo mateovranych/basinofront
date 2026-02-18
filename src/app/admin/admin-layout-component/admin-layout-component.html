@@ -1,36 +1,74 @@
 <mat-sidenav-container class="sidenav-container">
+
   <mat-sidenav mode="side" [(opened)]="opened" class="sidenav" fixedInViewport>
+
     <div class="logo">
       <img src="logo.png" alt="logo">
     </div>
 
     <mat-nav-list>
-      <mat-nav-list>
-        <!-- <a mat-list-item (click)="navigate('')">🏠 Dashboard</a> -->
 
-        <a mat-list-item (click)="navigate('condiciones-iva')">💼 Condiciones IVA</a>
-        <a mat-list-item (click)="navigate('categorias')">🗂️ Categorías</a>
-        <a mat-list-item (click)="navigate('cuentacorriente')">🗂️ Gestion de Recibos</a>
-        <a mat-list-item (click)="navigate('recibos')">🗂️ Recibos</a>
-        <a mat-list-item (click)="navigate('presentacion')">📦 Presentaciones</a>
+      <!-- ================= GESTIÓN COMERCIAL ================= -->
+      <mat-expansion-panel class="menu-group">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            📦 Gestión Comercial
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
         <a mat-list-item (click)="navigate('clientes')">👥 Clientes</a>
         <a mat-list-item (click)="navigate('proveedores')">🏭 Proveedores</a>
+        <a mat-list-item (click)="navigate('items')">📦 Productos / Servicios</a>
+        <a mat-list-item (click)="navigate('categorias')">🗂️ Categorías</a>
+        <a mat-list-item (click)="navigate('presentacion')">📦 Presentaciones</a>
+        <a mat-list-item (click)="navigate('precio')">💰 Precios</a>
+      </mat-expansion-panel>
 
-        <!-- <a mat-list-item (click)="navigate('facturacion')">💳 Facturación</a> -->
+
+      <!-- ================= GESTIÓN FINANCIERA ================= -->
+      <mat-expansion-panel class="menu-group">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            💰 Gestión Financiera
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
         <a mat-list-item (click)="navigate('presupuestos')">📑 Presupuestos</a>
-        <a mat-list-item (click)="navigate('items')">📦 Productos / Servicios</a>
-        <a mat-list-item (click)="navigate('precio')">💰 Precios</a>
+        <!-- <a mat-list-item (click)="navigate('facturas')">🧾 Facturas</a> -->
+        <a mat-list-item (click)="navigate('recibos')">🗂️ Recibos</a>
+        <!-- <a mat-list-item (click)="navigate('gestion-recibos')">🗂️ Gestión de Recibos</a> -->
+        <a mat-list-item (click)="navigate('cuentacorriente')">📊 Cuentas Corrientes</a>
+        <!-- <a mat-list-item (click)="navigate('saldo-general')">📈 Reporte Saldo General</a> -->
+        <a mat-list-item (click)="navigate('condiciones-iva')">💼 Condiciones IVA</a>
+      </mat-expansion-panel>
+
+
+      <!-- ================= GESTIÓN GEOGRÁFICA ================= -->
+      <mat-expansion-panel class="menu-group">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            🌍 Gestión Geográfica
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
         <a mat-list-item (click)="navigate('provincias')">🗺️ Provincias</a>
         <a mat-list-item (click)="navigate('localidades')">📍 Localidades</a>
+      </mat-expansion-panel>
 
-        <!-- <a mat-list-item (click)="navigate('comprobantes')">🧾 Comprobantes</a> -->
-        <!-- <a mat-list-item (click)="navigate('pedidos')">🧾 Pedidos</a> -->
-        <!-- <a mat-list-item (click)="navigate('reportes')">📊 Reportes</a> -->
-        <!-- <a mat-list-item (click)="navigate('sesiones')">🔐 Sesiones</a> -->
-      </mat-nav-list>
+
+
+      <!-- <mat-expansion-panel class="menu-group">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        ⚙️ Administración
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <a mat-list-item (click)="navigate('usuarios')">👤 Usuarios / Roles</a>
+    <a mat-list-item (click)="navigate('reportes')">📊 Reportes</a>
+    <a mat-list-item (click)="navigate('configuracion')">⚙️ Configuración</a>
+    <a mat-list-item (click)="logout()">🚪 Cerrar sesión</a>
+  </mat-expansion-panel> -->
 
     </mat-nav-list>
 
@@ -41,6 +79,7 @@
   </mat-sidenav>
 
   <mat-sidenav-content class="main-content">
+    
     <mat-toolbar color="primary">
       <button mat-icon-button (click)="opened = !opened">
         <mat-icon>menu</mat-icon>

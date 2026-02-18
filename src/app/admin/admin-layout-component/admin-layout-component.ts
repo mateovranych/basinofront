@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { MatExpansionPanelHeader, MatExpansionPanel, MatExpansionPanelTitle } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-admin-layout-component',  
@@ -17,13 +18,15 @@ import { CommonModule } from '@angular/common';
     CommonModule,
     RouterOutlet,
     RouterModule,
-    
     MatSidenavModule,
-     MatToolbarModule,
+    MatToolbarModule,
     MatIconModule,
     MatListModule,
-    MatButtonModule,
-  ],
+    MatButtonModule,    
+    MatExpansionPanelHeader,
+    MatExpansionPanel,
+    MatExpansionPanelTitle
+],
   templateUrl: './admin-layout-component.html',
   styleUrl: './admin-layout-component.scss'
 })

@@ -56,3 +56,18 @@ mat-toolbar {
   flex: 1;
   padding: 1.5rem;
 }
+
+
+.menu-group {
+  background: transparent;
+  box-shadow: none;
+}
+
+.menu-group .mat-expansion-panel-header {
+  padding: 0 16px;
+  font-weight: 600;
+}
+
+.menu-group a {
+  padding-left: 32px;
+}
