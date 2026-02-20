@@ -76,11 +76,11 @@
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" sticky></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
   </table>
 
-  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+  <mat-paginator [pageSize]="50" [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
 
 </div>

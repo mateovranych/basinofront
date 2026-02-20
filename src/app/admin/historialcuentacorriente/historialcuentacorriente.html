@@ -1,0 +1,37 @@
+<div class="historial-container">
+
+  <h2>
+    Historial cuenta corriente – {{ clienteNombre }}
+  </h2>
+
+  <table class="tabla-historial">
+
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Concepto</th>
+        <th class="num">Debe</th>
+        <th class="num">Haber</th>
+        <th class="num">Saldo</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let m of movimientos">
+        <td>{{ m.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ m.concepto }}</td>
+        <td class="num debe">{{ m.debe | currency }}</td>
+        <td class="num haber">{{ m.haber | currency }}</td>
+        <td class="num"
+            [ngClass]="{
+              'deuda': m.saldo > 0,
+              'favor': m.saldo < 0
+            }">
+          {{ m.saldo | currency }}
+        </td>
+      </tr>
+    </tbody>
+
+  </table>
+
+</div>

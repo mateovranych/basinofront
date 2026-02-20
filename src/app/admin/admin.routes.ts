@@ -13,6 +13,7 @@ export const ADMIN_ROUTES: Routes = [
       // { path: 'sesiones', loadComponent: () => import('./sesiones/sesiones').then(m => m.Sesiones) },
       { path: 'categorias', loadComponent: () => import('./categorias/categorias').then(m => m.Categorias) },
       { path: 'cuentacorriente', loadComponent: () => import('./cuentacorriente/cuentacorriente').then(m => m.Cuentacorriente) },
+      { path: 'historialcuentacorriente', loadComponent: () => import('./historialcuentacorriente/historialcuentacorriente').then(m => m.Historialcuentacorriente) },
       { path: 'recibos', loadComponent: () => import('./recibos/recibos').then(m => m.Recibos) },
       { path: 'clientes', loadComponent: () => import('../operador/clientes/clientes').then(m => m.Clientes) },
       { path: 'proveedores', loadComponent: () => import('../operador/proveedores/proveedores').then(m => m.Proveedores) },
