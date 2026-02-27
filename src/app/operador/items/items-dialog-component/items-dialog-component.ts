@@ -48,6 +48,7 @@ export class ItemsDialogComponent implements OnInit {
 
   proveedores: Proveedor[] = [];
   proveedoresFiltrados: Proveedor[] = [];
+  
   filtroProveedorCtrl = new FormControl('');
 
 

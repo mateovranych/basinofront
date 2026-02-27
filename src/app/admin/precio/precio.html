@@ -6,7 +6,7 @@
     <input type="number" placeholder="Venta máx" [(ngModel)]="filtroMaxVenta" (change)="aplicarFiltros()" />
   </div>
 
-  <div class="acciones-derecha">
+  <!-- <div class="acciones-derecha">
     <div class="porcentaje-global">
       <input type="number" placeholder="% global" [(ngModel)]="porcentajeGlobal" />
       <button mat-raised-button color="primary" (click)="aplicarPorcentajeGlobal()">
@@ -16,11 +16,29 @@
     <button mat-stroked-button color="primary" (click)="exportarAExcel()">
       Exportar Excel
     </button>
-  </div>
+  </div> -->
 
   <div class="acciones-derecha">
+
+    <mat-form-field appearance="outline" class="select-proveedor">
+      <mat-label>Proveedor</mat-label>
+      <mat-select [(ngModel)]="proveedorSeleccionado">
+
+        <mat-option>
+          <ngx-mat-select-search [formControl]="filtroProveedorCtrl" placeholderLabel="Buscar proveedor..."
+            noEntriesFoundLabel="Sin resultados">
+          </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngFor="let p of proveedoresFiltrados" [value]="p.id">
+          {{ p.razonSocial }}
+        </mat-option>
+
+      </mat-select>
+    </mat-form-field>
+
     <mat-form-field appearance="outline" class="select-lista">
-      <mat-label>Lista a exportar</mat-label>
+      <mat-label>Lista</mat-label>
       <mat-select [(ngModel)]="listaExportar">
         <mat-option *ngFor="let l of listas" [value]="l.key">
           {{ l.nombre }}
@@ -28,101 +46,103 @@
       </mat-select>
     </mat-form-field>
 
-    <button mat-stroked-button color="primary" (click)="exportarListaSeleccionada()">
-      Exportar lista
+    <button mat-raised-button color="primary" (click)="exportarProveedor()"
+      [disabled]="!proveedorSeleccionado || !listaExportar">
+      Exportar proveedor
     </button>
+
   </div>
-</div>
 
-<table mat-table [dataSource]="itemsPagina" class="tabla-precios mat-elevation-z2">
+  <table mat-table [dataSource]="itemsPagina" class="tabla-precios mat-elevation-z2">
 
-  <ng-container matColumnDef="codigo">
-    <th mat-header-cell *matHeaderCellDef (click)="ordenar('codigo')" class="sortable"> CÓDIGO </th>
-    <td mat-cell *matCellDef="let item"> {{ item.codigo }} </td>
-  </ng-container>
+    <ng-container matColumnDef="codigo">
+      <th mat-header-cell *matHeaderCellDef (click)="ordenar('codigo')" class="sortable"> CÓDIGO </th>
+      <td mat-cell *matCellDef="let item"> {{ item.codigo }} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="descripcion">
-    <th mat-header-cell *matHeaderCellDef (click)="ordenar('descripcion')" class="sortable"> DESCRIPCIÓN </th>
-    <td mat-cell *matCellDef="let item"> {{ item.descripcion }} </td>
-  </ng-container>
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef (click)="ordenar('descripcion')" class="sortable"> DESCRIPCIÓN </th>
+      <td mat-cell *matCellDef="let item"> {{ item.descripcion }} </td>
+    </ng-container>
 
-  <!-- ACORDATE TODA LA VIDA QUE EL PRECIO ES PRECIO VENTA EL QUE TOMA LOS VALORES, PRECIO COSTO ES EL QUE QUERIA BASSINO -->
+    <!-- ACORDATE TODA LA VIDA QUE EL PRECIO ES PRECIO VENTA EL QUE TOMA LOS VALORES, PRECIO COSTO ES EL QUE QUERIA BASSINO -->
 
-  <ng-container matColumnDef="precioVenta">
-    <th mat-header-cell *matHeaderCellDef (click)="ordenar('precioVenta')" class="sortable"> COSTO </th>
-    <td mat-cell *matCellDef="let item; let i = index">
+    <ng-container matColumnDef="precioVenta">
+      <th mat-header-cell *matHeaderCellDef (click)="ordenar('precioVenta')" class="sortable"> COSTO </th>
+      <td mat-cell *matCellDef="let item; let i = index">
 
-      <!-- <input type="number" 
+        <!-- <input type="number" 
       [(ngModel)]="item.precioVenta" 
       (change)="onPrecioVentaChange(item)"
         (keydown.enter)="onEnterPrecioVenta($event, item, i)" 
         class="input-precio input-precio-venta",
         (keydown.tab)="onTabPrecioVenta($event, item)" /> -->
 
-      <input type="number" [(ngModel)]="item.precioVenta" (keydown)="onKeyDownNumero($event)"
-        (focus)="onFocusNumero(item, 'precioVenta')" (keydown.enter)="onEnterPrecioVenta($event, item, i)"
-        (keydown.tab)="onTabPrecioVenta($event, item)" (keydown.escape)="onEscapeNumero(item, 'precioVenta')"
-        class="input-precio input-precio-venta" />
+        <input type="number" [(ngModel)]="item.precioVenta" (keydown)="onKeyDownNumero($event)"
+          (focus)="onFocusNumero(item, 'precioVenta')" (keydown.enter)="onEnterPrecioVenta($event, item, i)"
+          (keydown.tab)="onTabPrecioVenta($event, item)" (keydown.escape)="onEscapeNumero(item, 'precioVenta')"
+          class="input-precio input-precio-venta" />
 
-    </td>
-  </ng-container>
+      </td>
+    </ng-container>
 
-  @for (lista of listas; track lista.key; let listaIdx = $index) {
-  <ng-container [matColumnDef]="lista.key + '_pct'">
-    <th mat-header-cell *matHeaderCellDef> % {{ lista.nombre }} </th>
-    <td mat-cell *matCellDef="let item; let i = index">
+    @for (lista of listas; track lista.key; let listaIdx = $index) {
+    <ng-container [matColumnDef]="lista.key + '_pct'">
+      <th mat-header-cell *matHeaderCellDef> % {{ lista.nombre }} </th>
+      <td mat-cell *matCellDef="let item; let i = index">
 
-      <!-- <input type="number" [(ngModel)]="item.listasDetalle[listaIdx].porcentaje"
+        <!-- <input type="number" [(ngModel)]="item.listasDetalle[listaIdx].porcentaje"
         (change)="onPorcentajeChange(item, item.listasDetalle[listaIdx])"
         (keydown.enter)="onEnterPorcentaje($event, item, item.listasDetalle[listaIdx], i, lista.key)"
         (keydown.tab)="onTabPorcentaje($event, item, item.listasDetalle[listaIdx])"
         [class]="'input-porcentaje input-pct-' + lista.key" /> -->
 
-      <input type="number" [(ngModel)]="item.listasDetalle[listaIdx].porcentaje" (keydown)="onKeyDownNumero($event)"
-        (focus)="onFocusNumero(item.listasDetalle[listaIdx], 'porcentaje')"
-        (keydown.enter)="onEnterPorcentaje($event, item, item.listasDetalle[listaIdx], i, lista.key)"
-        (keydown.tab)="onTabPorcentaje($event, item, item.listasDetalle[listaIdx])"
-        (keydown.escape)="onEscapeNumero(item.listasDetalle[listaIdx], 'porcentaje')"
-        class="input-porcentaje input-pct-{{ lista.key }}" />
+        <input type="number" [(ngModel)]="item.listasDetalle[listaIdx].porcentaje" (keydown)="onKeyDownNumero($event)"
+          (focus)="onFocusNumero(item.listasDetalle[listaIdx], 'porcentaje')"
+          (keydown.enter)="onEnterPorcentaje($event, item, item.listasDetalle[listaIdx], i, lista.key)"
+          (keydown.tab)="onTabPorcentaje($event, item, item.listasDetalle[listaIdx])"
+          (keydown.escape)="onEscapeNumero(item.listasDetalle[listaIdx], 'porcentaje')"
+          class="input-porcentaje input-pct-{{ lista.key }}" />
 
 
-    </td>
-  </ng-container>
+      </td>
+    </ng-container>
 
-  <ng-container [matColumnDef]="lista.key + '_val'">
+    <ng-container [matColumnDef]="lista.key + '_val'">
 
-    <th mat-header-cell *matHeaderCellDef class="col-precio">
+      <th mat-header-cell *matHeaderCellDef class="col-precio">
 
-      {{ lista.nombre }}
+        {{ lista.nombre }}
 
-    </th>
+      </th>
 
-    <td mat-cell *matCellDef="let item" class="col-precio">
-      <!-- {{ item.listasDetalle[listaIdx].precio }} -->
-      {{ item.listasDetalle[listaIdx].precio | number:'1.2-2' }}
+      <td mat-cell *matCellDef="let item" class="col-precio">
+        <!-- {{ item.listasDetalle[listaIdx].precio }} -->
+        {{ item.listasDetalle[listaIdx].precio | number:'1.2-2' }}
 
-    </td>
+      </td>
 
-  </ng-container>
-  }
+    </ng-container>
+    }
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.highlight]="row._highlight"></tr>
-</table>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.highlight]="row._highlight"></tr>
+  </table>
 
-<div class="paginacion">
-  <button mat-stroked-button (click)="paginaAnterior()" [disabled]="pageIndex === 0"> Anterior </button>
-  <span> Página {{ pageIndex + 1 }} de {{ totalPaginas }} ({{ itemsFiltrados.length }} ítems) </span>
-  <button mat-stroked-button (click)="paginaSiguiente()" [disabled]="pageIndex + 1 >= totalPaginas"> Siguiente </button>
+  <div class="paginacion">
+    <button mat-stroked-button (click)="paginaAnterior()" [disabled]="pageIndex === 0"> Anterior </button>
+    <span> Página {{ pageIndex + 1 }} de {{ totalPaginas }} ({{ itemsFiltrados.length }} ítems) </span>
+    <button mat-stroked-button (click)="paginaSiguiente()" [disabled]="pageIndex + 1 >= totalPaginas"> Siguiente
+    </button>
 
-  <span class="page-size">
-    Mostrar
-    <select [(ngModel)]="pageSize" (change)="cambiarPageSize()">
-      <option [ngValue]="5">5</option>
-      <option [ngValue]="10">10</option>
-      <option [ngValue]="25">25</option>
-      <option [ngValue]="50">50</option>
-    </select>
-    por página
-  </span>
-</div>
+    <span class="page-size">
+      Mostrar
+      <select [(ngModel)]="pageSize" (change)="cambiarPageSize()">
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="25">25</option>
+        <option [ngValue]="50">50</option>
+      </select>
+      por página
+    </span>
+  </div>

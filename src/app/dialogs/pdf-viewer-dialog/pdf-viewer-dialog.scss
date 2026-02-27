@@ -1,0 +1,64 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fafafa;
+}
+
+
+.pdf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+
+  .titulo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    mat-icon {
+      color: #d32f2f;
+      font-size: 26px;
+    }
+
+    span {
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.3px;
+    }
+  }
+
+  .acciones {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      text-transform: none;
+    }
+  }
+}
+
+.pdf-body {
+  flex: 1;
+  background: #e5e7eb;  
+  overflow: hidden;
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 10px;
+    background: white;
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.08),
+      0 2px 4px rgba(0, 0, 0, 0.04);
+  }
+}

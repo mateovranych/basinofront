@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
@@ -14,6 +14,9 @@ import { ItemConPrecios } from '../../interfaces/Items/ItemConPrecios';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { ProveedoresService } from '../../services/proveedores-service';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { Proveedor } from '../../interfaces/Proveedor';
 
 @Component({
   selector: 'app-precio',
@@ -21,12 +24,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     MatTableModule,
     MatInputModule,
     MatButtonModule,
     MatOptionModule,
     MatSelectModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    NgxMatSelectSearchModule
   ],
   templateUrl: './precio.html',
   styleUrls: ['./precio.scss']
@@ -36,6 +41,8 @@ export class Precio implements OnInit {
   itemsOriginal: any[] = [];
   itemsFiltrados: any[] = [];
   itemsPagina: any[] = [];
+
+  filtroProveedorCtrl = new FormControl<string>('');
 
 
   terminoBusqueda: string = '';
@@ -69,14 +76,81 @@ export class Precio implements OnInit {
 
   displayedColumns: string[] = [];
 
+  proveedores: any[] = [];
+  proveedorSeleccionado: number | null = null;
+  proveedoresFiltrados: Proveedor[] = [];
+
   constructor(
     private itemsService: ItemsService,
     private precioConfigService: PrecioConfiguracionesService,
-    private precioService: PreciosService
+    private precioService: PreciosService,
+    private proveedorService: ProveedoresService
   ) { }
 
   ngOnInit(): void {
     this.cargarItems();
+    this.proveedorService.getAll().subscribe(res => {
+      this.proveedores = res;
+      this.proveedoresFiltrados = res;
+    });
+
+    this.filtroProveedorCtrl.valueChanges.subscribe(search => {
+      this.filtrarProveedores(search ?? '');
+
+
+    });
+  }
+
+
+  filtrarProveedores(search: string) {
+    if (!search) {
+      this.proveedoresFiltrados = this.proveedores;
+      return;
+    }
+
+    const term = search.toLowerCase();
+
+    this.proveedoresFiltrados = this.proveedores
+      .filter(p => p.razonSocial.toLowerCase().includes(term))
+      .sort((a, b) => {
+        const aNombre = a.razonSocial.toLowerCase();
+        const bNombre = b.razonSocial.toLowerCase();
+
+        const aEmpieza = aNombre.startsWith(term);
+        const bEmpieza = bNombre.startsWith(term);
+
+        if (aEmpieza && !bEmpieza) return -1;
+        if (!aEmpieza && bEmpieza) return 1;
+
+        return aNombre.localeCompare(bNombre);
+      });
+  }
+
+  exportarProveedor() {
+
+    if (!this.proveedorSeleccionado || !this.listaExportar) return;
+
+    this.precioService
+      .exportarProveedor(this.proveedorSeleccionado, this.mapearListaAId(this.listaExportar!))
+      .subscribe(blob => {
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ListaProveedor.xlsx';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+  }
+
+  private mapearListaAId(lista: string): number {
+
+    switch (lista) {
+      case "listaA": return 3;
+      case "listaB": return 4;
+      case "listaC": return 5;
+      default: throw new Error("Lista inválida");
+    }
   }
 
 
@@ -96,7 +170,6 @@ export class Precio implements OnInit {
 
         if (nextInput) {
           nextInput.focus();
-          // nextInput.select();
         }
       } else {
 
@@ -107,11 +180,6 @@ export class Precio implements OnInit {
       }
     }, 10);
   }
-
-
-
-
-
 
   cargarItems() {
     this.itemsService.obtenerItemsConPrecios().subscribe({
@@ -127,7 +195,6 @@ export class Precio implements OnInit {
           'codigo',
           'descripcion',
           'precioVenta',
-          // 'precioCosto',
           ...this.listas.flatMap(l => [l.key + '_pct', l.key + '_val'])
         ];
       }
@@ -233,13 +300,8 @@ export class Precio implements OnInit {
     this.aplicarFiltros();
   }
 
-
-
-  //LE SACO EL MATH.ROUND PARA NO READONDEAR.
   onPorcentajeChange(item: any, lista: any) {
     const nuevo = lista.porcentaje;
-
-
 
     const nuevoPrecio = (item.precioVenta * (1 + nuevo / 100));
     lista.precio = nuevoPrecio;
@@ -278,8 +340,6 @@ export class Precio implements OnInit {
     this.precioService
       .actualizarPrecio(venta.precioId, item.precioVenta)
       .subscribe(() => {
-        // ESTO ESTABA ROMPIENDO EL FOCO:
-        // this.cargarItems(); 
         console.log('Precio actualizado en servidor');
       });
   }
@@ -311,8 +371,6 @@ export class Precio implements OnInit {
     for (const item of this.itemsFiltrados) {
       item._highlight = true;
 
-
-      //LE SACO EL MATH.ROUHD PARA NO REDONDEAR
       for (const lista of item.listasDetalle) {
         lista.porcentaje = this.porcentajeGlobal!;
         const nuevoPrecio = (item.precioVenta * (1 + lista.porcentaje / 100));
@@ -439,7 +497,6 @@ export class Precio implements OnInit {
     keyboardEvent.preventDefault();
 
     for (const lista of item.listasDetalle) {
-      //LE SACO EL MATH.ROUHD PARA NO REDONDEAR
       lista.precio = (
         item.precioVenta * (1 + lista.porcentaje / 100)
       );
@@ -461,7 +518,6 @@ export class Precio implements OnInit {
     const keyboardEvent = event as KeyboardEvent;
     keyboardEvent.preventDefault();
 
-    //LE SACO EL MATH.ROUHD PARA NO REDONDEAR
 
     lista.precio = (
       item.precioVenta * (1 + lista.porcentaje / 100)
@@ -476,13 +532,11 @@ export class Precio implements OnInit {
     );
   }
 
-  //LE SACO EL MATH.ROUHD PARA NO REDONDEAR
   onPorcentajeInput(item: any, lista: any) {
     lista.precio = (
       item.precioVenta * (1 + lista.porcentaje / 100)
     );
   }
-  //LE SACO EL MATH.ROUHD PARA NO REDONDEAR
   onPrecioVentaInput(item: any) {
     for (const lista of item.listasDetalle) {
       lista.precio = (

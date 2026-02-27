@@ -1,4 +1,5 @@
 export interface MovimientoCuentaCorriente {
+  id:number;
   fecha: string;
   concepto: string;
   debe: number;

@@ -14,6 +14,7 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'categorias', loadComponent: () => import('./categorias/categorias').then(m => m.Categorias) },
       { path: 'cuentacorriente', loadComponent: () => import('./cuentacorriente/cuentacorriente').then(m => m.Cuentacorriente) },
       { path: 'historialcuentacorriente', loadComponent: () => import('./historialcuentacorriente/historialcuentacorriente').then(m => m.Historialcuentacorriente) },
+      { path: 'saldogeneral', loadComponent: () => import('./saldogeneral/saldogeneral').then(m => m.Saldogeneral) },
       { path: 'recibos', loadComponent: () => import('./recibos/recibos').then(m => m.Recibos) },
       { path: 'clientes', loadComponent: () => import('../operador/clientes/clientes').then(m => m.Clientes) },
       { path: 'proveedores', loadComponent: () => import('../operador/proveedores/proveedores').then(m => m.Proveedores) },

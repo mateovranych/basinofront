@@ -1,0 +1,35 @@
+<div class="pdf-header">
+
+  <div class="titulo">
+    <mat-icon>picture_as_pdf</mat-icon>
+    <span>{{ data.filename }}</span>
+  </div>
+
+  <div class="acciones">
+
+    <button mat-stroked-button (click)="descargar()">
+      <mat-icon>download</mat-icon>
+      Descargar PDF
+    </button>
+
+    <button mat-stroked-button *ngIf="data.onExportExcel" (click)="exportarExcel()" [disabled]="exportando">
+
+      <mat-spinner *ngIf="exportando" diameter="18" style="margin-right:6px">
+      </mat-spinner>
+
+      <mat-icon *ngIf="!exportando">grid_on</mat-icon>
+
+      Exportar Excel
+    </button>
+
+    <button mat-icon-button (click)="cerrar()">
+      <mat-icon>close</mat-icon>
+    </button>
+
+  </div>
+
+</div>
+
+<div class="pdf-body">
+  <iframe [src]="safeUrl"></iframe>
+</div>

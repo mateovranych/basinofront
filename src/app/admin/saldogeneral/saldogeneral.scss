@@ -1,0 +1,16 @@
+// saldogeneral.scss
+
+.num {
+  text-align: right !important;
+  padding-right: 24px !important; /* Espaciado para que no pegue al borde */
+}
+
+/* Si quieres que el título de la cabecera también se alinee visualmente bien */
+th.mat-header-cell.num {
+  text-align: right !important;
+}
+
+.actions {
+  display: flex;
+  gap: 10px; /* Espacio entre los botones */
+}

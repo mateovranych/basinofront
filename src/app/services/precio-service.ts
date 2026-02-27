@@ -22,8 +22,20 @@ export class PreciosService {
   obtenerPrecioParaCliente(itemId: number, clienteId: number): Observable<number> {
     return this.http.get<number>(
       `${this.apiUrl}/item/${itemId}/cliente/${clienteId}`
-    );
-
+    );    
   }
+
+  exportarProveedor(proveedorId: number, listaPrecioId: number) {
+  return this.http.get(
+    `${this.apiUrl}/exportar-proveedor`,
+    {
+      params: {
+        proveedorId,
+        listaPrecioId
+      },
+      responseType: 'blob'
+    }
+  );
+}
 
 }

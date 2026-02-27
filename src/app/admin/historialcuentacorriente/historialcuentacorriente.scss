@@ -1,0 +1,35 @@
+.filtros-grid {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+
+  .cliente-select {
+    flex: 2; // El selector de cliente será más ancho
+    min-width: 250px;
+  }
+
+  mat-form-field {
+    flex: 1;
+    min-width: 150px;
+  }
+}
+
+.num {
+  text-align: right;
+}
+
+.debe { color: #d32f2f; }
+.haber { color: #388e3c; }
+
+.deuda { font-weight: bold; color: #d32f2f; }
+.favor { font-weight: bold; color: #1976d2; }
+
+.no-data-msg {
+  padding: 40px;
+  text-align: center;
+  color: #666;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
