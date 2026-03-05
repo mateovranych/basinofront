@@ -64,8 +64,7 @@ export class Clientes implements OnInit, AfterViewInit {
     private signal: SignalRService
   ) {}
 
-  ngOnInit(): void {
-    // 🔎 Filtro personalizado
+  ngOnInit(): void {    
     this.dataSource.filterPredicate = (data: Cliente, filter: string): boolean => {
       const term = filter.trim().toLowerCase();
 
@@ -92,8 +91,7 @@ export class Clientes implements OnInit, AfterViewInit {
         this.cargarClientes();
       }
     });
-
-    // Debounce para evitar spam en el filtro
+    
     this.searchControl.valueChanges
       .pipe(debounceTime(300))
       .subscribe(value => {

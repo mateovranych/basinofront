@@ -1,6 +1,5 @@
 <div class="bassino-contenedor">
-
-  <!-- Header -->
+  
   <div class="bassino-header">
     <h2>Proveedores</h2>
     <button mat-raised-button color="primary" (click)="nuevo()">
@@ -8,8 +7,7 @@
       Nuevo Proveedor
     </button>
   </div>
-
-  <!-- Buscador -->
+  
   <div class="bassino-buscador">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Buscar proveedor</mat-label>
@@ -23,12 +21,10 @@
     </mat-form-field>
   </div>
 
-  <!-- Empty -->
   <div class="empty" *ngIf="dataSource.data.length === 0">
     No hay proveedores cargados.
   </div>
 
-  <!-- Tabla -->
   <div class="tabla-container" *ngIf="dataSource.data.length > 0">
     <table mat-table [dataSource]="dataSource" class="bassino-tabla">
 

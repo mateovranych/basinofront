@@ -16,12 +16,22 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <a mat-list-item (click)="navigate('clientes')">👥 Clientes</a>
+        <!-- <a mat-list-item (click)="navigate('clientes')">👥 Clientes</a>
         <a mat-list-item (click)="navigate('proveedores')">🏭 Proveedores</a>
-        <a mat-list-item (click)="navigate('items')">📦 Productos / Servicios</a>
-        <a mat-list-item (click)="navigate('categorias')">🗂️ Categorías</a>
-        <a mat-list-item (click)="navigate('presentacion')">📦 Presentaciones</a>
-        <a mat-list-item (click)="navigate('precio')">💰 Precios</a>
+        <a mat-list-item (click)="navigate('items')">📦 Productos / Servicios</a> -->
+        <!-- <a mat-list-item (click)="navigate('categorias')">🗂️ Categorías</a>
+        <a mat-list-item (click)="navigate('presentacion')">📦 Presentaciones</a> -->
+        <!-- <a mat-list-item (click)="navigate('precio')">💰 Precios</a> -->
+
+        <a mat-list-item routerLink="/admin/clientes" routerLinkActive="active-link">👥 Clientes</a>
+
+        <a mat-list-item routerLink="/admin/proveedores" routerLinkActive="active-link">🏭 Proveedores</a>
+
+        <a mat-list-item routerLink="/admin/items" routerLinkActive="active-link">📦 Productos / Servicios</a>
+
+        <a mat-list-item routerLink="/admin/categorias" routerLinkActive="active-link">🗂️ Categorías</a>
+        <a mat-list-item routerLink="/admin/presentacion" routerLinkActive="active-link">📦 Presentaciones</a>
+        <a mat-list-item routerLink="/admin/precio" routerLinkActive="active-link">💰 Precios</a>
       </mat-expansion-panel>
 
 
@@ -33,13 +43,28 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <a mat-list-item (click)="navigate('presupuestos')">📑 Presupuestos</a>
+        <!-- <a mat-list-item (click)="navigate('presupuestos')">📑 Presupuestos</a> -->
+        <a mat-list-item routerLink="/admin/presupuestos" routerLinkActive="active-link">📑 Facturas</a>
+
+        <a mat-list-item routerLink="/admin/facturacion" routerLinkActive="active-link">📑 Factura Arca</a>
+
         <!-- <a mat-list-item (click)="navigate('facturas')">🧾 Facturas</a> -->
-        <a mat-list-item (click)="navigate('recibos')">🗂️ Recibos</a>
-        <a mat-list-item (click)="navigate('cuentacorriente')">🗂️ Gestión de Recibos</a>
-        <a mat-list-item (click)="navigate('historialcuentacorriente')">📊 Cuentas Corrientes</a>
-        <a mat-list-item (click)="navigate('saldogeneral')">📈 Reporte Saldo General</a>
-        <a mat-list-item (click)="navigate('condiciones-iva')">💼 Condiciones IVA</a>
+
+        <a mat-list-item routerLink="/admin/recibos" routerLinkActive="active-link">🗂️ Recibos</a>
+        <!-- <a mat-list-item (click)="navigate('recibos')">🗂️ Recibos</a> -->
+
+        <a mat-list-item routerLink="/admin/cuentacorriente" routerLinkActive="active-link">🗂️ Gestión de Recibos</a>
+        <!-- <a mat-list-item (click)="navigate('cuentacorriente')">🗂️ Gestión de Recibos</a> -->
+        
+        <!-- <a mat-list-item (click)="navigate('historialcuentacorriente')">📊 Cuentas Corrientes</a> -->
+        <a mat-list-item routerLink="/admin/historialcuentacorriente" routerLinkActive="active-link">📊 Cuentas Corrientes</a>
+
+        <!-- <a mat-list-item (click)="navigate('saldogeneral')">📈 Reporte Saldo General</a> -->
+        <a mat-list-item routerLink="/admin/saldogeneral" routerLinkActive="active-link">📈 Reporte Saldo General</a>
+
+        <!-- <a mat-list-item (click)="navigate('condiciones-iva')">💼 Condiciones IVA</a> -->
+        <a mat-list-item routerLink="/admin/condiciones-iva" routerLinkActive="active-link">💼 Condiciones IVA</a>
+
       </mat-expansion-panel>
 
 
@@ -51,8 +76,11 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <a mat-list-item (click)="navigate('provincias')">🗺️ Provincias</a>
-        <a mat-list-item (click)="navigate('localidades')">📍 Localidades</a>
+        <!-- <a mat-list-item (click)="navigate('provincias')">🗺️ Provincias</a> -->
+        <a mat-list-item routerLink="/admin/provincias" routerLinkActive="active-link">🗺️ Provincias</a>
+
+        <!-- <a mat-list-item (click)="navigate('localidades')">📍 Localidades</a> -->
+        <a mat-list-item routerLink="/admin/localidades" routerLinkActive="active-link">📍 Localidades</a>
       </mat-expansion-panel>
 
 
@@ -79,7 +107,7 @@
   </mat-sidenav>
 
   <mat-sidenav-content class="main-content">
-    
+
     <mat-toolbar color="primary">
       <button mat-icon-button (click)="opened = !opened">
         <mat-icon>menu</mat-icon>

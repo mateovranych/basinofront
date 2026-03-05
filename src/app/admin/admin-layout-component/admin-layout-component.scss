@@ -4,33 +4,48 @@
 
 
 .sidenav {
-  width: 260px;
-  background: #919191;
+  width: 310px;  
+  background: #919191;  
   color: white;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
+.active-link {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-left: 5px solid #ffffff; 
+  font-weight: bold !important;
+  color: #000000 !important;
+}
+
 .logo img {
   width: 100%;
   height: auto;
-  max-width: 200px; /* ajustá según tu gusto */
+  max-width: 200px; 
   display: block;
   margin: 0 auto;
   padding: 16px 0;
 }
 
-
-
+// mat-nav-list a {
+//   color: white;
+//   font-weight: 500;
+// }
 
 mat-nav-list a {
-  color: white;
+  color: rgba(255, 255, 255, 0.8);
   font-weight: 500;
+  transition: all 0.3s ease;
+  height: 48px !important; /* Items un poco más altos */
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }
 
 mat-nav-list a:hover {
   background-color: rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
 .footer {
@@ -71,3 +86,4 @@ mat-toolbar {
 .menu-group a {
   padding-left: 32px;
 }
+

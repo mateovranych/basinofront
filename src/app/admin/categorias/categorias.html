@@ -1,4 +1,4 @@
-<div class="contenedor">
+<!-- <div class="contenedor">
   <div class="header">
     <h2>Categorías</h2>
     <button mat-raised-button color="primary" (click)="abrirDialogCrear()">+ Nueva categoría</button>
@@ -33,4 +33,73 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
+</div> -->
+
+
+<div class="bassino-contenedor">
+
+  <div class="bassino-header">
+    <h2>Categorías</h2>
+
+    <button mat-raised-button color="primary"
+            (click)="abrirDialogCrear()">
+      <mat-icon>add</mat-icon>
+      Nueva categoría
+    </button>
+  </div>
+
+  <mat-progress-bar
+    *ngIf="cargando"
+    mode="indeterminate">
+  </mat-progress-bar>
+
+  <div class="empty" *ngIf="!cargando && categorias?.length === 0">
+    No hay categorías cargadas.
+  </div>
+
+  <div class="tabla-container">
+
+    <table mat-table
+           [dataSource]="categorias"
+           class="bassino-tabla">
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let c">
+          {{ c.id }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let c">
+          {{ c.nombre }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let c">
+
+          <button mat-icon-button
+                  (click)="abrirDialogEditar(c)">
+            <mat-icon>edit</mat-icon>
+          </button>
+
+          <button mat-icon-button
+                  color="warn"
+                  (click)="eliminarCategoria(c.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+    </table>
+
+  </div>
+
 </div>

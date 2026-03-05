@@ -18,6 +18,8 @@ export class Cuentacorrienteservice {
     return this.http.get<any>(`${this.api}/cliente/${clienteId}`);
   }
 
+
+  //NO SE ESTAN USANDO ESTOS 3 MÉTODOS.
   pagar(dto: any) {
     return this.http.post(`${this.api}/pagar`, dto);
   }

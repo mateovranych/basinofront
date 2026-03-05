@@ -58,7 +58,7 @@ type ClienteMin = {
 })
 export class PresupuestosDialogComponent implements OnInit {
 
-  titulo = 'NUEVO PRESUPUESTO';
+  titulo = 'NUEVA FACTURA';
   form!: FormGroup;
 
   clientes: ClienteMin[] = [];
@@ -113,7 +113,7 @@ export class PresupuestosDialogComponent implements OnInit {
     public data: { modo: 'crear' | 'editar'; presupuesto?: any }
   ) {
     this.titulo =
-      data?.modo === 'editar' ? 'Editar presupuesto' : 'Nuevo presupuesto';
+      data?.modo === 'editar' ? 'Editar factura' : 'Nueva factura';
   }
 
   // ============================
