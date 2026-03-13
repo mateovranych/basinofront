@@ -14,6 +14,7 @@ import { Cuentacorrienteservice } from '../../services/cuentacorrienteservice';
 import { RecibosService } from '../../services/recibos-service';
 import { MatDialog } from '@angular/material/dialog';
 import { Historialcc } from './historialcc/historialcc';
+import { PdfViewerDialog } from '../../dialogs/pdf-viewer-dialog/pdf-viewer-dialog';
 
 
 interface ClienteMin {
@@ -227,14 +228,54 @@ export class Cuentacorriente implements OnInit {
     return this.presupuestosSeleccionados
       .reduce((acc, p) => acc + (p.montoPago ?? 0), 0);
   }
-  
+
 
 
   bloquearFlechas(event: KeyboardEvent) {
-  if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-    event.preventDefault();
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault();
+    }
   }
-}
+
+
+  abrirImprimir(): void {
+    const clienteId = this.clienteIdCtrl.value!;
+
+    this.cuentaCorrienteService.exportarPendientesPdf(clienteId)
+      .subscribe({
+        next: (blob) => {
+          const url = URL.createObjectURL(blob);
+
+          this.dialog.open(PdfViewerDialog, {
+            width: '900px',
+            height:'90vh',
+            maxHeight: '90vh',
+            data: {
+              url,
+              filename: `pendientes_${this.clienteSeleccionado?.razonSocial ?? clienteId}.pdf`,
+              onExportExcel: () => this.exportarPendientesExcel(clienteId)
+            }
+          });
+        },
+        error: () => Swal.fire('Error', 'No se pudo generar el PDF', 'error')
+      });
+  }
+
+  exportarPendientesExcel(clienteId: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.cuentaCorrienteService.exportarPendientesExcel(clienteId)
+        .subscribe({
+          next: (blob) => {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `pendientes_${clienteId}.xlsx`;
+            a.click();
+            resolve();
+          },
+          error: () => reject()
+        });
+    });
+  }
 
 
 

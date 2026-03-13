@@ -1,0 +1,42 @@
+.fila-no-autorizada {
+  background-color: rgba(244, 67, 54, 0.06) !important;
+}
+
+.chip-autorizada {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+  font-size: 11px;
+
+  mat-icon {
+    font-size: 14px;
+    color: #2e7d32;
+  }
+}
+
+.chip-pendiente {
+  background-color: #ffebee !important;
+  color: #c62828 !important;
+  font-size: 11px;
+
+  mat-icon {
+    font-size: 14px;
+    color: #c62828;
+  }
+}
+
+.chip-tipo {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.chip-1  { background-color: #e3f2fd !important; color: #1565c0 !important; } // Factura A
+.chip-6  { background-color: #f3e5f5 !important; color: #6a1b9a !important; } // Factura B
+.chip-11 { background-color: #e8f5e9 !important; color: #2e7d32 !important; } // Factura C
+
+.sin-cae {
+  color: #bbb;
+}
+
+.derecha {
+  text-align: right;
+}

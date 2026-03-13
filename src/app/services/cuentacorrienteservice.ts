@@ -55,6 +55,17 @@ export class Cuentacorrienteservice {
       { responseType: 'blob' }
     );
   }
+  exportarPendientesPdf(clienteId: number): Observable<Blob> {
+    return this.http.get(`${this.api}/${clienteId}/pendientes/pdf`, {
+      responseType: 'blob'
+    });
+  }
+
+  exportarPendientesExcel(clienteId: number): Observable<Blob> {
+    return this.http.get(`${this.api}/${clienteId}/pendientes/excel`, {
+      responseType: 'blob'
+    });
+  }
 
   exportarSaldoGeneralExcel() {
     return this.http.get(

@@ -21,6 +21,7 @@
     No hay ítems cargados.
   </div>
 
+  <div class="tabla-container" *ngIf="dataSource.data.length > 0">
   <table mat-table [dataSource]="dataSource" matSort class="bassino-tabla" *ngIf="dataSource.data.length > 0">
 
     <ng-container matColumnDef="codigo">
@@ -76,10 +77,11 @@
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns" sticky></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky : true" ></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
   </table>
+  </div>
 
   <mat-paginator [pageSize]="50" [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
 

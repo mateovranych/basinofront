@@ -1,0 +1,252 @@
+<div class="tittle">
+  <h2 mat-dialog-title>{{ titulo }}</h2>
+</div>
+
+<mat-dialog-content #dialogContent>
+  <form [formGroup]="form" class="form-wrap">
+
+    <!-- FILA CLIENTE -->
+    <div class="cliente-row">
+
+      <mat-form-field appearance="outline" class="cliente-select">
+        <mat-label>Cliente</mat-label>
+        <mat-select #clienteSelect formControlName="clienteId">
+          <mat-option>
+            <ngx-mat-select-search [formControl]="filtroClientesCtrl"
+              placeholderLabel="Buscar cliente..."
+              noEntriesFoundLabel="Sin resultados">
+            </ngx-mat-select-search>
+          </mat-option>
+          <mat-option *ngIf="cargandoClientes" [disabled]="true">Cargando...</mat-option>
+          <mat-option *ngFor="let c of clientesFiltrados" [value]="c.id">
+            {{ c.razonSocial }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="readonly-field">
+        <mat-label>Condición IVA</mat-label>
+        <input matInput [value]="clienteSeleccionado?.condicionIVA || '—'" disabled />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="readonly-field">
+        <mat-label>Lista de precios</mat-label>
+        <input matInput [value]="clienteSeleccionado?.listaPrecioNombre || '—'" disabled />
+      </mat-form-field>
+
+    </div>
+
+    <!-- FILA ARCA -->
+    <div class="arca-row">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo comprobante</mat-label>
+        <mat-select formControlName="tipoComprobanteId">
+          <mat-option *ngFor="let t of tiposComprobante" [value]="t.id">
+            {{ t.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Punto de venta</mat-label>
+        <input matInput type="number" formControlName="puntoVenta" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Concepto</mat-label>
+        <mat-select formControlName="concepto">
+          <mat-option [value]="1">Productos</mat-option>
+          <mat-option [value]="2">Servicios</mat-option>
+          <mat-option [value]="3">Productos y Servicios</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Vto. de pago</mat-label>
+        <input matInput [matDatepicker]="pickerVto" formControlName="fechaVencimientoPago" />
+        <mat-datepicker-toggle matSuffix [for]="pickerVto"></mat-datepicker-toggle>
+        <mat-datepicker #pickerVto></mat-datepicker>
+      </mat-form-field>
+
+    </div>
+
+    <!-- FECHAS SERVICIO (solo si concepto != 1) -->
+    <div class="fechas-row" *ngIf="requiereFechasServicio">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Período desde</mat-label>
+        <input matInput [matDatepicker]="pickerDesde" formControlName="fechaServicioDesde" />
+        <mat-datepicker-toggle matSuffix [for]="pickerDesde"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDesde></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Período hasta</mat-label>
+        <input matInput [matDatepicker]="pickerHasta" formControlName="fechaServicioHasta" />
+        <mat-datepicker-toggle matSuffix [for]="pickerHasta"></mat-datepicker-toggle>
+        <mat-datepicker #pickerHasta></mat-datepicker>
+      </mat-form-field>
+
+    </div>
+
+    <!-- ITEMS -->
+    <div class="lineas-header">
+      <h3>Ítems</h3>
+      <button mat-stroked-button color="primary" type="button" (click)="agregarLinea()">
+        <mat-icon>add</mat-icon> Agregar ítem
+      </button>
+      <mat-slide-toggle *ngIf="puedeEmitirComoNoCategorizado" formControlName="forzarNoDiscriminarIVA">
+        Emitir sin discriminar IVA
+      </mat-slide-toggle>
+    </div>
+
+    <div class="tabla-lineas">
+
+      <div class="fila cabecera">
+        <div class="col codigo">Código</div>
+        <div class="col item">Ítem</div>
+        <div class="col cantidad">Cant. Comercial</div>
+        <div class="col cantidad">Cantidad Base</div>
+        <div class="col precio">Precio</div>
+        <div class="col subtotal">Subtotal</div>
+        <div class="col acciones">Acciones</div>
+      </div>
+
+      <div class="fila" [class.fila-servicio]="det.get('esServicio')?.value"
+        *ngFor="let det of detalles.controls; let i = index" [formGroup]="det">
+
+        <!-- CÓDIGO -->
+        <div class="col codigo">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Código</mat-label>
+            <mat-select class="codigo-select" [value]="det.get('itemId')?.value"
+              (selectionChange)="onCodigoSeleccionado(det, $event.value)">
+              <mat-option>
+                <ngx-mat-select-search [formControl]="getFiltroItemCtrl(det)"
+                  placeholderLabel="Buscar..." noEntriesFoundLabel="Sin resultados">
+                </ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let it of filtrarItemsPorLinea(det)" [value]="it.id">
+                {{ it.codigo }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- ÍTEM -->
+        <div class="col item">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Producto / Servicio</mat-label>
+            <mat-select formControlName="itemId" (selectionChange)="onItemChange(i)">
+              <mat-option>
+                <ngx-mat-select-search [formControl]="getFiltroItemCtrl(det)"
+                  placeholderLabel="Buscar..." noEntriesFoundLabel="Sin resultados">
+                </ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let it of filtrarItemsPorLinea(det)" [value]="it.id">
+                {{ it.descripcion }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- OBSERVACIONES (solo servicios) -->
+        <div class="col item" *ngIf="det.get('esServicio')?.value">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Observaciones</mat-label>
+            <input matInput formControlName="observaciones" />
+          </mat-form-field>
+        </div>
+
+        <!-- CANTIDAD COMERCIAL -->
+        <div class="col cantidad">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Cant. ({{ det.get('unidadComercial')?.value || '—' }})</mat-label>
+            <input matInput type="number" formControlName="cantidadComercial" min="1" step="1" />
+          </mat-form-field>
+        </div>
+
+        <!-- CANTIDAD BASE -->
+        <div class="col cantidad">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>
+              {{ det.get('unidadBase')?.value === 'KG' ? 'Peso (kg)' : 'Cant. base' }}
+            </mat-label>
+            <input matInput type="number" formControlName="cantidad"
+              [step]="det.get('unidadBase')?.value === 'KG' ? '0.01' : '1'" />
+            <mat-hint *ngIf="det.get('factorConversion')?.value">
+              {{ det.get('cantidadComercial')?.value || 0 }}
+              × {{ det.get('factorConversion')?.value }}
+              = {{ (det.get('cantidadComercial')?.value || 0) * (det.get('factorConversion')?.value || 0) | number:'1.2-2' }}
+              {{ det.get('unidadBase')?.value }}
+            </mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- PRECIO -->
+        <div class="col precio">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Precio <span *ngIf="!discriminaIVA">(IVA inc.)</span></mat-label>
+            <input matInput type="text" inputmode="decimal" formControlName="precioVisual"
+              (input)="onPrecioVisualInput(det)" />
+          </mat-form-field>
+        </div>
+
+        <!-- SUBTOTAL -->
+        <div class="col subtotal">
+          <mat-form-field appearance="outline" class="w-100 readonly-field">
+            <mat-label>Subtotal</mat-label>
+            <input matInput [value]="subtotalVisual(det) | number:'1.2-2'" readonly />
+          </mat-form-field>
+        </div>
+
+        <!-- ACCIONES -->
+        <div class="col acciones">
+          <button mat-icon-button color="primary" type="button" (click)="agregarLinea()">
+            <mat-icon>add</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" type="button" (click)="quitarLinea(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RESUMEN -->
+    <div class="total-wrap resumen-box">
+      <ng-container *ngIf="discriminaIVA; else totalFinalBox">
+        <div class="resumen-linea">
+          <span>Subtotal</span>
+          <strong>$ {{ subtotal | number:'1.2-2' }}</strong>
+        </div>
+        <div class="resumen-linea">
+          <span>IVA 21%</span>
+          <strong>$ {{ iva | number:'1.2-2' }}</strong>
+        </div>
+        <div class="resumen-total">
+          <span>TOTAL</span>
+          <strong>$ {{ totalFinal | number:'1.2-2' }}</strong>
+        </div>
+      </ng-container>
+      <ng-template #totalFinalBox>
+        <div class="resumen-total grande">
+          <span>Total final (IVA incluido)</span>
+          <strong>$ {{ totalFinal | number:'1.2-2' }}</strong>
+        </div>
+      </ng-template>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" type="button"
+    (click)="guardar()"
+    [disabled]="form.invalid || detalles.length === 0 || guardando">
+    <mat-icon *ngIf="guardando">hourglass_empty</mat-icon>
+    {{ guardando ? 'Autorizando en ARCA...' : 'Emitir factura' }}
+  </button>
+  <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+</mat-dialog-actions>

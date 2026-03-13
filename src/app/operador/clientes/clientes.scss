@@ -13,3 +13,12 @@
     background-color: #d32f2f;
   }
 }
+
+.tabla-container {
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+
+  .bassino-tabla {
+    overflow: visible; // 👈 sobreescribe el global
+  }
+}
