@@ -80,6 +80,13 @@
 
         <div class="panel-pago" *ngIf="presupuestosSeleccionados.length">
 
+            <mat-form-field appearance="outline" class="w-100 fecha-field">
+                <mat-label>Fecha del recibo</mat-label>
+                <input matInput [matDatepicker]="pickerFecha" [(ngModel)]="fechaPago">
+                <mat-datepicker-toggle matIconSuffix [for]="pickerFecha"></mat-datepicker-toggle>
+                <mat-datepicker #pickerFecha></mat-datepicker>
+            </mat-form-field>
+
             <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Observación del recibo</mat-label>
                 <textarea matInput rows="2" [(ngModel)]="observacionPago"

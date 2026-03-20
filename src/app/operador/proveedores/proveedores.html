@@ -1,21 +1,27 @@
 <div class="bassino-contenedor">
-  
+
   <div class="bassino-header">
     <h2>Proveedores</h2>
-    <button mat-raised-button color="primary" (click)="nuevo()">
-      <mat-icon>add</mat-icon>
-      Nuevo Proveedor
-    </button>
+
+    <div>
+      <button mat-stroked-button (click)="verReporte()" [disabled]="cargandoReporte">
+        <mat-spinner *ngIf="cargandoReporte" diameter="18" style="margin-right:6px"></mat-spinner>
+        <mat-icon *ngIf="!cargandoReporte">picture_as_pdf</mat-icon>
+        Ver Reporte
+      </button>
+
+      <button mat-raised-button color="primary" (click)="nuevo()">
+        <mat-icon>add</mat-icon>
+        Nuevo Proveedor
+      </button>
+    </div>
   </div>
-  
+
   <div class="bassino-buscador">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Buscar proveedor</mat-label>
-      <input matInput [formControl]="searchControl"
-             placeholder="Razón social, CUIT, teléfono">
-      <button mat-icon-button *ngIf="searchControl.value"
-              matSuffix
-              (click)="searchControl.setValue('')">
+      <input matInput [formControl]="searchControl" placeholder="Razón social, CUIT, teléfono">
+      <button mat-icon-button *ngIf="searchControl.value" matSuffix (click)="searchControl.setValue('')">
         <mat-icon>close</mat-icon>
       </button>
     </mat-form-field>

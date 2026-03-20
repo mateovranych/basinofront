@@ -16,6 +16,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatInputModule } from '@angular/material/input';
 import { SignalRService } from '../../services/signal-rservice';
+import { PdfViewerDialog } from '../../dialogs/pdf-viewer-dialog/pdf-viewer-dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-clientes',
@@ -32,7 +34,8 @@ import { SignalRService } from '../../services/signal-rservice';
     MatSortModule,
     MatDialogModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './clientes.html',
   styleUrl: './clientes.scss'
@@ -54,6 +57,7 @@ export class Clientes implements OnInit, AfterViewInit {
 
   dataSource = new MatTableDataSource<Cliente>([]);
   searchControl = new FormControl('');
+  cargando = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -62,9 +66,9 @@ export class Clientes implements OnInit, AfterViewInit {
     private clienteService: ClientesService,
     private dialog: MatDialog,
     private signal: SignalRService
-  ) {}
+  ) { }
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.dataSource.filterPredicate = (data: Cliente, filter: string): boolean => {
       const term = filter.trim().toLowerCase();
 
@@ -83,7 +87,7 @@ export class Clientes implements OnInit, AfterViewInit {
       );
     };
 
-    this.cargarClientes();    
+    this.cargarClientes();
 
 
     this.signal.listen("actualizar", modulo => {
@@ -91,7 +95,7 @@ export class Clientes implements OnInit, AfterViewInit {
         this.cargarClientes();
       }
     });
-    
+
     this.searchControl.valueChanges
       .pipe(debounceTime(300))
       .subscribe(value => {
@@ -158,6 +162,45 @@ export class Clientes implements OnInit, AfterViewInit {
           },
         });
       }
+    });
+  }
+
+  verReporte(): void {
+    this.cargando = true;
+
+    this.clienteService.exportarClientesPDF().subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+
+        const dialogRef = this.dialog.open(PdfViewerDialog, {
+          width: '95vw',
+          height: '90vh',
+          maxWidth: '95vw',
+          data: {
+            url,
+            filename: 'Clientes.pdf',
+            onExportExcel: () => this.exportarExcel()
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(() => URL.revokeObjectURL(url));
+      },
+      error: (err) => console.error(err),
+      complete: () => this.cargando = false
+    });
+  }
+
+  exportarExcel(): void {
+    this.clienteService.exportarClientesExcel().subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Clientes.xlsx';
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: (err) => console.error(err)
     });
   }
 

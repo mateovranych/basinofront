@@ -9,9 +9,9 @@ import { environment } from '../../environments/environment';
 })
 export class ClientesService {
 
-   private apiUrl = `${environment.apiUrl}/Cliente`;
+  private apiUrl = `${environment.apiUrl}/Cliente`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAll(search: string = ''): Observable<Cliente[]> {
     let params = new HttpParams();
@@ -34,5 +34,13 @@ export class ClientesService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
-  
+
+  exportarClientesPDF(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/exportar-pdf`, { responseType: 'blob' });
+  }
+
+  exportarClientesExcel(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/exportar-excel`, { responseType: 'blob' });
+  }
+
 }

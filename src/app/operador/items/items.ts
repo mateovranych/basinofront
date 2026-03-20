@@ -14,6 +14,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PdfViewerDialog } from '../../dialogs/pdf-viewer-dialog/pdf-viewer-dialog';
 
 @Component({
   selector: 'app-items',
@@ -27,7 +29,8 @@ import { MatInputModule } from '@angular/material/input';
     MatProgressBarModule,
     MatPaginatorModule,
     MatSortModule,
-    MatInputModule
+    MatInputModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './items.html',
   styleUrl: './items.scss'
@@ -142,9 +145,6 @@ export class Items implements OnInit, AfterViewInit {
     });
   }
 
-
-
-
   eliminarItem(id: number): void {
     Swal.fire({
       title: '¿Eliminar ítem?',
@@ -165,5 +165,45 @@ export class Items implements OnInit, AfterViewInit {
       }
     });
   }
+
+    verReporte(): void {
+      this.cargando = true;
+  
+      this.service.exportarPDF().subscribe({
+        next: (blob) => {
+          const url = URL.createObjectURL(blob);
+  
+          const dialogRef = this.dialog.open(PdfViewerDialog, {
+            width: '95vw',
+            height: '90vh',
+            maxWidth: '95vw',
+            data: {
+              url,
+              filename: 'Items.pdf',
+              onExportExcel: () => this.exportarExcel()
+            }
+          });
+  
+          dialogRef.afterClosed().subscribe(() => URL.revokeObjectURL(url));
+        },
+        error: (err) => console.error(err),
+        complete: () => this.cargando = false
+      });
+    }
+  
+    exportarExcel(): void {
+      this.service.exportarExcel().subscribe({
+        next: (blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'Items.xlsx';
+          a.click();
+          URL.revokeObjectURL(url);
+        },
+        error: (err) => console.error(err)
+      });
+    }
+  
 
 }

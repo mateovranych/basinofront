@@ -48,6 +48,14 @@ export class ProveedoresService {
     return this.http.get<Proveedor[]>(`${this.apiUrl}/activos`);
   }
 
+  exportarPDF(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/exportar/pdf`, { responseType: 'blob' });
+  }
+
+  exportarExcel(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/exportar/excel`, { responseType: 'blob' });
+  }
+
 
 
 }

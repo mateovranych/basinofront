@@ -1,13 +1,22 @@
 <div class="bassino-contenedor">
-  
+
   <div class="bassino-header">
     <h2>Clientes</h2>
-    <button mat-raised-button color="primary" (click)="abrirDialogoNuevo()">
-      <mat-icon>add</mat-icon>
-      Nuevo Cliente
-    </button>
+    <div>
+      <button mat-stroked-button (click)="verReporte()" [disabled]="cargando">
+        <mat-spinner *ngIf="cargando" diameter="18" style="margin-right:6px"></mat-spinner>
+        <mat-icon *ngIf="!cargando">picture_as_pdf</mat-icon>
+        Reporte
+      </button>
+
+      <button mat-raised-button color="primary" (click)="abrirDialogoNuevo()">
+        <mat-icon>add</mat-icon>
+        Nuevo Cliente
+      </button>
+
+    </div>
   </div>
-  
+
   <div class="bassino-buscador">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Buscar cliente</mat-label>
@@ -17,7 +26,7 @@
       </button>
     </mat-form-field>
   </div>
-  
+
   <div class="empty" *ngIf="dataSource.data.length === 0">
     No hay clientes cargados.
   </div>
@@ -41,7 +50,7 @@
         <td mat-cell *matCellDef="let e">{{ e.domicilio }}</td>
       </ng-container>
 
-   
+
       <ng-container matColumnDef="telefono">
         <th mat-header-cell *matHeaderCellDef>Teléfono</th>
         <td mat-cell *matCellDef="let e">{{ e.telefono }}</td>

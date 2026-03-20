@@ -14,6 +14,8 @@ import { Proveedor } from '../../interfaces/Proveedor';
 import { ProveedoresService } from '../../services/proveedores-service';
 import { ProveedoresDialog } from './proveedores-dialog/proveedores-dialog';
 import { debounceTime } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { PdfViewerDialog } from '../../dialogs/pdf-viewer-dialog/pdf-viewer-dialog';
 
 @Component({
   selector: 'app-proveedores',
@@ -27,7 +29,8 @@ import { debounceTime } from 'rxjs';
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './proveedores.html',
   styleUrl: './proveedores.scss'
@@ -46,12 +49,15 @@ export class Proveedores implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Proveedor>([]);
   searchControl = new FormControl('');
 
+  cargandoReporte = false;
+
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private service: ProveedoresService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
 
@@ -127,6 +133,53 @@ export class Proveedores implements OnInit, AfterViewInit {
           error: () => Swal.fire('Error', 'No se pudo eliminar', 'error')
         });
       }
+    });
+  }
+
+  verReporte(): void {
+    this.cargandoReporte = true;
+
+    this.service.exportarPDF().subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+
+        this.dialog.open(PdfViewerDialog, {
+          width: '90vw',
+          maxWidth: '1200px',
+          height: '90vh',
+          data: {
+            url,
+            filename: 'proveedores.pdf',
+            onExportExcel: () => this.exportarExcel()
+          }
+        }).afterClosed().subscribe(() => URL.revokeObjectURL(url));
+
+        this.cargandoReporte = false;
+      },
+      error: () => {
+        Swal.fire('Error', 'No se pudo generar el reporte', 'error');
+        this.cargandoReporte = false;
+      }
+    });
+  }
+
+  private exportarExcel(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.service.exportarExcel().subscribe({
+        next: (blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'proveedores.xlsx';
+          a.click();
+          URL.revokeObjectURL(url);
+          resolve();
+        },
+        error: () => {
+          Swal.fire('Error', 'No se pudo exportar el Excel', 'error');
+          reject();
+        }
+      });
     });
   }
 }

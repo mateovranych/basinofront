@@ -177,6 +177,7 @@ input[type=number] {
   display: grid;
   grid-template-columns: 1fr auto;
   grid-template-areas:
+    "fecha fecha"
     "obs total"
     "detalles acciones";
 
@@ -190,6 +191,14 @@ input[type=number] {
 /* ================= OBSERVACION ================= */
 
 .panel-pago mat-form-field.w-100 {
+  grid-area: obs;
+}
+
+.panel-pago mat-form-field.fecha-field {
+  grid-area: fecha;
+}
+
+.panel-pago mat-form-field.w-100:not(.fecha-field) {
   grid-area: obs;
 }
 

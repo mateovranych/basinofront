@@ -39,6 +39,4 @@ export class RecibosService {
     return this.http.get<ReciboListadoDTO[]>(`${this.api}/cliente/${clienteId}`);
   }
 
-
-
 }

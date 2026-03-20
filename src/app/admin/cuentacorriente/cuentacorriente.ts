@@ -15,6 +15,8 @@ import { RecibosService } from '../../services/recibos-service';
 import { MatDialog } from '@angular/material/dialog';
 import { Historialcc } from './historialcc/historialcc';
 import { PdfViewerDialog } from '../../dialogs/pdf-viewer-dialog/pdf-viewer-dialog';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 
 interface ClienteMin {
@@ -58,7 +60,10 @@ interface CuentaCorrienteCliente {
     MatIconModule,
     MatInputModule,
     NgxMatSelectSearchModule,
-    FormsModule
+    FormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+
   ],
   templateUrl: './cuentacorriente.html',
   styleUrl: './cuentacorriente.scss'
@@ -82,6 +87,8 @@ export class Cuentacorriente implements OnInit {
   cargandoCuenta = false;
 
   observacionPago: string = '';
+
+  fechaPago: Date = new Date();
 
 
   constructor(
@@ -155,6 +162,39 @@ export class Cuentacorriente implements OnInit {
       });
   }
 
+  // pagarSeleccionados(): void {
+  //   const seleccionados = this.presupuestosSeleccionados
+  //     .filter(p => p.montoPago && p.montoPago > 0);
+
+  //   if (!seleccionados.length) {
+  //     Swal.fire('Atención', 'No hay pagos válidos', 'warning');
+  //     return;
+  //   }
+
+  //   this.reciboService.crearReciboPagoMultiple({
+  //     clienteId: this.clienteIdCtrl.value!,
+  //     observacion: this.observacionPago,
+  //     fecha: this.fechaPago,
+  //     detalles: seleccionados.map(p => ({
+  //       presupuestoId: p.presupuestoId,
+  //       monto: p.montoPago!
+  //     }))
+  //   }).subscribe({
+  //     next: res => {
+  //       Swal.fire(
+  //         'Pago registrado',
+  //         `Recibo Nº ${res.reciboId}`,
+  //         'success'
+  //       );
+  //       this.cargarCuentaCorriente(this.clienteIdCtrl.value!);
+  //     },
+  //     error: () => {
+  //       Swal.fire('Error', 'No se pudo registrar el pago', 'error');
+  //     }
+  //   });
+
+  // }
+
   pagarSeleccionados(): void {
     const seleccionados = this.presupuestosSeleccionados
       .filter(p => p.montoPago && p.montoPago > 0);
@@ -164,28 +204,51 @@ export class Cuentacorriente implements OnInit {
       return;
     }
 
+    this.pagando = true;
+
     this.reciboService.crearReciboPagoMultiple({
       clienteId: this.clienteIdCtrl.value!,
       observacion: this.observacionPago,
+      fecha: this.fechaPago.toISOString(),       // <-- nuevo
       detalles: seleccionados.map(p => ({
         presupuestoId: p.presupuestoId,
         monto: p.montoPago!
       }))
     }).subscribe({
       next: res => {
-        Swal.fire(
-          'Pago registrado',
-          `Recibo Nº ${res.reciboId}`,
-          'success'
-        );
         this.cargarCuentaCorriente(this.clienteIdCtrl.value!);
+        this.limpiarSeleccion();
+        this.observacionPago = '';
+        this.fechaPago = new Date();
+
+        // Abrir PDF del recibo recién creado
+        this.abrirPdfRecibo(res.reciboId);
       },
       error: () => {
         Swal.fire('Error', 'No se pudo registrar el pago', 'error');
-      }
+        this.pagando = false;
+      },
+      complete: () => this.pagando = false
     });
-
   }
+
+  abrirPdfRecibo(reciboId: number): void {
+  this.reciboService.obtenerPdf(reciboId).subscribe({
+    next: blob => {
+      const url = URL.createObjectURL(blob);
+      this.dialog.open(PdfViewerDialog, {
+        width: '900px',
+        height: '90vh',
+        maxHeight: '90vh',
+        data: {
+          url,
+          filename: `recibo_${reciboId}.pdf`
+        }
+      });
+    },
+    error: () => Swal.fire('Error', 'No se pudo generar el PDF del recibo', 'error')
+  });
+}
 
   limpiarSeleccion(): void {
     this.cuentaCorriente?.presupuestos.forEach(p => {
@@ -248,7 +311,7 @@ export class Cuentacorriente implements OnInit {
 
           this.dialog.open(PdfViewerDialog, {
             width: '900px',
-            height:'90vh',
+            height: '90vh',
             maxHeight: '90vh',
             data: {
               url,

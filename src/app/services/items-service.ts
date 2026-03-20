@@ -63,6 +63,14 @@ export class ItemsService {
     );
   }
 
+  exportarPDF(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/exportar/pdf`, { responseType: 'blob' });
+  }
+
+  exportarExcel(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/exportar/excel`, { responseType: 'blob' });
+  }
+
 
 
 }
