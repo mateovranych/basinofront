@@ -47,11 +47,11 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-
+<!-- 
       <mat-form-field appearance="outline">
         <mat-label>Punto de venta</mat-label>
         <input matInput type="number" formControlName="puntoVenta" />
-      </mat-form-field>
+      </mat-form-field> -->
 
       <mat-form-field appearance="outline">
         <mat-label>Concepto</mat-label>
@@ -150,22 +150,25 @@
             </mat-select>
           </mat-form-field>
         </div>
-
-        <!-- OBSERVACIONES (solo servicios) -->
+        
         <div class="col item" *ngIf="det.get('esServicio')?.value">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Observaciones</mat-label>
             <input matInput formControlName="observaciones" />
           </mat-form-field>
         </div>
-
-        <!-- CANTIDAD COMERCIAL -->
+        
         <div class="col cantidad">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Cant. ({{ det.get('unidadComercial')?.value || '—' }})</mat-label>
             <input matInput type="number" formControlName="cantidadComercial" min="1" step="1" />
           </mat-form-field>
         </div>
+
+        
+
+
+
 
         <!-- CANTIDAD BASE -->
         <div class="col cantidad">

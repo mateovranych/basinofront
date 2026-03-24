@@ -166,6 +166,33 @@ input[type=number] {
 
 /* ================= PANEL PAGO ================= */
 
+// .panel-pago {
+//   position: sticky;
+//   bottom: 16px;
+
+//   background: #ffffff;
+//   border-radius: 14px;
+//   padding: 20px 24px;
+
+//   display: grid;
+//   grid-template-columns: 1fr auto;
+//   grid-template-areas:
+//     "fecha fecha"
+//     "obs total"
+//     "detalles acciones";
+
+//   gap: 20px;
+
+//   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+//   border: 1px solid #e0e0e0;
+//   z-index: 30;
+// }
+
+
+/* ================= PANEL PAGO ================= */
+
+/* ================= PANEL PAGO ================= */
+
 .panel-pago {
   position: sticky;
   bottom: 16px;
@@ -186,6 +213,23 @@ input[type=number] {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   border: 1px solid #e0e0e0;
   z-index: 30;
+
+  // ✅ ESTO ES LO NUEVO: altura máxima del panel completo
+  max-height: 60vh;
+}
+
+/* ================= DETALLES ================= */
+
+.panel-detalles {
+  grid-area: detalles;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  // ✅ ESTO ES LO NUEVO: solo la lista de presupuestos hace scroll
+  overflow-y: auto;
+  max-height: 260px;
+  padding-right: 4px; // evita que el scrollbar tape el contenido
 }
 
 /* ================= OBSERVACION ================= */

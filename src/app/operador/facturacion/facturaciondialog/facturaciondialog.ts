@@ -78,7 +78,7 @@ export class Facturaciondialog implements OnInit {
   ];
 
   private readonly IVA = 0.21;
-  private readonly PUNTO_VENTA_DEFAULT = 10;
+  // private readonly PUNTO_VENTA_DEFAULT = 10;
 
   @ViewChild('dialogContent') dialogContent!: ElementRef<HTMLElement>;
   @ViewChild('clienteSelect') clienteSelect!: MatSelect;
@@ -112,8 +112,8 @@ export class Facturaciondialog implements OnInit {
     this.form = this.fb.group({
       clienteId: [null, Validators.required],
       tipoComprobanteId: [null, Validators.required],
-      puntoVenta: [this.PUNTO_VENTA_DEFAULT, Validators.required],
-      concepto: [3, Validators.required], // default: Ambos
+      // puntoVenta: [this.PUNTO_VENTA_DEFAULT, Validators.required],
+      concepto: [1, Validators.required], 
       forzarNoDiscriminarIVA: [false],
       fechaServicioDesde: [null],
       fechaServicioHasta: [null],
@@ -124,6 +124,8 @@ export class Facturaciondialog implements OnInit {
     this.agregarLinea();
     this.cargarClientes();
     this.cargarItems();
+
+    this.actualizarValidacionFechasServicio(1);
 
     this.filtroClientesCtrl.valueChanges.subscribe(valor => {
       const filtro = (valor || '').toLowerCase();
@@ -423,7 +425,7 @@ export class Facturaciondialog implements OnInit {
     const dto = {
       clienteId: Number(this.form.getRawValue().clienteId),
       tipoComprobanteId: Number(v.tipoComprobanteId),
-      puntoVenta: Number(v.puntoVenta),
+      // puntoVenta: Number(v.puntoVenta),
       concepto: Number(v.concepto),
       forzarNoDiscriminarIVA: v.forzarNoDiscriminarIVA,
       fechaServicioDesde: v.fechaServicioDesde
