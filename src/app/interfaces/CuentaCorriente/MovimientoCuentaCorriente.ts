@@ -6,5 +6,6 @@ export interface MovimientoCuentaCorriente {
   haber: number;
   saldo: number;
   presupuestoId?: number;
+  facturaId?: number;
   reciboId?: number;
 }

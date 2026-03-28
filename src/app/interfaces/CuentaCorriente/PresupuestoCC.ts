@@ -1,5 +1,6 @@
 export interface PresupuestoCC {
-  presupuestoId: number;
+  presupuestoId?: number | null;
+  facturaId?: number | null;
   fecha: string;
   monto: number;
   pagos: number;

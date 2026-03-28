@@ -1,4 +1,5 @@
 export interface ReciboPagoDetalleDTO {
-  presupuestoId: number;
+  presupuestoId?: number | null;
+  facturaId?: number | null;
   monto: number;
 }

@@ -66,7 +66,7 @@ export class Presupuestos implements OnInit, AfterViewInit {
       },
       error: () => {
         this.cargando = false;
-        Swal.fire('Error', 'No se pudieron cargar los presupuestos', 'error');
+        Swal.fire('Error', 'No se pudieron cargar las facturas', 'error');
       }
     });
   }
@@ -128,7 +128,7 @@ export class Presupuestos implements OnInit, AfterViewInit {
           if (result.isConfirmed) {
             this.service.eliminarPresupuesto(id).subscribe({
               next: () => {
-                Swal.fire('Eliminado', 'Presupuesto eliminado correctamente', 'success');
+                Swal.fire('Eliminado', 'Factura eliminada correctamente', 'success');
                 this.cargarPresupuestos();
               },
               error: (err) => {

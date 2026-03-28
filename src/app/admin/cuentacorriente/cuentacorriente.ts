@@ -27,7 +27,8 @@ interface ClienteMin {
 }
 
 interface PresupuestoCC {
-  presupuestoId: number;
+  presupuestoId?: number | null;
+  facturaId?: number | null;
   fecha: string;
   monto: number;
   pagos: number;
@@ -209,9 +210,10 @@ export class Cuentacorriente implements OnInit {
     this.reciboService.crearReciboPagoMultiple({
       clienteId: this.clienteIdCtrl.value!,
       observacion: this.observacionPago,
-      fecha: this.fechaPago.toISOString(),       // <-- nuevo
+      fecha: new Date(this.fechaPago.getTime() - this.fechaPago.getTimezoneOffset() * 60000).toISOString().replace('Z', ''),
       detalles: seleccionados.map(p => ({
-        presupuestoId: p.presupuestoId,
+        presupuestoId: p.presupuestoId ?? null,
+        facturaId: p.facturaId ?? null,
         monto: p.montoPago!
       }))
     }).subscribe({

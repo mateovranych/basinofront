@@ -42,7 +42,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Tipo comprobante</mat-label>
         <mat-select formControlName="tipoComprobanteId">
-          <mat-option *ngFor="let t of tiposComprobante" [value]="t.id">
+          <mat-option *ngFor="let t of tiposComprobanteDisponibles" [value]="t.id">
             {{ t.nombre }}
           </mat-option>
         </mat-select>

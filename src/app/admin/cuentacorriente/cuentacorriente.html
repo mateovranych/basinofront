@@ -64,7 +64,7 @@
                 <tr *ngFor="let p of cc.presupuestos" (dblclick)="toggleSeleccion(p)"
                     [class.seleccionado]="p.seleccionado">
 
-                    <td>#{{ p.presupuestoId }}</td>
+                    <td>{{ p.facturaId ? 'F#' + p.facturaId : '#' + p.presupuestoId }}</td>
 
                     <td class="fecha">
                         {{ p.fecha | date:'dd/MM/yyyy' }}
@@ -99,7 +99,7 @@
                 <div class="detalle-pago" *ngFor="let p of presupuestosSeleccionados">
 
                     <div class="detalle-info">
-                        <strong>Presupuesto #{{ p.presupuestoId }}</strong>
+                        <strong>{{ p.facturaId ? 'Factura ARCA #' + p.facturaId : 'Factura #' + p.presupuestoId }}</strong>
                         <small>Saldo: {{ p.saldo | currency:'$' }}</small>
                     </div>
 

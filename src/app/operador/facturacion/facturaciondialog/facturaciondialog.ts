@@ -21,6 +21,7 @@ import { FacturaService } from '../../../services/factura-service';
 import { ItemsService } from '../../../services/items-service';
 import { ClientesService } from '../../../services/clientes-service';
 import { PreciosService } from '../../../services/precio-service';
+import { ConfiguracionService } from '../../../services/configuracion-service';
 import { ItemMin } from '../../../interfaces/Items/ItemMin';
 import { TipoComprobante } from '../../../interfaces/Factura/TipoComprobante';
 
@@ -71,11 +72,22 @@ export class Facturaciondialog implements OnInit {
 
   filtroClientesCtrl = new FormControl('');
 
-  tiposComprobante: TipoComprobante[] = [
+  private readonly tiposComprobante: TipoComprobante[] = [
     { id: 1, nombre: 'Factura A', codigoAfip: 1 },
     { id: 2, nombre: 'Factura B', codigoAfip: 6 },
     { id: 3, nombre: 'Factura C', codigoAfip: 11 },
   ];
+
+  condicionEmisor: string = 'RI';
+
+  get tiposComprobanteDisponibles(): TipoComprobante[] {
+    switch (this.condicionEmisor) {
+      case 'Monotributista': return this.tiposComprobante.filter(t => t.codigoAfip === 11);
+      case 'Exento':         return this.tiposComprobante.filter(t => t.codigoAfip === 6);
+      case 'RI':             return this.tiposComprobante.filter(t => t.codigoAfip === 1 || t.codigoAfip === 6);
+      default:               return this.tiposComprobante;
+    }
+  }
 
   private readonly IVA = 0.21;
   // private readonly PUNTO_VENTA_DEFAULT = 10;
@@ -101,6 +113,7 @@ export class Facturaciondialog implements OnInit {
     private itemsService: ItemsService,
     private clientesService: ClientesService,
     private precioService: PreciosService,
+    private configuracionService: ConfiguracionService,
     public dialogRef: MatDialogRef<Facturaciondialog>,
     @Inject(MAT_DIALOG_DATA) public data: { modo: 'crear' }
   ) { }
@@ -124,6 +137,7 @@ export class Facturaciondialog implements OnInit {
     this.agregarLinea();
     this.cargarClientes();
     this.cargarItems();
+    this.cargarConfiguracionEmisor();
 
     this.actualizarValidacionFechasServicio(1);
 
@@ -152,13 +166,41 @@ export class Facturaciondialog implements OnInit {
   }
 
   // ============================
+  // CONFIGURACIÓN EMISOR
+  // ============================
+  cargarConfiguracionEmisor(): void {
+    this.configuracionService.getEmisor().subscribe({
+      next: config => {
+        this.condicionEmisor = config.condicionIvaEmisor;
+        // Re-sugerir tipo en caso de que ya haya un cliente seleccionado
+        this.actualizarTipoComprobanteSugerido();
+      }
+    });
+  }
+
+  // ============================
   // TIPO COMPROBANTE AUTOMÁTICO
   // ============================
   actualizarTipoComprobanteSugerido(): void {
     if (!this.clienteSeleccionado) return;
-    const id = this.clienteSeleccionado.condicionIvaId;
-    // 1=RI → Factura A, resto → Factura C
-    const tipoId = id === 1 ? 1 : 3;
+
+    const receptorEsRI = this.clienteSeleccionado.condicionIvaId === 1;
+    let tipoId: number;
+
+    switch (this.condicionEmisor) {
+      case 'Monotributista':
+        tipoId = 3; // siempre C
+        break;
+      case 'Exento':
+        tipoId = 2; // siempre B
+        break;
+      case 'RI':
+      default:
+        // RI emisor: A para receptor RI, B para el resto
+        tipoId = receptorEsRI ? 1 : 2;
+        break;
+    }
+
     this.form.get('tipoComprobanteId')?.setValue(tipoId, { emitEvent: false });
   }
 
