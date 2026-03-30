@@ -49,7 +49,7 @@
       <ng-container matColumnDef="numeroComprobante">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
         <td mat-cell *matCellDef="let f">
-          {{ f.puntoVenta | number:'4.0' }}-{{ f.numeroComprobante | number:'8.0' }}
+          {{ f.puntoVenta.toString().padStart(4, '0') }}-{{ f.numeroComprobante.toString().padStart(8, '0') }}
         </td>
       </ng-container>
 
