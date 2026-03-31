@@ -149,10 +149,7 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-        </div>
-        
-        <div class="col item" *ngIf="det.get('esServicio')?.value">
-          <mat-form-field appearance="outline" class="w-100">
+          <mat-form-field *ngIf="det.get('esServicio')?.value" appearance="outline" class="w-100">
             <mat-label>Observaciones</mat-label>
             <input matInput formControlName="observaciones" />
           </mat-form-field>

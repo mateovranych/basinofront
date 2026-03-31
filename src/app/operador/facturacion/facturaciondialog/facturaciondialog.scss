@@ -32,31 +32,7 @@
        CUANDO ES SERVICIO
        =============================== */
     &.fila-servicio {
-      grid-template-columns:
-        90px minmax(160px, 1.1fr)
-        /* Servicio */
-        minmax(220px, 1.5fr)
-        /* Observaciones */
-        140px
-        /* Cant. Comercial */
-        160px
-        /* Precio */
-        150px
-        /* Subtotal */
-        70px;
-      /* Acciones */
-
-      
-      &.fila-servicio {
-
-        /* Oculta Cantidad Base */
-        .col.cantidad-base {
-          display: none;
-        }
-      }
-
-      
-
+      align-items: start;
     }
 
     .col {
